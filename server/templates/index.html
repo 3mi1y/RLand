@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>First page</h2>
+
+<p id="demo">aifhfadsfh akj;sdnfjadshf i;sadnf iuhsafbk;j asdhib .</p>
+<p id ="asdf"></p>
+<script>
+document.getElementById("asdf").innerHTML = "sdfioasndfiosadfoisadfasfsdfg";
+</script>
+{% block body %}
+  <form action = "/" method = "POST">
+    Email: <input name ="email" type ="text"><br />
+    name: <input name ="name" type ="text" ><br />
+    Password: <input name="password" type="password"> <br />
+    {% module xsrf_form_html() %}
+    <input type ="submit">
+  </form>
+  {% end % }
+
+{% end %}
+<button type="button" onclick='window.location = "otherPage"'>Click Me to go to next page!</button>
+
+</body>
+</html>
