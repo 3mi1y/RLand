@@ -7,6 +7,7 @@ import tornado.escape
 import os.path
 from tornado import gen
 
+
 from tornado.options import define, options
 
 from storage.riak import RiakDb
@@ -50,4 +51,5 @@ if __name__ == "__main__":
     http_server = tornado.httpserver.HTTPServer(Application())
     http_server.listen(options.port)
     db = RiakDb()
+    print("IM RUNNING ON PORT: " + str( options.port))
     tornado.ioloop.IOLoop.current().start()
