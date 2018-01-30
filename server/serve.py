@@ -6,9 +6,10 @@ import tornado.options
 import tornado.escape
 import os.path
 from tornado import gen
-import riak
 
 from tornado.options import define, options
+
+from storage.riak import RiakDb
 
 define("port", default = 8000, help="run on the given port", type=int)
 class MainHandler(tornado.web.RequestHandler):
@@ -17,21 +18,17 @@ class MainHandler(tornado.web.RequestHandler):
         self.render("index.html")
     @gen.coroutine
     def post(self):
-        new_user = user_bucket.new('testUser', data ={
-                'email': self.get_argument("email"),
-                'name': self.get_argument("name"),
-                'pw': self.get_argument("password"),
-        })
-        new_user.store()
+        db.create_user(self.get_argument("email"),
+                       self.get_argument("name"),
+                       self.get_argument("password"))
         self.redirect("/")
 
 
 
 class OtherPagehandler(tornado.web.RequestHandler):
     def get(self):
-        user_bucket = client.bucket('user')
-        user = user_bucket.get('testUser').data
-        self.render("otherPage.html",user = user['name'], userEmail = user['email'],  pw =user['pw'])
+        user = db.get_user('email')
+        self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw =user['password'])
 
 
 
@@ -52,6 +49,5 @@ if __name__ == "__main__":
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
     http_server.listen(options.port)
-    client = riak.RiakClient()
-    user_bucket = client.bucket('user')
+    db = RiakDb()
     tornado.ioloop.IOLoop.current().start()
