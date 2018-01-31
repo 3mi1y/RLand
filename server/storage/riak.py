@@ -7,13 +7,16 @@ class RiakDb:
         self.user_bucket = self.client.bucket('user')
 
     def create_user(self, email, name, password):
-        # TODO: make sure user does not already exist
-        new_user = self.user_bucket.new(email, data ={
-                'email': email,
-                'name': name,
-                'password': hash_password(password),
-        })
-        new_user.store()
+        if self.user_bucket.get(email).data is None: 
+            new_user = self.user_bucket.new(email, data ={
+                    'email': email,
+                    'name': name,
+                    'password': hash_password(password),
+            })
+            new_user.store()
+        else:
+            #TODO: do something if user already exists.
+            print("User is already in db")
 
     def get_user(self, email):
         user = self.user_bucket.get(email).data
