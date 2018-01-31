@@ -20,14 +20,24 @@ class BaseHandler(tornado.web.RequestHandler):
 class MainHandler(BaseHandler):
 
     def get(self):
-        self.render("index.html")
+        self.render("index.html", error = None)
     @gen.coroutine
     def post(self):
-        db.create_user(self.get_argument("email"),
-                       self.get_argument("name"),
-                       self.get_argument("password"))
-        self.set_secure_cookie("userEmail", self.get_argument("email"))
-        self.redirect("/otherPage")
+        email = self.get_argument("email")
+        name = self.get_argument("name")
+        password = self.get_argument("password")
+        if(db.get_user(email) is None):
+            db.create_user(email,
+                           name,
+                           password)
+            self.set_secure_cookie("userEmail", email)
+            self.redirect("/otherPage")
+        else:
+            if(db.login(email,password)):
+                self.set_secure_cookie("userEmail",email)
+                self.redirect("/otherPage")
+            else:
+                self.render("index.html",error = "incorrect email or password")
 
 
 
@@ -40,6 +50,11 @@ class OtherPagehandler(BaseHandler):
             self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'])
         else:
             self.write('<head></head><body>there is no user with that name, it broke</body>')
+        @gen.coroutine
+        def post(self):
+            print("in other page post")
+            self.clear_cookie("userEmail")
+            self.redirect("/")
 
 
 

@@ -1,25 +1,36 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>Log in/ create user</title>
+</head>
 <body>
 
 <h2>First page</h2>
 
-<p id="demo">aifhfadsfh akj;sdnfjadshf i;sadnf iuhsafbk;j asdhib .</p>
-<p id ="asdf"></p>
-<script>
-document.getElementById("asdf").innerHTML = "sdfioasndfiosadfoisadfasfsdfg";
-</script>
 {% block body %}
+{% if error %}
+<span style ="color: red">Error: {{ error }}</span><p>
+
+{% end %}
+
+
+
+
   <form action = "/" method = "POST">
     Email: <input name ="email" type ="text"><br />
-    name: <input name ="name" type ="text" ><br />
+    name(if making a new user): <input name ="name" type ="text" ><br />
     Password: <input name="password" type="password"> <br />
     {% module xsrf_form_html() %}
-    <input type ="submit">
+    Click to login or create new user: <input type ="submit" name ="Create user">
   </form>
   {% end % }
 
 {% end %}
+<br />
+<br />
+<br />
+
+
 
 </body>
 </html>
