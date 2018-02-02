@@ -21,24 +21,44 @@ class MainHandler(BaseHandler):
 
     def get(self):
         self.render("index.html", error = None)
+
     @gen.coroutine
     def post(self):
         email = self.get_argument("email")
         name = self.get_argument("name")
         password = self.get_argument("password")
-        if(db.get_user(email) is None):
-            db.create_user(email,
-                           name,
-                           password)
-            self.set_secure_cookie("userEmail", email)
+
+        db.create_user(email,
+                       name,
+                       password)
+        self.set_secure_cookie("userEmail", email)
+        self.redirect("/")
+
+
+class LoginHandler(BaseHandler):
+
+    def get(self):
+        self.render("index.html", error = None)
+
+    @gen.coroutine
+    def post(self):
+        email = self.get_argument("email")
+        password = self.get_argument("password")
+        if(db.login(email,password)):
+            self.set_secure_cookie("userEmail",email)
             self.redirect("/otherPage")
         else:
-            if(db.login(email,password)):
-                self.set_secure_cookie("userEmail",email)
-                self.redirect("/otherPage")
-            else:
-                self.render("index.html",error = "incorrect email or password")
+            self.render("index.html",error = "incorrect email or password")
 
+class LogoutHandler(BaseHandler):
+
+    def get(self):
+        self.clear_cookie("userEmail")
+        self.redirect("/")
+
+    def post(self):
+        self.clear_cookie("userEmail")
+        self.redirect("/")
 
 
 class OtherPagehandler(BaseHandler):
@@ -50,6 +70,7 @@ class OtherPagehandler(BaseHandler):
             self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'])
         else:
             self.write('<head></head><body>there is no user with that name, it broke</body>')
+
         @gen.coroutine
         def post(self):
             print("in other page post")
@@ -64,6 +85,8 @@ class Application(tornado.web.Application):
     def __init__(self):
         handlers =[
             (r"/", MainHandler),
+            (r"/login", LoginHandler),
+            (r"/logout", LogoutHandler),
             (r"/otherPage",OtherPagehandler)
         ]
         settings = dict(

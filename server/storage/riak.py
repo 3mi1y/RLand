@@ -24,6 +24,9 @@ class RiakDb:
     def login(self,email,password):
         #print("logging in")
         user = self.get_user(email)
+        if user is None:
+            return False
+
         if security.check_password(password,user['password']):
             return True
         else:

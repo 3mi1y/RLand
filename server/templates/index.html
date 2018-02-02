@@ -13,24 +13,25 @@
 
 {% end %}
 
-
-
-
+<h2>Create User</h2>
   <form action = "/" method = "POST">
     Email: <input name ="email" type ="text"><br />
-    name(if making a new user): <input name ="name" type ="text" ><br />
+    Name: <input name ="name" type ="text" ><br />
     Password: <input name="password" type="password"> <br />
     {% module xsrf_form_html() %}
-    Click to login or create new user: <input type ="submit" name ="Create user">
+    <input type ="submit" value="Create user">
   </form>
-  {% end % }
+
+<hr>
+
+<h2>Login</h2>
+  <form action="/login" method="POST">
+    Email: <input name="email" type="text"><br />
+    Password: <input name="password" type="password"> <br />
+    {% module xsrf_form_html() %}
+    <input type ="submit" value="Login">
+  </form>
 
 {% end %}
-<br />
-<br />
-<br />
-
-
-
 </body>
 </html>
