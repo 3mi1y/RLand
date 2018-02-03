@@ -67,18 +67,58 @@ class OtherPagehandler(BaseHandler):
 
         user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8')) #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
         if(not user is None):
-            self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'])
+            self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = None)
+
         else:
             self.write('<head></head><body>there is no user with that name, it broke</body>')
 
-        @gen.coroutine
-        def post(self):
-            print("in other page post")
-            self.clear_cookie("userEmail")
-            self.redirect("/")
+    @gen.coroutine
+    def post(self):
+        db.create_polygon(self.get_argument("ID"),self.get_argument("Location"),self.get_argument("Name"))
+        self.redirect("/otherPage")
 
 
 
+class GetPolyHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8')) #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
+        if(not user is None):
+            self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = None)
+
+        else:
+            self.write('<head></head><body>there is no user with that name, it broke</body>')
+    @gen.coroutine
+    def post(self):
+        poly = db.get_polygon(self.get_argument("ID"))
+        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
+        if(not user is None):
+            if(not poly is None):
+                self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = poly)
+            else:
+                self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = "Did not exist")
+
+        else:
+            self.write('<head></head><body>there is no user with that name, it broke</body>')
+
+class DeletePolyHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8')) #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
+        if(not user is None):
+            self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = None)
+
+        else:
+            self.write('<head></head><body>there is no user with that name, it broke</body>')
+    @gen.coroutine
+    def post(self):
+        db.delete_polygon(self.get_argument("ID"))
+        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
+        if(not user is None):
+            self.render("otherPage.html",user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = "was deleted")
+
+        else:
+            self.write('<head></head><body>there is no user with that name, it broke</body>')
 
 
 class Application(tornado.web.Application):
@@ -87,13 +127,15 @@ class Application(tornado.web.Application):
             (r"/", MainHandler),
             (r"/login", LoginHandler),
             (r"/logout", LogoutHandler),
-            (r"/otherPage",OtherPagehandler)
+            (r"/otherPage",OtherPagehandler),
+            (r"/getPoly",GetPolyHandler),
+            (r"/deletePoly",DeletePolyHandler)
         ]
         settings = dict(
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
-            login_url= "/",
-            cookie_secret ="__TODO:__GENERATE__YOUR_OWN_RANDOM_VALUE_HERE",
+            login_url= "/login",
+            cookie_secret ="__TODO:__GENERATE__YOUR_OWN_RANDOM_VALUE_HERE:  42",
         )
         super(Application,self).__init__(handlers, **settings)
 

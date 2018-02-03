@@ -8,11 +8,45 @@
     &nbsp
     WELCOME  {{ user }}
     <br />
-    youre email: {{ userEmail }}
+    your email: {{ userEmail }}
     <br />
-    youre pw: {{ pw }}
+    your pw: {{ pw }}
+    <br/>
+    {% if polygon %}
+    your last requested polygon: {{ polygon }}<br />
+    {% end %}
     <input type ="button" value = "log out" onclick = 'document.cookie = "userEmail=; expires =Thu, 01 Jan 2000 00:00:00 GMT"; window.location.href = "/"'/>
-  </body>
+
+    <br/>
+
+
+    <br />
+    <br />
+    <h1>Create a polygon</h1>
+    <form action = "/otherPage" method = "POST">
+      ID: <input name ="ID" type ="text"><br />
+      Location: <input name ="Location" type ="text" ><br />
+      Name: <input name="Name" type="text"> <br />
+      {% module xsrf_form_html() %}
+      <input type ="submit" value="Create Polygon">
+    </form>
+    <hr />
+    <br />
+    <h2>Get Polygon</h2>
+    <form action = "/getPoly" method = "POST">
+      ID: <input name ="ID" type ="text"><br />
+      {% module xsrf_form_html() %}
+      <input type ="submit" value="Get Polygon">
+    </form>
+    <hr />
+    <br />
+    <h3>Delete Polygon</h2>
+    <form action = "/deletePoly" method = "POST">
+      ID: <input name ="ID" type ="text"><br />
+      {% module xsrf_form_html() %}
+      <input type ="submit" value="Delete Polygon">
+    </form>
+    </body>
 
 
 
