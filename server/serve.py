@@ -129,7 +129,8 @@ class Application(tornado.web.Application):
             (r"/logout", LogoutHandler),
             (r"/otherPage",OtherPagehandler),
             (r"/getPoly",GetPolyHandler),
-            (r"/deletePoly",DeletePolyHandler)
+            (r"/deletePoly",DeletePolyHandler),
+            (r"/(favicon.ico)", tornado.web.StaticFileHandler,{"path": os.path.join(os.path.dirname(__file__))+"/static/favico.ico"})
         ]
         settings = dict(
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
