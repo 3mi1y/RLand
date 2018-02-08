@@ -74,7 +74,7 @@ class OtherPagehandler(BaseHandler):
 
     @gen.coroutine
     def post(self):
-        db.create_polygon(self.get_argument("ID"),self.get_argument("Location"),self.get_argument("Name"))
+        db.create_polygon(self.get_argument("ID"),self.get_argument("Location"),self.get_argument("Name"),str(self.get_secure_cookie("userEmail"),'utf-8'))
         self.redirect("/otherPage")
 
 
@@ -90,7 +90,7 @@ class GetPolyHandler(BaseHandler):
             self.write('<head></head><body>there is no user with that name, it broke</body>')
     @gen.coroutine
     def post(self):
-        poly = db.get_polygon(self.get_argument("ID"))
+        poly = db.get_polygon(self.get_argument("ID"),str(self.get_secure_cookie("userEmail"),'utf-8'))
         user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
         if(not user is None):
             if(not poly is None):
