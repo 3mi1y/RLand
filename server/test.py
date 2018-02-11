@@ -26,7 +26,12 @@ else:
 
 # make a new polygon
 db.delete_polygon("polygon1")
-db.create_polygon("polygon1", "Nevada", "Area 51")
+db.create_polygon("polygon1", "Nevada", "Area 51", U_EMAIL)
 
-poly = db.get_polygon("polygon1")
+# test that the user can get it
+poly = db.get_polygon("polygon1", U_EMAIL)
 print(poly['name'], "is in", poly['location'])
+
+# test that a different user can not get it
+poly = db.get_polygon("polygon1", "impostor")
+print(poly)
