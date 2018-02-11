@@ -51,6 +51,7 @@ class RiakDb:
         if user.data:
             user.delete()
 
+
     def create_polygon(self, poly_id, location, name,uEmail):
         if self.poly_bucket.get(poly_id).data is None:
             poly = self.poly_bucket.new(poly_id, data = {
@@ -60,6 +61,7 @@ class RiakDb:
                 'user' : uEmail
             })
             poly.store()
+            return ({'id': poly_id, 'location': location, 'name': name, 'user': uEmail})
         else:
             # TODO: polygon already exists
             print("Oh no this already exists!")
@@ -78,3 +80,4 @@ class RiakDb:
         poly = self.poly_bucket.get(poly_id)
         if poly.data:
             poly.delete()
+            return ("Deleted")

@@ -5,7 +5,6 @@ import tornado.ioloop
 import tornado.options
 import tornado.escape
 import tornado.httpclient
-#import tornado.AsyncHTTPClient
 import os.path
 from tornado import gen
 
@@ -14,7 +13,7 @@ from tornado.options import define, options
 
 from storage.riak import RiakDb
 
-define("port", default = 8000, help="run on the given port", type=int)
+define("port", default = 8888, help="run on the given port", type=int)
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie("userEmail")
@@ -63,64 +62,43 @@ class LogoutHandler(BaseHandler):
         self.redirect("/")
 
 
-class OtherPagehandler(BaseHandler):
+class CreatePolyhandler(BaseHandler):
     @tornado.web.authenticated
-    def get(self):
+    def get(self,id,location,name):
 
         user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8')) #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
         if(not user is None):
-            self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = None)
-
-        else:
-            self.write('<head></head><body>there is no user with that name, it broke</body>')
-
-    @gen.coroutine
-    def post(self):
-        db.create_polygon(self.get_argument("ID"),self.get_argument("Location"),self.get_argument("Name"),str(self.get_secure_cookie("userEmail"),'utf-8'))
-        self.redirect("/otherPage")
+            response = db.create_polygon(id,location,name,user)
+            if(not response is None):
+                self.write(response)
+            else:
+                self.write("That poly has already been made.")
 
 
 
 class GetPolyHandler(BaseHandler):
     @tornado.web.authenticated
-    def get(self):
-        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8')) #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
-        if(not user is None):
-            self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = None)
-
-        else:
-            self.write('<head></head><body>there is no user with that name, it broke</body>')
-    @gen.coroutine
-    def post(self):
-        poly = db.get_polygon(self.get_argument("ID"),str(self.get_secure_cookie("userEmail"),'utf-8'))
+    def get(self, polyID):
         user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
+        poly = db.get_polygon(polyID,str(self.get_secure_cookie("userEmail"),'utf-8'))
         if(not user is None):
             if(not poly is None):
-                self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = poly)
+                response = {'polygon': poly}
+                self.write(response)
             else:
-                self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = "Did not exist")
+                self.write('<head></head><body>there is no polygon with that ID, it broke</body>')
+
 
         else:
             self.write('<head></head><body>there is no user with that name, it broke</body>')
 
 class DeletePolyHandler(BaseHandler):
     @tornado.web.authenticated
-    def get(self):
+    def get(self,polyID):
         user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8')) #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
         if(not user is None):
-            self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = None)
-
-        else:
-            self.write('<head></head><body>there is no user with that name, it broke</body>')
-    @gen.coroutine
-    def post(self):
-        db.delete_polygon(self.get_argument("ID"))
-        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
-        if(not user is None):
-            self.render("otherPage.html",user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = "was deleted")
-
-        else:
-            self.write('<head></head><body>there is no user with that name, it broke</body>')
+            response = db.delete_polygon(polyID)
+            self.write(response)
 
 
 
@@ -131,9 +109,9 @@ class Application(tornado.web.Application):
             (r"/", MainHandler),
             (r"/login", LoginHandler),
             (r"/logout", LogoutHandler),
-            (r"/otherPage",OtherPagehandler),
-            (r"/getPoly",GetPolyHandler),
-            (r"/deletePoly",DeletePolyHandler),
+            (r"/createPoly/([0-9]+)&([a-z]+)&([a-z]+)",CreatePolyhandler),
+            (r"/getPoly/([0-9]+)",GetPolyHandler),
+            (r"/deletePoly/([0-9]+)",DeletePolyHandler),
             (r"/(favicon.ico)", tornado.web.StaticFileHandler,{"path": os.path.join(os.path.dirname(__file__))+"/static/favico.ico"})
         ]
         settings = dict(
