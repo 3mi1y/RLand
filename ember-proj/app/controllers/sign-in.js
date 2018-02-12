@@ -36,9 +36,9 @@ export default Controller.extend({
         isProcessing: false
       });
 
-      $.post("http://localhost:8000/login", {
+      $.post("http://localhost:8000/", {
         email: this.get("email"),
-        username: this.get("username"),
+        name: this.get("username"),
         password: this.get("password")
       }).then(function () {
           this.set("isProcessing", false);
