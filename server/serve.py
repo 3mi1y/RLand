@@ -74,6 +74,7 @@ class OtherPagehandler(BaseHandler):
         else:
             self.write('<head></head><body>there is no user with that name, it broke</body>')
 
+    @tornado.web.authenticated
     @gen.coroutine
     def post(self):
         db.create_polygon(self.get_argument("ID"),self.get_argument("Location"),self.get_argument("Name"),str(self.get_secure_cookie("userEmail"),'utf-8'))
@@ -90,6 +91,8 @@ class GetPolyHandler(BaseHandler):
 
         else:
             self.write('<head></head><body>there is no user with that name, it broke</body>')
+
+    @tornado.web.authenticated
     @gen.coroutine
     def post(self):
         poly = db.get_polygon(self.get_argument("ID"),str(self.get_secure_cookie("userEmail"),'utf-8'))
@@ -112,6 +115,8 @@ class DeletePolyHandler(BaseHandler):
 
         else:
             self.write('<head></head><body>there is no user with that name, it broke</body>')
+
+    @tornado.web.authenticated
     @gen.coroutine
     def post(self):
         db.delete_polygon(self.get_argument("ID"))
