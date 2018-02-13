@@ -46,6 +46,14 @@ class RiakDb:
 
         return u
 
+    def update_user(self, updateUser):
+        user = self.user_bucket.get(updateUser['email'])
+        if user.data:
+            user.data['name'] = updateUser['name']
+            user.data['password'] = updateUser['password']
+            user.data['polygon_ids'] = updateUser['polygon_ids']
+            user.store()
+
     def delete_user(self, email):
         user = self.user_bucket.get(email)
         if user.data:

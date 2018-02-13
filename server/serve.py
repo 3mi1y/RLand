@@ -127,7 +127,54 @@ class DeletePolyHandler(BaseHandler):
         else:
             self.write('<head></head><body>there is no user with that name, it broke</body>')
 
+class PolyCollectionHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8')) #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
+        if(not user is None):
+            self.write(dict(ids=user['polygon_ids']))
+        else:
+            self.write(dict(error="you are logged in as a nonexistent user"))
 
+    @tornado.web.authenticated
+    @gen.coroutine
+    def post(self):
+        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
+        # TODO: make sure this is a number, or autogenerate
+        poly_id = self.get_argument("ID")
+        db.create_polygon(poly_id,self.get_argument("Location"),self.get_argument("Name"))
+        user['polygon_ids'] += [ poly_id ]
+        db.update_user(user)
+
+class PolyHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, poly_id):
+        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
+        poly = db.get_polygon(str(poly_id))
+        if(not user is None):
+            if(not poly is None):
+                # TODO: verify user owns polygon
+                self.write(poly)
+            else:
+                # TODO: better 404
+                self.write(dict(error="not found"))
+        else:
+            self.write(dict(error="you are logged in as a nonexistent user"))
+
+    @tornado.web.authenticated
+    def delete(self, poly_id): user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
+        if (user is None):
+            self.write(dict(error="you are logged in as a nonexistent user"))
+            return
+
+        if (user['polygon_ids']):
+            user['polygon_ids'].remove(poly_id)
+            db.update_user(user)
+            db.delete_polygon(poly_id)
+            self.write(dict(status="deleted"))
+        else:
+            # TODO: http status code
+            self.write(dict(error="not your polygon"))
 
 
 class Application(tornado.web.Application):
@@ -139,6 +186,8 @@ class Application(tornado.web.Application):
             (r"/otherPage",OtherPagehandler),
             (r"/getPoly",GetPolyHandler),
             (r"/deletePoly",DeletePolyHandler),
+            (r"/polygons/", PolyCollectionHandler),
+            (r"/polygons/([0-9]+)", PolyHandler),
             (r"/(favicon.ico)", tornado.web.StaticFileHandler,{"path": os.path.join(os.path.dirname(__file__))+"/static/favico.ico"})
         ]
         settings = dict(
