@@ -20,9 +20,10 @@ class BaseHandler(tornado.web.RequestHandler):
         return self.get_secure_cookie("userEmail")
 
     def set_default_headers(self):
-       self.set_header("Access-Control-Allow-Origin", "*")
-       self.set_header("Access-Control-Allow-Headers", "x-requested-with")
-       self.set_header("Access-Control-Allow-Methods", 'PUT, DELETE, OPTIONS')
+        self.set_header("Access-Control-Allow-Origin", "localhost:4200")
+        self.set_header("Vary","Origin")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header("Access-Control-Allow-Methods", 'PUT, DELETE, OPTIONS')
 
     def options(self):
         # no body
@@ -172,7 +173,8 @@ class PolyHandler(BaseHandler):
             self.write(dict(error="you are logged in as a nonexistent user"))
 
     @tornado.web.authenticated
-    def delete(self, poly_id): user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
+    def delete(self, poly_id):
+        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
         if (user is None):
             self.write(dict(error="you are logged in as a nonexistent user"))
             return
