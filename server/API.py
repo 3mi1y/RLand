@@ -77,7 +77,7 @@ class CreatePolyhandler(BaseHandler):
     @tornado.web.authenticated
     def get(self,id,location,name):
 
-        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8')) #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
+        user = str(self.get_secure_cookie("userEmail"),'utf-8') #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
         if(not user is None):
             response = db.create_polygon(id,location,name,user)
             if(not response is None):
