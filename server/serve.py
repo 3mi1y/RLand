@@ -161,7 +161,7 @@ class PolyHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, poly_id):
         user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
-        poly = db.get_polygon(str(poly_id))
+        poly = db.get_polygon(str(poly_id), user['email'])
         if(not user is None):
             if(not poly is None):
                 # TODO: verify user owns polygon
