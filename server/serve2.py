@@ -59,9 +59,9 @@ class LoginHandler(BaseHandler):
         password = self.get_argument("password")
         if(self.settings['db'].login(email,password)):
             self.set_secure_cookie("userEmail",email)
-            self.redirect("/otherPage")
+            self.write(dict(status="success"))
         else:
-            self.render("index.html",error = "incorrect email or password")
+            self.write(dict(status="failure", error="incorrect email or password"))
 
 class LogoutHandler(BaseHandler):
 
