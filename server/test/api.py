@@ -54,3 +54,14 @@ class TestPolygon(AuthenticatedServerTest):
         response = self.fetch("/polygons/992", headers=dict(cookie=self.cookie))
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["error"], "not found")
+
+    def test_create_get_delete_polygon(self):
+        response = self.fetch("/polygons/", method="POST", headers=dict(cookie=self.cookie), body="ID=993&Name=created&Location=loc3")
+        self.assertEqual(response.code, 200)
+
+        response = self.fetch("/polygons/993", headers=dict(cookie=self.cookie))
+        data = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(data["name"], "created")
+
+        response = self.fetch("/polygons/993", method="DELETE", headers=dict(cookie=self.cookie))
+        self.assertEqual(response.code, 200)

@@ -156,7 +156,7 @@ class PolyCollectionHandler(BaseHandler):
         user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
         # TODO: make sure this is a number, or autogenerate
         poly_id = self.get_argument("ID")
-        db.create_polygon(poly_id,self.get_argument("Location"),self.get_argument("Name"))
+        db.create_polygon(poly_id,self.get_argument("Location"),self.get_argument("Name"), str(self.get_secure_cookie("userEmail"),'utf-8'))
         user['polygon_ids'] += [ poly_id ]
         db.update_user(user)
 
