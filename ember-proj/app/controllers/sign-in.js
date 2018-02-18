@@ -15,7 +15,7 @@ export default Controller.extend({
         isProcessing: false
       });
 
-      $.post("http://localhost:8000/login", {
+      $.post("http://localhost:8000/api/login", {
         email: this.get("username"),
         password: this.get("password")
       }).then(function () {
@@ -36,7 +36,7 @@ export default Controller.extend({
         isProcessing: false
       });
 
-      $.post("http://localhost:8000/", {
+      $.post("http://localhost:8000/api/signup", {
         email: this.get("email"),
         name: this.get("username"),
         password: this.get("password")

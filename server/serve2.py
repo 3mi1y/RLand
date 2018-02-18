@@ -54,6 +54,7 @@ class LoginHandler(BaseHandler):
             self.set_secure_cookie("userEmail",email)
             self.write(dict(status="success"))
         else:
+            self.set_status(400)
             self.write(dict(status="failure", error="incorrect email or password"))
 
 class LogoutHandler(BaseHandler):
