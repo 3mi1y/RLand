@@ -33,11 +33,9 @@
     <hr />
     <br />
     <h2>Get Polygon</h2>
-    <form action = "/getPoly" method = "POST">
-      ID: <input name ="ID" type ="text"><br />
-      {% module xsrf_form_html() %}
-      <input type ="submit" value="Get Polygon">
-    </form>
+    <form action = "/getPoly" method = "GET">
+      ID: <input name ="ID" type ="text" id = "id"><br />
+      <input type = "button" value="Get Polygon" onclick ='window.location.href = "/polygons/" + document.getElementById("id").value' >
     <hr />
     <br />
     <h3>Delete Polygon</h2>
