@@ -19,12 +19,6 @@ class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie("userEmail")
 
-    def set_default_headers(self):
-        self.set_header("Access-Control-Allow-Origin", "localhost:4200")
-        self.set_header("Vary","Origin")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
-        self.set_header("Access-Control-Allow-Methods", 'PUT, DELETE, OPTIONS')
-
     def options(self):
         # no body
         self.set_status(204)
@@ -33,7 +27,11 @@ class BaseHandler(tornado.web.RequestHandler):
 class MainHandler(BaseHandler):
 
     def get(self):
-        self.render("index.html", error = None)
+        f = open(os.path.join(os.path.dirname(__file__), "../ember-proj/dist/index.html"))
+        index = f.read()
+        self.write(index)
+
+class SignupHandler(BaseHandler):
 
     @gen.coroutine
     def post(self):
@@ -44,14 +42,9 @@ class MainHandler(BaseHandler):
         self.settings['db'].create_user(email,
                        name,
                        password)
-        self.set_secure_cookie("userEmail", email)
-        self.redirect("/")
-
+        self.write(dict(status="success"))
 
 class LoginHandler(BaseHandler):
-
-    def get(self):
-        self.render("index.html", error = None)
 
     @gen.coroutine
     def post(self):
@@ -73,72 +66,6 @@ class LogoutHandler(BaseHandler):
         self.clear_cookie("userEmail")
         self.redirect("/")
 
-
-class OtherPagehandler(BaseHandler):
-    @tornado.web.authenticated
-    def get(self):
-
-        user = self.settings['db'].get_user(str(self.get_secure_cookie("userEmail"),'utf-8')) #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
-        if(not user is None):
-            self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = None)
-
-        else:
-            self.write('<head></head><body>there is no user with that name, it broke</body>')
-
-    @tornado.web.authenticated
-    @gen.coroutine
-    def post(self):
-        self.settings['db'].create_polygon(self.get_argument("ID"),self.get_argument("Location"),self.get_argument("Name"),str(self.get_secure_cookie("userEmail"),'utf-8'))
-        self.redirect("/otherPage")
-
-
-
-class GetPolyHandler(BaseHandler):
-    @tornado.web.authenticated
-    def get(self):
-        user = self.settings['db'].get_user(str(self.get_secure_cookie("userEmail"),'utf-8')) #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
-        if(not user is None):
-            self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = None)
-
-        else:
-            self.write('<head></head><body>there is no user with that name, it broke</body>')
-
-    @tornado.web.authenticated
-    @gen.coroutine
-    def post(self):
-        db = self.settings['db']
-        poly = db.get_polygon(self.get_argument("ID"),str(self.get_secure_cookie("userEmail"),'utf-8'))
-        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
-        if(not user is None):
-            if(not poly is None):
-                self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = poly)
-            else:
-                self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = "Did not exist")
-
-        else:
-            self.write('<head></head><body>there is no user with that name, it broke</body>')
-
-class DeletePolyHandler(BaseHandler):
-    @tornado.web.authenticated
-    def get(self):
-        user = self.settings['db'].get_user(str(self.get_secure_cookie("userEmail"),'utf-8')) #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
-        if(not user is None):
-            self.render("otherPage.html", user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = None)
-
-        else:
-            self.write('<head></head><body>there is no user with that name, it broke</body>')
-
-    @tornado.web.authenticated
-    @gen.coroutine
-    def post(self):
-        db = self.settings['db']
-        db.delete_polygon(self.get_argument("ID"))
-        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
-        if(not user is None):
-            self.render("otherPage.html",user = user['name'], userEmail = user['email'],  pw = user['password'], polygon = "was deleted")
-
-        else:
-            self.write('<head></head><body>there is no user with that name, it broke</body>')
 
 class PolyCollectionHandler(BaseHandler):
     @tornado.web.authenticated
@@ -197,15 +124,14 @@ class PolyHandler(BaseHandler):
 class Application(tornado.web.Application):
     def __init__(self, database):
         handlers =[
-            (r"/", MainHandler),
-            (r"/login", LoginHandler),
-            (r"/logout", LogoutHandler),
-            (r"/otherPage",OtherPagehandler),
-            (r"/getPoly",GetPolyHandler),
-            (r"/deletePoly",DeletePolyHandler),
-            (r"/polygons/", PolyCollectionHandler),
-            (r"/polygons/([0-9]+)", PolyHandler),
-            (r"/(favicon.ico)", tornado.web.StaticFileHandler,{"path": os.path.join(os.path.dirname(__file__))+"/static/favico.ico"})
+            (r"/api/signup", SignupHandler),
+            (r"/api/login", LoginHandler),
+            (r"/api/logout", LogoutHandler),
+            (r"/api/polygons/", PolyCollectionHandler),
+            (r"/api/polygons/([0-9]+)", PolyHandler),
+            (r"/(favicon.ico)", tornado.web.StaticFileHandler,{"path": os.path.join(os.path.dirname(__file__), "static")}),
+            (r"/(assets/.*|ember-welcome-page/.*|fonts/.*|tests/.*|index.html|robots.txt|testem.js)", tornado.web.StaticFileHandler, dict(path=os.path.join(os.path.dirname(__file__), "../ember-proj/dist/"))),
+            (r"/.*", MainHandler),
         ]
         settings = dict(
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
