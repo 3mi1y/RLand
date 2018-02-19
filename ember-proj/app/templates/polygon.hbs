@@ -1,0 +1,15 @@
+{{outlet}}
+<h1>This form lets you insert a new polygon</h1>
+<form {{action "createPolygon" on="submit"}}>
+   <label>Please enter the ID for your polygon</label>
+   <p>{{input value=ID type="text"}}</p>
+   <label>Please enter a location of your polygon</label>
+   <p>{{input value=Location type="text"}}</p>
+   <label>Please enter the name of the polygon</label>
+   <p>{{input value=Name type="text"}}</p>
+   <button type="submit">Submit</button>
+</form>
+<br>
+<h1>This button console.log()'s all of the users polygons, so check your console</h1>
+<button {{action "getPolygons" on="click"}}>Get Polygons</button>
+
