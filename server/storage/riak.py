@@ -82,7 +82,7 @@ class RiakDb:
         if (poly['user'] == uEmail):
             return { 'id': poly['id'], 'location': poly['location'], 'name': poly['name'], 'user': poly['user'] }
         else:
-            return ("You don't have access to that polygon.")
+            return None
 
     def delete_polygon(self, poly_id):
         poly = self.poly_bucket.get(poly_id)
