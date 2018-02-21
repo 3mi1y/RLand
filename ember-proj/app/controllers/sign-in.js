@@ -15,12 +15,12 @@ export default Controller.extend({
         isProcessing: false
       });
 
-      $.post("http://localhost:8000/api/login", {
+      $.post("api/login", {
         email: this.get("username"),
         password: this.get("password")
       }).then(function () {
           this.set("isProcessing", false);
-          document.location = '/';
+          document.location = 'polygon';
         }.bind(this),
 
         function () {
@@ -36,13 +36,13 @@ export default Controller.extend({
         isProcessing: false
       });
 
-      $.post("http://localhost:8000/api/signup", {
+      $.post("api/signup", {
         email: this.get("email"),
         name: this.get("username"),
         password: this.get("password")
       }).then(function () {
           this.set("isProcessing", false);
-          document.location = '/sign-in';
+          document.location = 'sign-in';
         }.bind(this),
 
         function () {
