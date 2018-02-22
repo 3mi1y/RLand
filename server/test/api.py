@@ -33,7 +33,7 @@ class TestLogin(ServerTest):
         self.assertEqual(data["status"], "failure")
 
     def test_signup(self):
-        response = self.fetch("/api/signup", method="POST", body="email=test2&name=test2&password=test2")
+        response = self.fetch("/api/users", method="POST", body=json.dumps({"data":{"attributes":{"email":"test2","name":"test2","password":"test2"}}}))
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["status"], "success")
         response = self.fetch("/api/login", method="POST", body="email=test2&password=test2")
@@ -69,7 +69,7 @@ class TestPolygon(AuthenticatedServerTest):
         self.assertEqual(data["error"], "not found")
 
     def test_create_get_delete_polygon(self):
-        response = self.fetch("/api/polygons/", method="POST", headers=dict(cookie=self.cookie), body=json.dumps({"data":{"id":993,"attributes":{"name":"created","location":"loc3"}}}))
+        response = self.fetch("/api/polygons", method="POST", headers=dict(cookie=self.cookie), body=json.dumps({"data":{"id":993,"attributes":{"name":"created","location":"loc3"}}}))
         self.assertEqual(response.code, 200)
 
         response = self.fetch("/api/polygons/993", headers=dict(cookie=self.cookie))

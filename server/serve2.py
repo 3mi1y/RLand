@@ -43,7 +43,6 @@ class UsersHandler(BaseHandler):
                        name,
                        password)
         self.write(dict(status="success"))
-        self.redirect('/')
 
 class LoginHandler(BaseHandler):
 
