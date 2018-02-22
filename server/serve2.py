@@ -146,7 +146,7 @@ class Application(tornado.web.Application):
             (r"/api/users", UsersHandler),
             (r"/api/login", LoginHandler),
             (r"/api/logout", LogoutHandler),
-            (r"/api/polygons/", PolyCollectionHandler),
+            (r"/api/polygons", PolyCollectionHandler),
             (r"/api/polygons/([0-9]+)", PolyHandler),
             (r"/(favicon.ico)", tornado.web.StaticFileHandler,{"path": os.path.join(os.path.dirname(__file__), "static")}),
             (r"/(assets/.*|ember-welcome-page/.*|fonts/.*|tests/.*|index.html|robots.txt|testem.js)", tornado.web.StaticFileHandler, dict(path=os.path.join(os.path.dirname(__file__), "../ember-proj/dist/"))),
