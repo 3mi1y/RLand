@@ -5,21 +5,15 @@ import DS from 'ember-data';
 export default Controller.extend({
   actions: {
     createPolygon() {
-      let polygon = this.store.createRecord('polygon', { 'id': this.get("id"), 'name': this.get("name"), 'location': this.get("location")});
+      let polygon = this.get('store').createRecord('polygon', { 'name': this.get("name"), 'location': this.get("location")});
       polygon.save();
-      $.get('api/createPoly', {
-        id: this.get('id'),
-        location: this.get('location'),
-        name: this.get('name')
-      }).then(function (polygon) {
-        //this.get('store').pushPayload(polygon);
-        alert(polygon)
-      })
     },
 
     getPolygons() {
-      this.get('store').findAll('polygon').then(function(polygon) {
-        console.log(polygon.id)
+      this.get('store').findAll('polygon').then(function(polygons) {
+          polygons.forEach(function(p) {
+            console.log(p.id);
+          });
       })
     }
   }

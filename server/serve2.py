@@ -99,11 +99,10 @@ class PolyCollectionHandler(BaseHandler):
         user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
         bodyJSON = tornado.escape.json_decode(self.request.body)
         attr = bodyJSON['data']['attributes']
-        # TODO: make sure this is a number, or autogenerate
-        poly_id = str(bodyJSON['data']['id'])
-        db.create_polygon(poly_id, attr['location'], attr['name'], str(self.get_secure_cookie("userEmail"),'utf-8'))
-        user['polygon_ids'] += [ poly_id ]
+        poly = db.create_polygon(attr['location'], attr['name'], str(self.get_secure_cookie("userEmail"),'utf-8'))
+        user['polygon_ids'] += [ poly['id'] ]
         db.update_user(user)
+        self.write({"data": jsonify_poly(poly['id'], poly)})
 
 class PolyHandler(BaseHandler):
     @tornado.web.authenticated
