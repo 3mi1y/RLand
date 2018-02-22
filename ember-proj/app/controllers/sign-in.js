@@ -30,7 +30,7 @@ export default Controller.extend({
         }.bind(this));
     },
 
-    register() {
+    registerAjaxMethod() {
       this.setProperties({
         registerFailed: false,
         isProcessing: false
@@ -50,6 +50,15 @@ export default Controller.extend({
           this.set("isProcessing", false);
           this.set("registerFailed", true);
         }.bind(this));
+    },
+    register() {
+       const user = this.get('store').createRecord('user', {
+          name: this.get("username"),
+          email: this.get("email"),
+          password: this.get("password"),
+          polygons: []
+       });
+       user.save()
     }
   }
 });
