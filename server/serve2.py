@@ -31,7 +31,7 @@ class MainHandler(BaseHandler):
         index = f.read()
         self.write(index)
 
-class SignupHandler(BaseHandler):
+class UsersHandler(BaseHandler):
 
     @gen.coroutine
     def post(self):
@@ -143,7 +143,7 @@ class PolyHandler(BaseHandler):
 class Application(tornado.web.Application):
     def __init__(self, database):
         handlers =[
-            (r"/api/signup", SignupHandler),
+            (r"/api/users", UsersHandler),
             (r"/api/login", LoginHandler),
             (r"/api/logout", LogoutHandler),
             (r"/api/polygons/", PolyCollectionHandler),
