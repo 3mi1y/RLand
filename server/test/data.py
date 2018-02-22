@@ -33,21 +33,22 @@ class PolygonDbTests(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
         self.db.create_user(U_EMAIL, U_NAME, U_PASS)
-        self.db.create_polygon("999", "Nevada", "Area 51", U_EMAIL)
+        p = self.db.create_polygon("Nevada", "Area 51", U_EMAIL)
+        self.poly_id = p['id']
 
     def test_get_own_polygon(self):
-        self.assertEqual(self.db.get_polygon("999", U_EMAIL)['name'], "Area 51")
+        self.assertEqual(self.db.get_polygon(self.poly_id, U_EMAIL)['name'], "Area 51")
 
     def test_get_other_polygon(self):
-        self.assertIsNone(self.db.get_polygon("999", "wrong_user"))
+        self.assertIsNone(self.db.get_polygon(self.poly_id, "wrong_user"))
 
     # TODO: test_get_deleted_polygon
 
     def test_delete_own_polygon(self):
-        self.db.delete_polygon("999")
-        self.assertIsNone(self.db.get_polygon("999", U_EMAIL))
+        self.db.delete_polygon(self.poly_id)
+        self.assertIsNone(self.db.get_polygon(self.poly_id, U_EMAIL))
 
     # TODO: test_delete_other_polygon?
 
     def tearDown(self):
-        self.db.delete_polygon("999")
+        self.db.delete_polygon(self.poly_id)

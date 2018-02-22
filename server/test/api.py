@@ -50,31 +50,35 @@ class AuthenticatedServerTest(ServerTest):
 class TestPolygon(AuthenticatedServerTest):
     def setUp(self):
         super().setUp()
-        self.db.create_polygon("991", "loc1", "name1", "test")
-        self.db.create_polygon("992", "loc2", "name2", "other_user")
+        p1 = self.db.create_polygon("loc1", "name1", "test")
+        p2 = self.db.create_polygon("loc2", "name2", "other_user")
+        self.id_p1 = p1["id"]
+        self.id_p2 = p2["id"]
 
     def tearDown(self):
-        self.db.delete_polygon("991")
-        self.db.delete_polygon("992")
+        self.db.delete_polygon(self.id_p1)
+        self.db.delete_polygon(self.id_p2)
         super().tearDown()
 
     def test_get_own_polygon(self):
-        response = self.fetch("/api/polygons/991", headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/polygons/" + self.id_p1, headers=dict(cookie=self.cookie))
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "name1")
 
     def test_cant_get_not_own_polygon(self):
-        response = self.fetch("/api/polygons/992", headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/polygons/" + self.id_p2, headers=dict(cookie=self.cookie))
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["error"], "not found")
 
     def test_create_get_delete_polygon(self):
-        response = self.fetch("/api/polygons", method="POST", headers=dict(cookie=self.cookie), body=json.dumps({"data":{"id":993,"attributes":{"name":"created","location":"loc3"}}}))
+        response = self.fetch("/api/polygons", method="POST", headers=dict(cookie=self.cookie), body=json.dumps({"data":{"attributes":{"name":"created","location":"loc3"}}}))
         self.assertEqual(response.code, 200)
+        resp = json.loads(str(response.body, "utf-8"))
+        poly_id = resp['data']['id']
 
-        response = self.fetch("/api/polygons/993", headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/polygons/" + poly_id, headers=dict(cookie=self.cookie))
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "created")
 
-        response = self.fetch("/api/polygons/993", method="DELETE", headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/polygons/" + poly_id, method="DELETE", headers=dict(cookie=self.cookie))
         self.assertEqual(response.code, 200)
