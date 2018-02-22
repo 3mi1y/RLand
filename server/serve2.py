@@ -19,6 +19,12 @@ class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie("userEmail")
 
+     def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "localhost:8000")
+        self.set_header("Vary","Origin")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header("Access-Control-Allow-Methods", 'PUT, DELETE, OPTIONS')
+
     def options(self):
         # no body
         self.set_status(204)
@@ -35,14 +41,15 @@ class SignupHandler(BaseHandler):
 
     @gen.coroutine
     def post(self):
-        email = self.get_argument("email")
-        name = self.get_argument("name")
-        password = self.get_argument("password")
-
+        bodyJSON = tornado.escape.json_decode(self.request.body)
+        email = bodyJSON['data']['attributes']['email']
+        name = bodyJSON['data']['attributes']['name']
+        password = bodyJSON['data']['attributes']['password']
         self.settings['db'].create_user(email,
                        name,
                        password)
         self.write(dict(status="success"))
+        self.redirect('/')
 
 class LoginHandler(BaseHandler):
 
