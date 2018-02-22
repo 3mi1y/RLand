@@ -19,11 +19,11 @@ class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie("userEmail")
 
-     def set_default_headers(self):
-        self.set_header("Access-Control-Allow-Origin", "localhost:8000")
-        self.set_header("Vary","Origin")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
-        self.set_header("Access-Control-Allow-Methods", 'PUT, DELETE, OPTIONS')
+    def set_default_headers(self):
+       self.set_header("Access-Control-Allow-Origin", "localhost:8000")
+       self.set_header("Vary","Origin")
+       self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+       self.set_header("Access-Control-Allow-Methods", 'PUT, DELETE, OPTIONS')
 
     def options(self):
         # no body
@@ -49,7 +49,6 @@ class SignupHandler(BaseHandler):
                        name,
                        password)
         self.write(dict(status="success"))
-        self.redirect('/')
 
 class LoginHandler(BaseHandler):
 
@@ -132,7 +131,7 @@ class PolyHandler(BaseHandler):
 class Application(tornado.web.Application):
     def __init__(self, database):
         handlers =[
-            (r"/api/signup", SignupHandler),
+            (r"/api/signup/users", SignupHandler),
             (r"/api/login", LoginHandler),
             (r"/api/logout", LogoutHandler),
             (r"/api/polygons/", PolyCollectionHandler),
