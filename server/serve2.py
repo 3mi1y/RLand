@@ -68,13 +68,28 @@ class LogoutHandler(BaseHandler):
         self.clear_cookie("userEmail")
         self.redirect("/")
 
+def jsonify_poly(poly_id, poly):
+    return {
+        "type": "polygons",
+        "id": str(poly_id),
+        "attributes": {
+            "name": poly["name"],
+            "location": poly["location"],
+        }
+    }
 
 class PolyCollectionHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         user = self.settings['db'].get_user(str(self.get_secure_cookie("userEmail"),'utf-8')) #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
         if(not user is None):
-            self.write(dict(ids=user['polygon_ids']))
+            ids = user['polygon_ids']
+            polys_json = []
+            for poly_id in ids:
+                poly = db.get_polygon(str(poly_id), user['email'])
+                if poly:
+                    polys_json += [ jsonify_poly(poly_id, poly) ]
+            self.write({ "data": polys_json })
         else:
             self.write(dict(error="you are logged in as a nonexistent user"))
 
@@ -83,9 +98,11 @@ class PolyCollectionHandler(BaseHandler):
     def post(self):
         db = self.settings['db']
         user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
+        bodyJSON = tornado.escape.json_decode(self.request.body)
+        attr = bodyJSON['data']['attributes']
         # TODO: make sure this is a number, or autogenerate
-        poly_id = self.get_argument("ID")
-        db.create_polygon(poly_id,self.get_argument("Location"),self.get_argument("Name"), str(self.get_secure_cookie("userEmail"),'utf-8'))
+        poly_id = str(bodyJSON['data']['id'])
+        db.create_polygon(poly_id, attr['location'], attr['name'], str(self.get_secure_cookie("userEmail"),'utf-8'))
         user['polygon_ids'] += [ poly_id ]
         db.update_user(user)
 
@@ -98,7 +115,7 @@ class PolyHandler(BaseHandler):
         if(not user is None):
             if(not poly is None):
                 # TODO: verify user owns polygon
-                self.write(poly)
+                self.write({ "data": jsonify_poly(poly_id, poly) })
             else:
                 # TODO: better 404
                 self.write(dict(error="not found"))
