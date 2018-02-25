@@ -65,6 +65,18 @@ class TestPolygon(AuthenticatedServerTest):
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "name1")
 
+    def test_update_own_polygon(self):
+        response = self.fetch("/api/polygons/" + self.id_p1, method="PATCH", headers=dict(cookie=self.cookie),
+            body=json.dumps({"data":{"id":self.id_p1, "attributes":{"name":"updated_name"}}})
+            )
+        resp = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(resp["data"]["attributes"]["name"], "updated_name")
+
+        response = self.fetch("/api/polygons/" + self.id_p1, headers=dict(cookie=self.cookie))
+        resp = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(resp["data"]["attributes"]["name"], "updated_name")
+        self.assertEqual(resp["data"]["attributes"]["location"], "loc1")
+
     def test_cant_get_not_own_polygon(self):
         response = self.fetch("/api/polygons/" + self.id_p2, headers=dict(cookie=self.cookie))
         data = json.loads(str(response.body, "utf-8"))

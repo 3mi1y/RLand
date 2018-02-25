@@ -121,6 +121,27 @@ class PolyHandler(BaseHandler):
             self.write(dict(error="you are logged in as a nonexistent user"))
 
     @tornado.web.authenticated
+    def patch(self, poly_id):
+        db = self.settings['db']
+        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
+        poly = db.get_polygon(str(poly_id), user['email'])
+        if(not user is None):
+            if(not poly is None):
+                # TODO: verify user owns polygon
+                bodyJSON = tornado.escape.json_decode(self.request.body)
+                attrs = bodyJSON['data']['attributes']
+                for attr_name in ['location', 'name']:
+                    if attr_name in attrs:
+                        poly[attr_name] = attrs[attr_name]
+                db.update_polygon(poly)
+                self.write({"data": jsonify_poly(poly['id'], poly)})
+            else:
+                # TODO: better 404
+                self.write(dict(error="not found"))
+        else:
+            self.write(dict(error="you are logged in as a nonexistent user"))
+
+    @tornado.web.authenticated
     def delete(self, poly_id):
         db = self.settings['db']
         user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))

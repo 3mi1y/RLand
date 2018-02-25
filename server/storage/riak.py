@@ -84,6 +84,16 @@ class RiakDb:
         else:
             return None
 
+    def update_polygon(self, updatePoly):
+        poly = self.poly_bucket.get(updatePoly['id'])
+        if poly.data:
+            poly.data['name'] = updatePoly['name']
+            poly.data['location'] = updatePoly['location']
+            if poly.data['user'] != updatePoly['user']:
+                # TODO: decide on exception handling policy
+                raise Exception("Can't change the user a polygon belongs to!")
+            poly.store()
+
     def delete_polygon(self, poly_id):
         poly = self.poly_bucket.get(poly_id)
         if poly.data:
