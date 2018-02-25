@@ -12,6 +12,7 @@ Router.map(function() {
   this.route('profile');
   this.route('login');
   this.route('polygon');
+  this.route('task');
 });
 
 export default Router;
