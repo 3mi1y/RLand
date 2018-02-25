@@ -9,6 +9,15 @@
    <button type="submit">Submit</button>
 </form>
 <br>
-<h1>This button console.log()'s all of the users polygons, so check your console</h1>
-<button {{action "getPolygons" on="click"}}>Get Polygons</button>
-
+<h1>Polygons in DB</h1>
+<div class="col-md-4">
+  {{#each model as |polygon|}}
+    <div class="row">
+      {{#polygon-list item=polygon}}
+        <button>Add Task</button>
+        <button>Edit</button>
+        <button>Delete</button>
+      {{/polygon-list}}
+    </div>
+  {{/each}}
+</div>
