@@ -1,0 +1,28 @@
+<div class="row">
+  {{md-input value=selected.name
+             label="Name"
+             required=true
+             class="col s12"}}
+  {{md-select content=categories
+              value=selected.category
+              label="Category"
+              prompt="Please choose..."
+              class="col s12"}}
+  {{md-select content=subcategories
+              value=selected.subcategory
+              label="Sub Category"
+              prompt="Please choose..."
+              class="col s12"}}
+
+  {{rland-input-date
+    label="Started"
+    value=selected.startDate
+    class="col s12"}}
+
+  {{rland-input-date
+    label="End Date"
+    value=selected.endDate
+    class="col s12"}}
+
+</div>
+{{yield}}

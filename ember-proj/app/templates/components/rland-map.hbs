@@ -1,0 +1,8 @@
+<div class="year-selector">
+  {{#md-btn-dropdown text='Year' belowOrigin=false}}
+    <li><a {{action "select_year" 2017}}>2017</a></li>
+    <li><a {{action "select_year" 2016}}>2016</a></li>
+  {{/md-btn-dropdown}}
+</div>
+<div class="map-container"></div>
+{{polygon-info selected=selected}}

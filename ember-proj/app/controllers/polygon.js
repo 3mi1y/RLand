@@ -1,6 +1,6 @@
 import Controller from '@ember/controller';
-import $ from 'jquery';
-import DS from 'ember-data';
+//import $ from 'jquery';
+//import DS from 'ember-data';
 
 export default Controller.extend({
   actions: {
