@@ -15,14 +15,17 @@ export default EmberObject.extend({
       zoom: 20
     });
     this.pinLocation(location, map);
+    return map;
   },
 
   pinLocation(location, map) {
     this.get('geocoder').geocode({address: location}, (result, status) => {
-      let geometry = result[0].geometry.location;
-      let position = {lat: geometry.lat(), lng: geometry.lng()};
-      map.setCenter(position);
-      new google.maps.Marker({position, map, title: location});
-    })
+      if (status === google.maps.GeocoderStatus.OK) {
+        let geometry = result[0].geometry.location;
+        let position = {lat: geometry.lat(), lng: geometry.lng()};
+        map.setCenter(position);
+        new google.maps.Marker({position, map, title: location});
+      }
+    });
   }
-})
+});

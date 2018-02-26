@@ -21,7 +21,7 @@ export default Service.extend({
     if (!element) {
       element = this.createMapElement();
       this.get('mapUtil').createMap(element, location);
-      this.set('cachedMaps.${camelizedLocation}', element)
+      this.set('cachedMaps.${camelizedLocation}', element);
     }
     return element;
   },
