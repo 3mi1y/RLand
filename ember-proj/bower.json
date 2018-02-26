@@ -1,0 +1,6 @@
+{
+  "name": "ember-proj",
+  "dependencies": {
+    "materialize": "0.97.6"
+  }
+}
