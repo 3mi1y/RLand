@@ -7,8 +7,13 @@ module.exports = function(defaults) {
     'ember-bootstrap': {
       'bootstrapVersion': 3,
       'importBootstrapFont': true,
-      'importBootstrapCSS': true
-    }
+      'importBootstrapCSS': false
+    },
+    sassOptions: {
+      includePaths: [
+        'bower_components/materialize/sass'
+      ]
+    },
   });
 
   // Use `app.import` to add additional libraries to the generated
@@ -23,6 +28,8 @@ module.exports = function(defaults) {
   // modules that you would like to import into your application
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
+
+  app.import('vendor/gmaps.js');
 
   return app.toTree();
 };
