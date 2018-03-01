@@ -4,6 +4,7 @@
 * Ubuntu 16.04 is the best option
 * Riak has instructions for Ubuntu 16.04
 * ember.js needs a newer node.js version than Ubuntu has (use something like `nvm` to install a node.js version)
+* also need to have bower
 * python3 and tornado, and other python libraries required. virtualenv recommended. `pip3 install -r requirements.txt`
 
 ## Running
