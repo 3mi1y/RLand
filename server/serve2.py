@@ -39,10 +39,47 @@ class UsersHandler(BaseHandler):
         email = bodyJSON['data']['attributes']['email']
         name = bodyJSON['data']['attributes']['name']
         password = bodyJSON['data']['attributes']['password']
+        address = bodyJSON['data']['attributes']['address']
         self.settings['db'].create_user(email,
                        name,
-                       password)
+                       password,
+                       address)
         self.write(dict(status="success"))
+    @tornado.web.authenticated
+    def get(self,userEmail):
+        db = self.settings['db']
+        user = db.get_user(userEmail)
+        if(not user is None):
+            self.write({"data":{"email": user["email"],
+            "name": user["name"],
+            "password": user["password"],
+            "address": user["address"]
+            } })
+
+        else:
+            self.write(dict(error="you are logged in as a nonexistent user"))
+
+
+    @tornado.web.authenticated
+    def patch(self,userEmail):
+        db = self.settings['db']
+        user = db.get_user(userEmail)
+        if(not user is None):
+            bodyJSON = tornado.escape.json_decode(self.request.body)
+            email = bodyJSON['data']['attributes']['email']
+            name = bodyJSON['data']['attributes']['name']
+            password = bodyJSON['data']['attributes']['password']
+            polygon_ids = bodyJSON['data']['attributes']['polygon_ids']
+            address = bodyJSON['data']['attributes']['address']
+            updatedUser = {"email":email,
+            "name":name,
+            "password":password,
+            "polygon_ids":polygon_ids,
+            "address":address}
+            db.update_user(updatedUser)
+            self.write(dict(status = "success"))
+        else:
+            self.write(dict(error = "you are logged in as a nonexistent user"))
 
 class LoginHandler(BaseHandler):
 
@@ -163,6 +200,7 @@ class Application(tornado.web.Application):
     def __init__(self, database):
         handlers =[
             (r"/api/users", UsersHandler),
+            (r"/api/users/([a-z]+)",UsersHandler),
             (r"/api/login", LoginHandler),
             (r"/api/logout", LogoutHandler),
             (r"/api/polygons", PolyCollectionHandler),

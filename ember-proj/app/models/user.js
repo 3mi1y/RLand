@@ -4,5 +4,6 @@ export default DS.Model.extend({
    email: DS.attr('string'),
    name: DS.attr('string'),
    password: DS.attr('string'),
+   address: DS.attr('string'),
    polygons: DS.hasMany('polygon')
 });

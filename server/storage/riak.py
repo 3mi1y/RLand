@@ -7,13 +7,14 @@ class RiakDb:
         self.user_bucket = self.client.bucket('user')
         self.poly_bucket = self.client.bucket('polygon')
 
-    def create_user(self, email, name, password):
+    def create_user(self, email, name, password, address):
         #print("creating new user")
         if self.user_bucket.get(email).data is None:
             new_user = self.user_bucket.new(email, data ={
                     'email': email,
                     'name': name,
                     'password': security.hash_password(password),
+                    'address' : address,
                     'polygon_ids': [],
             })
             new_user.store()
@@ -37,7 +38,7 @@ class RiakDb:
         user = self.user_bucket.get(email).data
         if user is None:
             return None
-        u = { 'email': user['email'], 'name': user['name'], 'password': user['password'] }
+        u = { 'email': user['email'], 'name': user['name'], 'password': user['password'], 'address': user['address'] }
 
         try:
             u['polygon_ids'] = user['polygon_ids']

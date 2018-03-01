@@ -33,7 +33,7 @@ class TestLogin(ServerTest):
         self.assertEqual(data["status"], "failure")
 
     def test_signup(self):
-        response = self.fetch("/api/users", method="POST", body=json.dumps({"data":{"attributes":{"email":"test2","name":"test2","password":"test2"}}}))
+        response = self.fetch("/api/users", method="POST", body=json.dumps({"data":{"attributes":{"email":"test2","name":"test2","password":"test2","address" : "address2"}}}))
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["status"], "success")
         response = self.fetch("/api/login", method="POST", body="email=test2&password=test2")

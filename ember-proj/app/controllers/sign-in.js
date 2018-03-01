@@ -39,7 +39,8 @@ export default Controller.extend({
       $.post("api/signup", {
         email: this.get("email"),
         name: this.get("username"),
-        password: this.get("password")
+        password: this.get("password"),
+	address: this.get("address")
       }).then(function () {
           this.set("isProcessing", false);
           document.location = 'sign-in';
@@ -56,6 +57,7 @@ export default Controller.extend({
           name: this.get("username"),
           email: this.get("email"),
           password: this.get("password"),
+	address: this.get("address"),
           polygons: []
        });
        user.save()
