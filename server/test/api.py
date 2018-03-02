@@ -4,14 +4,16 @@ from tornado.testing import AsyncTestCase, AsyncHTTPTestCase
 from storage.riak import RiakDb
 import serve2
 
+TEST_EMAIL = "test@example.com"
+
 class ServerTest(AsyncHTTPTestCase):
     def setUp(self):
         self.db = RiakDb()
-        self.db.create_user("test", "test", "test")
+        self.db.create_user(TEST_EMAIL, "test name", "testpass", "New York")
         super().setUp()
 
     def tearDown(self):
-        self.db.delete_user("test")
+        self.db.delete_user(TEST_EMAIL)
         super().tearDown()
 
     def get_app(self):
@@ -23,7 +25,7 @@ class TestLogin(ServerTest):
         super().tearDown()
 
     def test_login(self):
-        response = self.fetch("/api/login", method="POST", body="email=test&password=test")
+        response = self.fetch("/api/login", method="POST", body="email=test@example.com&password=testpass")
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["status"], "success")
 
@@ -44,13 +46,54 @@ class TestLogin(ServerTest):
 class AuthenticatedServerTest(ServerTest):
     def setUp(self):
         super().setUp()
-        response = self.fetch("/api/login", method="POST", body="email=test&password=test")
+        response = self.fetch("/api/login", method="POST", body="email=test@example.com&password=testpass")
         self.cookie = response.headers["set-cookie"]
+
+
+class TestUsers(AuthenticatedServerTest):
+    def setUp(self):
+        super().setUp()
+        self.id_me = "test@example.com"
+        u1 = self.db.create_user("other@example.com", "user 2", "testpass", "New York")
+        self.id_u1 = "other@example.com"
+
+    def tearDown(self):
+        self.db.delete_user(self.id_u1)
+        super().tearDown()
+
+    def test_get_own_user(self):
+        response = self.fetch("/api/users/" + self.id_me, headers=dict(cookie=self.cookie))
+        print(response)
+        resp = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(resp["data"]["attributes"]["name"], "test")
+
+    def test_update_own_user(self):
+        response = self.fetch("/api/users/" + self.id_me, method="PATCH", headers=dict(cookie=self.cookie),
+            body=json.dumps({"data":{"id":self.id_me, "attributes":{"address":"Paris"}}})
+            )
+        resp = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(resp["data"]["attributes"]["address"], "Paris")
+
+        response = self.fetch("/api/users/" + self.id_me, headers=dict(cookie=self.cookie))
+        resp = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(resp["data"]["attributes"]["name"], "test name")
+        self.assertEqual(resp["data"]["attributes"]["address"], "Paris")
+
+    def test_cant_get_other_user(self):
+        response = self.fetch("/api/users/" + self.id_u1, headers=dict(cookie=self.cookie))
+        data = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(data["error"], "not found")
+
+    def test_cant_delete_other_user(self):
+        response = self.fetch("/api/users/" + self.id_u1, method="DELETE", headers=dict(cookie=self.cookie))
+        data = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(data["error"], "not found")
+
 
 class TestPolygon(AuthenticatedServerTest):
     def setUp(self):
         super().setUp()
-        p1 = self.db.create_polygon("loc1", "name1", "test")
+        p1 = self.db.create_polygon("loc1", "name1", TEST_EMAIL)
         p2 = self.db.create_polygon("loc2", "name2", "other_user")
         self.id_p1 = p1["id"]
         self.id_p2 = p2["id"]

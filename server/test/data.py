@@ -6,11 +6,12 @@ import storage.security as security
 U_EMAIL = "test@example.com"
 U_NAME = "Test User"
 U_PASS = "test password"
+U_ADDR = "test address"
 
 class UserDbTests(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
-        self.db.create_user(U_EMAIL, U_NAME, U_PASS)
+        self.db.create_user(U_EMAIL, U_NAME, U_PASS, U_ADDR)
 
     def test_get_user(self):
         self.assertEqual(self.db.get_user(U_EMAIL)['name'], U_NAME) 
@@ -30,7 +31,7 @@ class UserDbTests(unittest.TestCase):
 class PolygonDbTests(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
-        self.db.create_user(U_EMAIL, U_NAME, U_PASS)
+        self.db.create_user(U_EMAIL, U_NAME, U_PASS, U_ADDR)
         p = self.db.create_polygon("Nevada", "Area 51", U_EMAIL)
         self.poly_id = p['id']
 

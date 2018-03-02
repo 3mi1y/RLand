@@ -200,7 +200,7 @@ class Application(tornado.web.Application):
     def __init__(self, database):
         handlers =[
             (r"/api/users", UsersHandler),
-            (r"/api/users/([a-z]+)",UsersHandler),
+            (r"/api/users/(.*)",UsersHandler),
             (r"/api/login", LoginHandler),
             (r"/api/logout", LogoutHandler),
             (r"/api/polygons", PolyCollectionHandler),
