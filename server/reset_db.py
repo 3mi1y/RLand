@@ -9,3 +9,4 @@ def clear_bucket(bucket):
 db = RiakDb()
 clear_bucket(db.user_bucket)
 clear_bucket(db.poly_bucket)
+clear_bucket(db.poly_type_bucket)
