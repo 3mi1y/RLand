@@ -27,8 +27,6 @@ class UserDbTests(unittest.TestCase):
         self.db.delete_user(U_EMAIL)
         self.assertIsNone(self.db.get_user(U_EMAIL))
 
-    # TODO: test_get_deleted_user
-
 class PolygonDbTests(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
@@ -42,13 +40,9 @@ class PolygonDbTests(unittest.TestCase):
     def test_get_other_polygon(self):
         self.assertIsNone(self.db.get_polygon(self.poly_id, "wrong_user"))
 
-    # TODO: test_get_deleted_polygon
-
-    def test_delete_own_polygon(self):
+    def test_delete_polygon(self):
         self.db.delete_polygon(self.poly_id)
         self.assertIsNone(self.db.get_polygon(self.poly_id, U_EMAIL))
-
-    # TODO: test_delete_other_polygon?
 
     def tearDown(self):
         self.db.delete_polygon(self.poly_id)

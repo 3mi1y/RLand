@@ -173,7 +173,7 @@ class PolyHandler(BaseHandler):
                 db.update_polygon(poly)
                 self.write({"data": jsonify_poly(poly['id'], poly)})
             else:
-                # TODO: better 404
+                self.set_status(404)
                 self.write(dict(error="not found"))
         else:
             self.write(dict(error="you are logged in as a nonexistent user"))
@@ -186,14 +186,14 @@ class PolyHandler(BaseHandler):
             self.write(dict(error="you are logged in as a nonexistent user"))
             return
 
-        if (user['polygon_ids']):
+        if (user['polygon_ids'] and poly_id in user['polygon_ids']):
             user['polygon_ids'].remove(poly_id)
             db.update_user(user)
             db.delete_polygon(poly_id)
             self.write(dict(status="deleted"))
         else:
-            # TODO: http status code
-            self.write(dict(error="not your polygon"))
+            self.set_status(404)
+            self.write(dict(error="not found"))
 
 
 class Application(tornado.web.Application):
