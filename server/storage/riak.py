@@ -1,6 +1,7 @@
 import riak
 import storage.security as security
 
+
 class RiakDb:
     def __init__(self):
         self.client = riak.RiakClient(pb_port=8087)
@@ -8,41 +9,43 @@ class RiakDb:
         self.poly_bucket = self.client.bucket('polygon')
 
     def create_user(self, email, name, password, address):
-        #print("creating new user")
         if self.user_bucket.get(email).data is None:
-            new_user = self.user_bucket.new(email, data ={
+            new_user = self.user_bucket.new(email, data={
                     'email': email,
                     'name': name,
                     'password': security.hash_password(password),
-                    'address' : address,
+                    'address': address,
                     'polygon_ids': [],
             })
             new_user.store()
         else:
-            #TODO: do something if user already exists.
+            # TODO: do something if user already exists.
             return "User is already in db"
 
-    def login(self,email,password):
-        #print("logging in")
+    def login(self, email, password):
         user = self.get_user(email)
         if user is None:
             return False
 
-        if security.check_password(password,user['password']): #we could just return this line but I have this in case we need to do something else.
+        if security.check_password(password, user['password']):
             return True
         else:
             return False
-
 
     def get_user(self, email):
         user = self.user_bucket.get(email).data
         if user is None:
             return None
-        u = { 'email': user['email'], 'name': user['name'], 'password': user['password'], 'address': user['address'] }
+        u = {
+            'email': user['email'],
+            'name': user['name'],
+            'password': user['password'],
+            'address': user['address']
+        }
 
         try:
             u['polygon_ids'] = user['polygon_ids']
-        except:
+        except KeyError:
             u['polygon_ids'] = []
 
         return u
@@ -60,28 +63,37 @@ class RiakDb:
         if user.data:
             user.delete()
 
-
     def create_polygon(self, location, name, uEmail):
         # TODO: this is really a hack
         keys = self.poly_bucket.get_keys()
         mx = max([int(k) for k in keys] + [0])
         poly_id = str(mx+1)
 
-        poly = self.poly_bucket.new(poly_id, data = {
+        poly = self.poly_bucket.new(poly_id, data={
             'id': poly_id,
             'location': location,
             'name': name,
-            'user' : uEmail
+            'user': uEmail
         })
         poly.store()
-        return { 'id': poly_id, 'location': location, 'name': name, 'user': uEmail }
+        return {
+            'id': poly_id,
+            'location': location,
+            'name': name,
+            'user': uEmail
+        }
 
     def get_polygon(self, poly_id, uEmail):
         poly = self.poly_bucket.get(poly_id).data
         if poly is None:
             return None
         if (poly['user'] == uEmail):
-            return { 'id': poly['id'], 'location': poly['location'], 'name': poly['name'], 'user': poly['user'] }
+            return {
+                'id': poly['id'],
+                'location': poly['location'],
+                'name': poly['name'],
+                'user': poly['user']
+            }
         else:
             return None
 

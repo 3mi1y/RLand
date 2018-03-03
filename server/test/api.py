@@ -6,6 +6,7 @@ import serve2
 
 TEST_EMAIL = "test@example.com"
 
+
 class ServerTest(AsyncHTTPTestCase):
     def setUp(self):
         self.db = RiakDb()
@@ -19,26 +20,38 @@ class ServerTest(AsyncHTTPTestCase):
     def get_app(self):
         return serve2.Application(self.db)
 
+
 class TestLogin(ServerTest):
     def tearDown(self):
         self.db.delete_user("test2")
         super().tearDown()
 
     def test_login(self):
-        response = self.fetch("/api/login", method="POST", body="email=test@example.com&password=testpass")
+        response = self.fetch("/api/login", method="POST",
+                              body="email=test@example.com&password=testpass")
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["status"], "success")
 
     def test_failed_login(self):
-        response = self.fetch("/api/login", method="POST", body="email=no&password=fake")
+        response = self.fetch("/api/login", method="POST",
+                              body="email=no&password=fake")
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["status"], "failure")
 
     def test_signup(self):
-        response = self.fetch("/api/users", method="POST", body=json.dumps({"data":{"attributes":{"email":"test2","name":"test2","password":"test2","address" : "address2"}}}))
+        body = json.dumps({"data": {
+            "attributes": {
+                "email": "test2",
+                "name": "test2",
+                "password": "test2",
+                "address": "address2"
+            }
+        }})
+        response = self.fetch("/api/users", method="POST", body=body)
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["status"], "success")
-        response = self.fetch("/api/login", method="POST", body="email=test2&password=test2")
+        response = self.fetch("/api/login", method="POST",
+                              body="email=test2&password=test2")
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["status"], "success")
 
@@ -46,7 +59,8 @@ class TestLogin(ServerTest):
 class AuthenticatedServerTest(ServerTest):
     def setUp(self):
         super().setUp()
-        response = self.fetch("/api/login", method="POST", body="email=test@example.com&password=testpass")
+        response = self.fetch("/api/login", method="POST",
+                              body="email=test@example.com&password=testpass")
         self.cookie = response.headers["set-cookie"]
 
 
@@ -54,7 +68,8 @@ class TestUsers(AuthenticatedServerTest):
     def setUp(self):
         super().setUp()
         self.id_me = "test@example.com"
-        u1 = self.db.create_user("other@example.com", "user 2", "testpass", "New York")
+        self.db.create_user("other@example.com", "user 2", "testpass",
+                            "New York")
         self.id_u1 = "other@example.com"
 
     def tearDown(self):
@@ -62,30 +77,37 @@ class TestUsers(AuthenticatedServerTest):
         super().tearDown()
 
     def test_get_own_user(self):
-        response = self.fetch("/api/users/" + self.id_me, headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/users/" + self.id_me,
+                              headers=dict(cookie=self.cookie))
         print(response)
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "test")
 
     def test_update_own_user(self):
-        response = self.fetch("/api/users/" + self.id_me, method="PATCH", headers=dict(cookie=self.cookie),
-            body=json.dumps({"data":{"id":self.id_me, "attributes":{"address":"Paris"}}})
-            )
+        body = json.dumps({"data": {
+            "id": self.id_me,
+            "attributes": {"address": "Paris"}
+        }})
+        response = self.fetch("/api/users/" + self.id_me, method="PATCH",
+                              headers=dict(cookie=self.cookie), body=body)
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["address"], "Paris")
 
-        response = self.fetch("/api/users/" + self.id_me, headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/users/" + self.id_me,
+                              headers=dict(cookie=self.cookie))
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "test name")
         self.assertEqual(resp["data"]["attributes"]["address"], "Paris")
 
     def test_cant_get_other_user(self):
-        response = self.fetch("/api/users/" + self.id_u1, headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/users/" + self.id_u1,
+                              headers=dict(cookie=self.cookie))
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["error"], "not found")
 
     def test_cant_delete_other_user(self):
-        response = self.fetch("/api/users/" + self.id_u1, method="DELETE", headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/users/" + self.id_u1, method="DELETE",
+                              headers=dict(cookie=self.cookie))
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["error"], "not found")
 
@@ -104,41 +126,55 @@ class TestPolygon(AuthenticatedServerTest):
         super().tearDown()
 
     def test_get_own_polygon(self):
-        response = self.fetch("/api/polygons/" + self.id_p1, headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/polygons/" + self.id_p1,
+                              headers=dict(cookie=self.cookie))
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "name1")
 
     def test_update_own_polygon(self):
-        response = self.fetch("/api/polygons/" + self.id_p1, method="PATCH", headers=dict(cookie=self.cookie),
-            body=json.dumps({"data":{"id":self.id_p1, "attributes":{"name":"updated_name"}}})
-            )
+        body = json.dumps({"data": {
+            "id": self.id_p1,
+            "attributes": {"name": "updated_name"}
+        }})
+        response = self.fetch("/api/polygons/" + self.id_p1, method="PATCH",
+                              headers=dict(cookie=self.cookie), body=body)
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "updated_name")
 
-        response = self.fetch("/api/polygons/" + self.id_p1, headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/polygons/" + self.id_p1,
+                              headers=dict(cookie=self.cookie))
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "updated_name")
         self.assertEqual(resp["data"]["attributes"]["location"], "loc1")
 
     def test_cant_get_not_own_polygon(self):
-        response = self.fetch("/api/polygons/" + self.id_p2, headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/polygons/" + self.id_p2,
+                              headers=dict(cookie=self.cookie))
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["error"], "not found")
 
     def test_create_get_delete_polygon(self):
-        response = self.fetch("/api/polygons", method="POST", headers=dict(cookie=self.cookie), body=json.dumps({"data":{"attributes":{"name":"created","location":"loc3"}}}))
+        body = json.dumps({"data": {"attributes": {
+            "name": "created",
+            "location": "loc3"
+        }}})
+        response = self.fetch("/api/polygons", method="POST",
+                              headers=dict(cookie=self.cookie), body=body)
         self.assertEqual(response.code, 200)
         resp = json.loads(str(response.body, "utf-8"))
         poly_id = resp['data']['id']
 
-        response = self.fetch("/api/polygons/" + poly_id, headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/polygons/" + poly_id,
+                              headers=dict(cookie=self.cookie))
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "created")
 
-        response = self.fetch("/api/polygons/" + poly_id, method="DELETE", headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/polygons/" + poly_id, method="DELETE",
+                              headers=dict(cookie=self.cookie))
         self.assertEqual(response.code, 200)
 
     def test_cant_delete_not_own_polygon(self):
-        response = self.fetch("/api/polygons/" + self.id_p2, method="DELETE", headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/polygons/" + self.id_p2, method="DELETE",
+                              headers=dict(cookie=self.cookie))
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["error"], "not found")

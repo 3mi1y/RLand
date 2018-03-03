@@ -8,13 +8,14 @@ U_NAME = "Test User"
 U_PASS = "test password"
 U_ADDR = "test address"
 
+
 class UserDbTests(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
         self.db.create_user(U_EMAIL, U_NAME, U_PASS, U_ADDR)
 
     def test_get_user(self):
-        self.assertEqual(self.db.get_user(U_EMAIL)['name'], U_NAME) 
+        self.assertEqual(self.db.get_user(U_EMAIL)['name'], U_NAME)
 
     def test_check_correct_password(self):
         pwhash = self.db.get_user(U_EMAIL)['password']
@@ -28,6 +29,7 @@ class UserDbTests(unittest.TestCase):
         self.db.delete_user(U_EMAIL)
         self.assertIsNone(self.db.get_user(U_EMAIL))
 
+
 class PolygonDbTests(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
@@ -36,7 +38,8 @@ class PolygonDbTests(unittest.TestCase):
         self.poly_id = p['id']
 
     def test_get_own_polygon(self):
-        self.assertEqual(self.db.get_polygon(self.poly_id, U_EMAIL)['name'], "Area 51")
+        name = self.db.get_polygon(self.poly_id, U_EMAIL)['name']
+        self.assertEqual(name, "Area 51")
 
     def test_get_other_polygon(self):
         self.assertIsNone(self.db.get_polygon(self.poly_id, "wrong_user"))

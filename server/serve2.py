@@ -149,10 +149,9 @@ class PolyHandler(BaseHandler):
         poly = db.get_polygon(str(poly_id), user['email'])
         if(not user is None):
             if(not poly is None):
-                # TODO: verify user owns polygon
                 self.write({ "data": jsonify_poly(poly_id, poly) })
             else:
-                # TODO: better 404
+                self.set_status(404)
                 self.write(dict(error="not found"))
         else:
             self.write(dict(error="you are logged in as a nonexistent user"))
