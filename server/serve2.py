@@ -45,16 +45,24 @@ class UsersHandler(BaseHandler):
                        password,
                        address)
         self.write(dict(status="success"))
+
     @tornado.web.authenticated
     def get(self,userEmail):
         db = self.settings['db']
+        logged_in = str(self.get_secure_cookie("userEmail"),'utf-8')
+        if logged_in != userEmail:
+            self.set_status(404)
+            self.write(dict(error="not found"))
+            return
+
         user = db.get_user(userEmail)
         if(not user is None):
-            self.write({"data":{"email": user["email"],
+            self.write({"data":{"id": user["email"],
+            "attributes": {
             "name": user["name"],
             "password": user["password"],
             "address": user["address"]
-            } })
+            }}})
 
         else:
             self.write(dict(error="you are logged in as a nonexistent user"))
@@ -63,6 +71,12 @@ class UsersHandler(BaseHandler):
     @tornado.web.authenticated
     def patch(self,userEmail):
         db = self.settings['db']
+        logged_in = str(self.get_secure_cookie("userEmail"),'utf-8')
+        if logged_in != userEmail:
+            self.set_status(404)
+            self.write(dict(error="not found"))
+            return
+
         user = db.get_user(userEmail)
         if(not user is None):
             bodyJSON = tornado.escape.json_decode(self.request.body)
@@ -80,6 +94,23 @@ class UsersHandler(BaseHandler):
             self.write(dict(status = "success"))
         else:
             self.write(dict(error = "you are logged in as a nonexistent user"))
+
+    @tornado.web.authenticated
+    def delete(self, userEmail):
+        db = self.settings['db']
+        logged_in = str(self.get_secure_cookie("userEmail"),'utf-8')
+        if logged_in != userEmail:
+            self.set_status(404)
+            self.write(dict(error="not found"))
+            return
+
+        user = db.get_user(userEmail)
+        if (user is None):
+            self.write(dict(error="you are logged in as a nonexistent user"))
+            return
+
+        db.delete_user(userEmail)
+
 
 class LoginHandler(BaseHandler):
 

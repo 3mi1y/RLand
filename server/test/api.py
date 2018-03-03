@@ -81,7 +81,7 @@ class TestUsers(AuthenticatedServerTest):
                               headers=dict(cookie=self.cookie))
         print(response)
         resp = json.loads(str(response.body, "utf-8"))
-        self.assertEqual(resp["data"]["attributes"]["name"], "test")
+        self.assertEqual(resp["data"]["attributes"]["name"], "test name")
 
     def test_update_own_user(self):
         body = json.dumps({"data": {
