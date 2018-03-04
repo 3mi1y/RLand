@@ -2,12 +2,18 @@ import riak
 import storage.security as security
 
 
+# Provides access to a Riak database with RLand data types, such as
+# User, Polygon, Harvest, Task, etc.
 class RiakDb:
-    def __init__(self):
-        self.client = riak.RiakClient(pb_port=8087)
+
+    # Initializes a RiakDb that will connect to the specified port on
+    # localhost
+    def __init__(self, port=8087):
+        self.client = riak.RiakClient(pb_port=port)
         self.user_bucket = self.client.bucket('user')
         self.poly_bucket = self.client.bucket('polygon')
 
+    # Create a user with the given email, name, password, and address.
     def create_user(self, email, name, password, address):
         if self.user_bucket.get(email).data is None:
             new_user = self.user_bucket.new(email, data={
@@ -22,6 +28,9 @@ class RiakDb:
             # TODO: do something if user already exists.
             return "User is already in db"
 
+    # Checks if a given email/password is valid for logging in. Returns
+    # True if the user can login, False if either the email or password
+    # is incorrect.
     def login(self, email, password):
         user = self.get_user(email)
         if user is None:
@@ -32,6 +41,7 @@ class RiakDb:
         else:
             return False
 
+    # Gets a user by email address. No access checks are made.
     def get_user(self, email):
         user = self.user_bucket.get(email).data
         if user is None:
@@ -50,6 +60,8 @@ class RiakDb:
 
         return u
 
+    # Updates a user by email. If the user does not exist, nothing is
+    # done. All user fields must exist on the input 'updateUser'
     def update_user(self, updateUser):
         user = self.user_bucket.get(updateUser['email'])
         if user.data:
@@ -58,11 +70,15 @@ class RiakDb:
             user.data['polygon_ids'] = updateUser['polygon_ids']
             user.store()
 
+    # Deletes a user by email.
     def delete_user(self, email):
         user = self.user_bucket.get(email)
         if user.data:
             user.delete()
 
+    # Creates a polygon with the specified location, name, and owning
+    # user. An ID is automatically assigned. The created polygon is
+    # returned as in get_polygon()
     def create_polygon(self, location, name, uEmail):
         # TODO: this is really a hack
         keys = self.poly_bucket.get_keys()
@@ -83,6 +99,8 @@ class RiakDb:
             'user': uEmail
         }
 
+    # Retrieves a polygon by id and owner. If the owner does not match,
+    # None is returned. Otherwise, returns the polygon as a dictionary.
     def get_polygon(self, poly_id, uEmail):
         poly = self.poly_bucket.get(poly_id).data
         if poly is None:
@@ -97,6 +115,8 @@ class RiakDb:
         else:
             return None
 
+    # Updates a polygon by its id. All polygon fields must be specified on
+    # 'updatePoly'
     def update_polygon(self, updatePoly):
         poly = self.poly_bucket.get(updatePoly['id'])
         if poly.data:
@@ -107,6 +127,7 @@ class RiakDb:
                 raise Exception("Can't change the user a polygon belongs to!")
             poly.store()
 
+    # Deletes the polygon with the given ID.
     def delete_polygon(self, poly_id):
         poly = self.poly_bucket.get(poly_id)
         if poly.data:
