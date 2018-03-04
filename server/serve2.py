@@ -17,7 +17,10 @@ from storage.riak import RiakDb
 define("port", default = 8000, help="run on the given port", type=int)
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
-        return self.get_secure_cookie("userEmail")
+        cookie_bytes = self.get_secure_cookie("userEmail")
+        if not cookie_bytes:
+            return None
+        return str(cookie_bytes, "utf-8")
 
     def options(self):
         # no body
@@ -49,8 +52,7 @@ class UsersHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self,userEmail):
         db = self.settings['db']
-        logged_in = str(self.get_secure_cookie("userEmail"),'utf-8')
-        if logged_in != userEmail:
+        if self.current_user != userEmail:
             self.set_status(404)
             self.write(dict(error="not found"))
             return
@@ -71,8 +73,7 @@ class UsersHandler(BaseHandler):
     @tornado.web.authenticated
     def patch(self,userEmail):
         db = self.settings['db']
-        logged_in = str(self.get_secure_cookie("userEmail"),'utf-8')
-        if logged_in != userEmail:
+        if self.current_user != userEmail:
             self.set_status(404)
             self.write(dict(error="not found"))
             return
@@ -98,8 +99,7 @@ class UsersHandler(BaseHandler):
     @tornado.web.authenticated
     def delete(self, userEmail):
         db = self.settings['db']
-        logged_in = str(self.get_secure_cookie("userEmail"),'utf-8')
-        if logged_in != userEmail:
+        if self.current_user != userEmail:
             self.set_status(404)
             self.write(dict(error="not found"))
             return
@@ -149,7 +149,7 @@ class PolyCollectionHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         db = self.settings['db']
-        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8')) #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
+        user = db.get_user(self.current_user)
         if(not user is None):
             ids = user['polygon_ids']
             polys_json = []
@@ -165,10 +165,10 @@ class PolyCollectionHandler(BaseHandler):
     @gen.coroutine
     def post(self):
         db = self.settings['db']
-        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
+        user = db.get_user(self.current_user)
         bodyJSON = tornado.escape.json_decode(self.request.body)
         attr = bodyJSON['data']['attributes']
-        poly = db.create_polygon(attr['location'], attr['name'], str(self.get_secure_cookie("userEmail"),'utf-8'))
+        poly = db.create_polygon(attr['location'], attr['name'], self.current_user)
         user['polygon_ids'] += [ poly['id'] ]
         db.update_user(user)
         self.write({"data": jsonify_poly(poly['id'], poly)})
@@ -177,7 +177,7 @@ class PolyHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, poly_id):
         db = self.settings['db']
-        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
+        user = db.get_user(self.current_user)
         poly = db.get_polygon(str(poly_id), user['email'])
         if(not user is None):
             if(not poly is None):
@@ -191,7 +191,7 @@ class PolyHandler(BaseHandler):
     @tornado.web.authenticated
     def patch(self, poly_id):
         db = self.settings['db']
-        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
+        user = db.get_user(self.current_user)
         poly = db.get_polygon(str(poly_id), user['email'])
         if(not user is None):
             if(not poly is None):
@@ -212,7 +212,7 @@ class PolyHandler(BaseHandler):
     @tornado.web.authenticated
     def delete(self, poly_id):
         db = self.settings['db']
-        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
+        user = db.get_user(self.current_user)
         if (user is None):
             self.write(dict(error="you are logged in as a nonexistent user"))
             return
