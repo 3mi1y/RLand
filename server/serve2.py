@@ -71,13 +71,7 @@ class UsersHandler(BaseHandler):
 
         user = db.get_user(userEmail)
         if(not user is None):
-            self.write({"data":{"id": user["email"],
-            "attributes": {
-            "name": user["name"],
-            "password": user["password"],
-            "address": user["address"]
-            }}})
-
+            self.write({"data": jsonify_user(user)})
         else:
             self.write(dict(error="you are logged in as a nonexistent user"))
 
@@ -93,18 +87,18 @@ class UsersHandler(BaseHandler):
         user = db.get_user(userEmail)
         if(not user is None):
             bodyJSON = tornado.escape.json_decode(self.request.body)
-            email = bodyJSON['data']['attributes']['email']
-            name = bodyJSON['data']['attributes']['name']
-            password = bodyJSON['data']['attributes']['password']
-            polygon_ids = bodyJSON['data']['attributes']['polygon_ids']
-            address = bodyJSON['data']['attributes']['address']
-            updatedUser = {"email":email,
-            "name":name,
-            "password":password,
-            "polygon_ids":polygon_ids,
-            "address":address}
-            db.update_user(updatedUser)
-            self.write(dict(status = "success"))
+            attrs = bodyJSON['data']['attributes']
+            if 'email' in attrs and attrs['email'] != userEmail:
+                self.write(dict(error = "cannot change user email address"))
+                return
+
+            # TODO: should users be able to change their password
+            # through this same API?
+            for attr_name in ['name', 'polygon_ids', 'address']:
+                if attr_name in attrs:
+                    user[attr_name] = attrs[attr_name]
+            db.update_user(user)
+            self.write(dict(data=jsonify_user(user)))
         else:
             self.write(dict(error = "you are logged in as a nonexistent user"))
 

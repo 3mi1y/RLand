@@ -95,7 +95,6 @@ class TestUsers(AuthenticatedServerTest):
     def test_get_own_user(self):
         response = self.fetch("/api/users/" + self.id_me,
                               headers=dict(cookie=self.cookie))
-        print(response)
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "test name")
 
@@ -114,6 +113,16 @@ class TestUsers(AuthenticatedServerTest):
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "test name")
         self.assertEqual(resp["data"]["attributes"]["address"], "Paris")
+
+    def test_cant_update_email_address(self):
+        body = json.dumps({"data": {
+            "id": self.id_me,
+            "attributes": {"email": "evil.com", "address": "Paris"}
+        }})
+        response = self.fetch("/api/users/" + self.id_me, method="PATCH",
+                              headers=dict(cookie=self.cookie), body=body)
+        resp = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(resp["error"], "cannot change user email address")
 
     def test_cant_get_other_user(self):
         response = self.fetch("/api/users/" + self.id_u1,
