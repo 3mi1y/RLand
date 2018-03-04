@@ -38,7 +38,7 @@ class TestLogin(ServerTest):
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["status"], "failure")
 
-    def test_signup(self):
+    def test_signup_login(self):
         body = json.dumps({"data": {
             "attributes": {
                 "email": "test2",
@@ -49,11 +49,27 @@ class TestLogin(ServerTest):
         }})
         response = self.fetch("/api/users", method="POST", body=body)
         data = json.loads(str(response.body, "utf-8"))
-        self.assertEqual(data["status"], "success")
+        self.assertEqual(data["data"]["attributes"]["name"], "test2")
         response = self.fetch("/api/login", method="POST",
                               body="email=test2&password=test2")
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["status"], "success")
+
+    def test_cant_signup_duplicate(self):
+        body = json.dumps({"data": {
+            "attributes": {
+                "email": "test2",
+                "name": "test2",
+                "password": "test2",
+                "address": "address2"
+            }
+        }})
+        response = self.fetch("/api/users", method="POST", body=body)
+        data = json.loads(str(response.body, "utf-8"))
+
+        response = self.fetch("/api/users", method="POST", body=body)
+        data = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(data["error"], "user already exists")
 
 
 class AuthenticatedServerTest(ServerTest):

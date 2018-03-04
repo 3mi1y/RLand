@@ -34,6 +34,17 @@ class MainHandler(BaseHandler):
         index = f.read()
         self.write(index)
 
+def jsonify_user(user):
+    return {
+        "type": "users",
+        "id": user["email"],
+        "attributes": {
+            "name": user["name"],
+            "address": user["address"],
+            "polygon_ids": user["polygon_ids"],
+        }
+    }
+
 class UsersHandler(BaseHandler):
 
     @gen.coroutine
@@ -43,11 +54,12 @@ class UsersHandler(BaseHandler):
         name = bodyJSON['data']['attributes']['name']
         password = bodyJSON['data']['attributes']['password']
         address = bodyJSON['data']['attributes']['address']
-        self.settings['db'].create_user(email,
-                       name,
-                       password,
-                       address)
-        self.write(dict(status="success"))
+        new_user = self.settings['db'].create_user(email, name, password, address)
+        if new_user:
+            self.write(dict(data=jsonify_user(new_user)))
+        else:
+            self.set_status(400)
+            self.write(dict(error="user already exists"))
 
     @tornado.web.authenticated
     def get(self,userEmail):

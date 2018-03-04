@@ -24,9 +24,18 @@ class RiakDb:
                     'polygon_ids': [],
             })
             new_user.store()
+
+            user = new_user.data
+            return {
+                'email': user['email'],
+                'name': user['name'],
+                'password': user['password'],
+                'address': user['address'],
+                'polygon_ids': user['polygon_ids'],
+            }
+
         else:
-            # TODO: do something if user already exists.
-            return "User is already in db"
+            return False
 
     # Checks if a given email/password is valid for logging in. Returns
     # True if the user can login, False if either the email or password
@@ -46,19 +55,13 @@ class RiakDb:
         user = self.user_bucket.get(email).data
         if user is None:
             return None
-        u = {
+        return {
             'email': user['email'],
             'name': user['name'],
             'password': user['password'],
-            'address': user['address']
+            'address': user['address'],
+            'polygon_ids': user['polygon_ids'],
         }
-
-        try:
-            u['polygon_ids'] = user['polygon_ids']
-        except KeyError:
-            u['polygon_ids'] = []
-
-        return u
 
     # Updates a user by email. If the user does not exist, nothing is
     # done. All user fields must exist on the input 'updateUser'
