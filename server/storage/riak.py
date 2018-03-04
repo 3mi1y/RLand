@@ -67,6 +67,7 @@ class RiakDb:
         if user.data:
             user.data['name'] = updateUser['name']
             user.data['password'] = updateUser['password']
+            user.data['address'] = updateUser['address']
             user.data['polygon_ids'] = updateUser['polygon_ids']
             user.store()
 
