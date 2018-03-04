@@ -1,5 +1,5 @@
 import json
-from tornado.testing import AsyncTestCase, AsyncHTTPTestCase
+from tornado.testing import AsyncHTTPTestCase
 
 from storage.riak import RiakDb
 import serve2
@@ -112,7 +112,7 @@ class TestUsers(AuthenticatedServerTest):
         self.assertEqual(data["error"], "not found")
 
 
-class TestPolygon(AuthenticatedServerTest):
+class TestPolygons(AuthenticatedServerTest):
     def setUp(self):
         super().setUp()
         p1 = self.db.create_polygon("loc1", "name1", TEST_EMAIL)

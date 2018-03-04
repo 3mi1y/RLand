@@ -148,7 +148,8 @@ def jsonify_poly(poly_id, poly):
 class PolyCollectionHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        user = self.settings['db'].get_user(str(self.get_secure_cookie("userEmail"),'utf-8')) #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
+        db = self.settings['db']
+        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8')) #you have to do str(self.get_secure_cookie("cookieName"),'utf-8') to get a string out of a cookie otherwise it returns stupid byte string
         if(not user is None):
             ids = user['polygon_ids']
             polys_json = []

@@ -9,7 +9,7 @@ U_PASS = "test password"
 U_ADDR = "test address"
 
 
-class UserDbTests(unittest.TestCase):
+class TestDbUsers(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
         self.db.create_user(U_EMAIL, U_NAME, U_PASS, U_ADDR)
@@ -30,7 +30,7 @@ class UserDbTests(unittest.TestCase):
         self.assertIsNone(self.db.get_user(U_EMAIL))
 
 
-class PolygonDbTests(unittest.TestCase):
+class TestDbPolygons(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
         self.db.create_user(U_EMAIL, U_NAME, U_PASS, U_ADDR)
