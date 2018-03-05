@@ -110,6 +110,7 @@ class UsersHandler(BaseHandler):
             return
 
         db.delete_user(userEmail)
+        self.set_status(204)
 
 
 class LoginHandler(BaseHandler):
@@ -220,7 +221,7 @@ class PolyHandler(BaseHandler):
             user['polygon_ids'].remove(poly_id)
             db.update_user(user)
             db.delete_polygon(poly_id)
-            self.write(dict(status="deleted"))
+            self.set_status(204)
         else:
             self.set_status(404)
             self.write(dict(error="not found"))
