@@ -13,11 +13,16 @@
       {{ link-to 'Home' 'index' class="navbar-brand" }}
       {{ link-to 'Map' 'map' class="navbar-brand" }}
       {{ link-to 'Polygon' 'polygon' class="navbar-brand" }}
+      {{ link-to 'Profile' 'profile' class="navbar-brand" }}
     </div>
 
     <div class="collapse navbar-collapse" id="menu-collapse">
       <ul class="nav navbar-nav pull-right">
-        <li>{{ link-to 'Sign-in' 'sign-in' }}</li>
+        {{#if session.isAuthenticated}}
+          <li><a {{action 'invalidateSession'}}>Log out</a></li>
+        {{else}}
+          <li>{{ link-to 'Sign-in' 'login' }}</li>
+        {{/if}}
       </ul>
     </div>
   </div>

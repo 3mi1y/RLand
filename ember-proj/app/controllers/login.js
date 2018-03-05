@@ -52,13 +52,13 @@ export default Controller.extend({
         }.bind(this));
     },
     register() {
-       const user = this.get('store').createRecord('user', {
-          name: this.get("username"),
-          email: this.get("email"),
-          password: this.get("password"),
-          polygons: []
-       });
-       user.save()
+      const user = this.get('store').createRecord('user', {
+        name: this.get("username"),
+        email: this.get("email"),
+        password: this.get("password"),
+        polygons: []
+      });
+      user.save()
     }
   }
 });
