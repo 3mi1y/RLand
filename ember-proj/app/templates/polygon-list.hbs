@@ -9,7 +9,7 @@
            <button>Add Task</button>
         </div>
         <div>
-           <button>Edit</button>
+           {{#link-to "edit-polygon" polygon.id}}Edit{{/link-to}}
            <button {{action "deletePolygon" polygon}}>Delete</button>
         </div>
       {{/polygon-list}}

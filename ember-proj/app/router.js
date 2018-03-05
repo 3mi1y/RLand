@@ -16,7 +16,7 @@ Router.map(function() {
   this.route('dashboard');
   this.route('polygon-list');
   this.route('new-polygon');
-  this.route('edit-polygon');
+  this.route('edit-polygon', { path: '/edit-polygon/:polygon_id' });
   this.route('polygon-info', { path: '/polygon-info/:polygon_id' });
 });
 

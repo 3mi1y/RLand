@@ -1,1 +1,11 @@
 {{outlet}}
+<h1>Edit Polygon:</h1>
+
+<form {{action "editPolygon" on="submit"}}>
+   <label>Please enter a location of your polygon</label>
+   <p>{{input value=location placeholder=model.location type="text"}}</p>
+   <label>Please enter the name of the polygon</label>
+   <p>{{input value=name placeholder=model.name type="text"}}</p>
+   <button type="submit">Submit</button>
+</form>
+
