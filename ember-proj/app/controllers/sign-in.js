@@ -20,7 +20,7 @@ export default Controller.extend({
         password: this.get("password")
       }).then(function () {
           this.set("isProcessing", false);
-          document.location = 'polygon';
+          document.location = 'dashboard';
         }.bind(this),
 
         function () {
