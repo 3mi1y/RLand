@@ -194,8 +194,10 @@ class TestPolygons(AuthenticatedServerTest):
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "created")
         
-        response = self.fetch("/api/polygons/" + poly_id, method="DELETE", headers=dict(cookie=self.cookie))
-        self.assertEqual(response.code, 200)
+        response = self.fetch("/api/polygons/" + poly_id, method="DELETE",
+                              headers=dict(cookie=self.cookie))
+        self.assertEqual(response.code, 204)
+
 
         
     def test_cant_delete_not_own_polygon(self):
