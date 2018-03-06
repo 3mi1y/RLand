@@ -50,3 +50,20 @@ class TestDbPolygons(unittest.TestCase):
 
     def tearDown(self):
         self.db.delete_polygon(self.poly_id)
+
+class PolygonTypeDbTests(unittest.TestCase):
+    def setUp(self):
+        self.db = RiakDb()
+        self.db.create_poly_type("Test", False, None, "test subtype")
+
+    def test_get_poly_type(self):
+        self.assertEqual(self.db.get_poly_type("Test")['subtype'], "test subtype")
+
+    # TODO: test_get_deleted_poly_type
+
+    def test_delete_poly_type(self):
+        self.db.delete_poly_type("Test")
+        self.assertIsNone(self.db.get_poly_type("Test"))
+
+    def tearDown(self):
+        self.db.delete_polygon("Test")

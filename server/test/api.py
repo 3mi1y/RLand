@@ -193,13 +193,55 @@ class TestPolygons(AuthenticatedServerTest):
                               headers=dict(cookie=self.cookie))
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "created")
-
+        
         response = self.fetch("/api/polygons/" + poly_id, method="DELETE",
                               headers=dict(cookie=self.cookie))
         self.assertEqual(response.code, 204)
 
+
+        
     def test_cant_delete_not_own_polygon(self):
         response = self.fetch("/api/polygons/" + self.id_p2, method="DELETE",
                               headers=dict(cookie=self.cookie))
         data = json.loads(str(response.body, "utf-8"))
         self.assertEqual(data["error"], "not found")
+        
+class TestPolygonType(AuthenticatedServerTest):
+    def setUp(self):
+        super().setUp()
+        self.db.create_poly_type("Plant", False, None, None)
+        self.db.create_poly_type("Plant:Vegetable Garden", True, "crop", "Vegetable")
+
+    def tearDown(self):
+        self.db.delete_poly_type("Plant")
+        self.db.delete_poly_type("Plant:Vegetable Garden")
+        super().tearDown()
+
+    def test_get_poly_type(self):
+        response = self.fetch("/api/polygon_types/Plant", headers=dict(cookie=self.cookie))
+        resp = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(resp["data"]["attributes"]["subtype"], None)
+
+    def test_update_poly_type(self):
+        response = self.fetch("/api/polygon_types/Plant", method="PATCH", headers=dict(cookie=self.cookie),
+            body=json.dumps({"data":{"attributes":{"subtype":"new_subtype"}}})
+            )
+        resp = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(resp["data"]["attributes"]["subtype"], "new_subtype")
+
+        response = self.fetch("/api/polygon_types/Plant", headers=dict(cookie=self.cookie))
+        resp = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(resp["data"]["id"], "Plant")
+        self.assertEqual(resp["data"]["attributes"]["subtype"], "new_subtype")
+
+    def test_create_get_delete_poly_type(self):
+        response = self.fetch("/api/polygon_types", method="POST", headers=dict(cookie=self.cookie), body=json.dumps({"data":{"id":"Test Type","attributes":{"is_container":False,"harvest":None,"subtype":"st"}}}))
+        self.assertEqual(response.code, 200)
+        resp = json.loads(str(response.body, "utf-8"))
+
+        response = self.fetch("/api/polygon_types/Test%20Type", headers=dict(cookie=self.cookie))
+        resp = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(resp["data"]["attributes"]["subtype"], "st")
+
+        response = self.fetch("/api/polygon_types/Test%20Type", method="DELETE", headers=dict(cookie=self.cookie))
+        self.assertEqual(response.code, 204)

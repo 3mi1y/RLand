@@ -5,7 +5,6 @@ import tornado.ioloop
 import tornado.options
 import tornado.escape
 import tornado.httpclient
-#import tornado.AsyncHTTPClient
 import os.path
 from tornado import gen
 
@@ -233,6 +232,72 @@ class PolyHandler(BaseHandler):
             self.set_status(404)
             self.write(dict(error="not found"))
 
+def jsonify_poly_type(ptype):
+    return {
+        "type": "polygon_types",
+        "id": ptype["name"],
+        "attributes": {
+            "is_container": ptype["is_container"],
+            "harvest": ptype["harvest"],
+            "subtype": ptype["subtype"],
+        }
+    }
+
+class PolyTypeCollectionHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        self.set_status(500)
+
+    @tornado.web.authenticated
+    @gen.coroutine
+    def post(self):
+        # TODO: make sure user is allowed to make new polygon types
+        db = self.settings['db']
+        bodyJSON = tornado.escape.json_decode(self.request.body)
+        name = bodyJSON['data']['id']
+        attr = bodyJSON['data']['attributes']
+        ptype = db.create_poly_type(name, attr['is_container'], attr['harvest'], attr['subtype'])
+        self.write({"data": jsonify_poly_type(ptype)})
+
+class PolyTypeHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, name):
+        db = self.settings['db']
+        ptype = db.get_poly_type(name)
+        if(not ptype is None):
+            self.write({ "data": jsonify_poly_type(ptype) })
+        else:
+            self.write({ "error": "not found" })
+            self.set_status(404)
+
+    @tornado.web.authenticated
+    def patch(self, name):
+        db = self.settings['db']
+        ptype = db.get_poly_type(name)
+        if(not ptype is None):
+            # TODO: verify user is allowed to write polygon types
+            bodyJSON = tornado.escape.json_decode(self.request.body)
+            attrs = bodyJSON['data']['attributes']
+            for attr_name in ['is_container', 'harvest', 'subtype']:
+                if attr_name in attrs:
+                    ptype[attr_name] = attrs[attr_name]
+            db.update_poly_type(ptype)
+            self.write({"data": jsonify_poly_type(ptype)})
+        else:
+            self.set_status(404)
+
+    @tornado.web.authenticated
+    def delete(self, name):
+        db = self.settings['db']
+        # TODO: verify user is allowed to delete polygon types
+        ptype = db.get_poly_type(name)
+        if(not ptype is None):
+            db.delete_poly_type(name)
+            self.set_status(204)
+        else:
+            self.set_status(404)
+
+
 
 class Application(tornado.web.Application):
     def __init__(self, database):
@@ -243,6 +308,8 @@ class Application(tornado.web.Application):
             (r"/api/logout", LogoutHandler),
             (r"/api/polygons", PolyCollectionHandler),
             (r"/api/polygons/([0-9]+)", PolyHandler),
+            (r"/api/polygon_types", PolyTypeCollectionHandler),
+            (r"/api/polygon_types/(.*)", PolyTypeHandler),
             (r"/(favicon.ico)", tornado.web.StaticFileHandler,{"path": os.path.join(os.path.dirname(__file__), "static")}),
             (r"/(assets/.*|ember-welcome-page/.*|fonts/.*|tests/.*|index.html|robots.txt|testem.js)", tornado.web.StaticFileHandler, dict(path=os.path.join(os.path.dirname(__file__), "../ember-proj/dist/"))),
             (r"/.*", MainHandler),
