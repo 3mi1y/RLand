@@ -5,7 +5,6 @@ import tornado.ioloop
 import tornado.options
 import tornado.escape
 import tornado.httpclient
-#import tornado.AsyncHTTPClient
 import os.path
 from tornado import gen
 
@@ -59,21 +58,21 @@ class UsersHandler(BaseHandler):
             self.write(dict(data=jsonify_user(new_user)))
         else:
             self.set_status(400)
-            self.write(dict(error="user already exists"))
+            self.write(dict(errors=[{"title": "user already exists"}]))
 
     @tornado.web.authenticated
     def get(self,userEmail):
         db = self.settings['db']
         if self.current_user != userEmail:
             self.set_status(404)
-            self.write(dict(error="not found"))
+            self.write(dict(errors=[{"title": "not found"}]))
             return
 
         user = db.get_user(userEmail)
         if(not user is None):
             self.write({"data": jsonify_user(user)})
         else:
-            self.write(dict(error="you are logged in as a nonexistent user"))
+            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
 
 
     @tornado.web.authenticated
@@ -81,7 +80,7 @@ class UsersHandler(BaseHandler):
         db = self.settings['db']
         if self.current_user != userEmail:
             self.set_status(404)
-            self.write(dict(error="not found"))
+            self.write(dict(errors=[{"title": "not found"}]))
             return
 
         user = db.get_user(userEmail)
@@ -89,7 +88,7 @@ class UsersHandler(BaseHandler):
             bodyJSON = tornado.escape.json_decode(self.request.body)
             attrs = bodyJSON['data']['attributes']
             if 'email' in attrs and attrs['email'] != userEmail:
-                self.write(dict(error = "cannot change user email address"))
+                self.write(dict(errors=[{"title": "cannot change user email address"}]))
                 return
 
             # TODO: should users be able to change their password
@@ -100,19 +99,19 @@ class UsersHandler(BaseHandler):
             db.update_user(user)
             self.write(dict(data=jsonify_user(user)))
         else:
-            self.write(dict(error = "you are logged in as a nonexistent user"))
+            self.write(dict(errors =  [{"title": "you are logged in as a nonexistent user"}]))
 
     @tornado.web.authenticated
     def delete(self, userEmail):
         db = self.settings['db']
         if self.current_user != userEmail:
             self.set_status(404)
-            self.write(dict(error="not found"))
+            self.write(dict(errors=[{"title": "not found"}]))
             return
 
         user = db.get_user(userEmail)
         if (user is None):
-            self.write(dict(error="you are logged in as a nonexistent user"))
+            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
             return
 
         db.delete_user(userEmail)
@@ -130,7 +129,7 @@ class LoginHandler(BaseHandler):
             self.write(dict(status="success"))
         else:
             self.set_status(400)
-            self.write(dict(status="failure", error="incorrect email or password"))
+            self.write(dict(status="failure", errors=[{"title": "incorrect email or password"}]))
 
 class LogoutHandler(BaseHandler):
 
@@ -166,7 +165,7 @@ class PolyCollectionHandler(BaseHandler):
                     polys_json += [ jsonify_poly(poly_id, poly) ]
             self.write({ "data": polys_json })
         else:
-            self.write(dict(error="you are logged in as a nonexistent user"))
+            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
 
     @tornado.web.authenticated
     @gen.coroutine
@@ -191,9 +190,9 @@ class PolyHandler(BaseHandler):
                 self.write({ "data": jsonify_poly(poly_id, poly) })
             else:
                 self.set_status(404)
-                self.write(dict(error="not found"))
+                self.write(dict(errors=[{"title": "not found"}]))
         else:
-            self.write(dict(error="you are logged in as a nonexistent user"))
+            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
 
     @tornado.web.authenticated
     def patch(self, poly_id):
@@ -212,16 +211,16 @@ class PolyHandler(BaseHandler):
                 self.write({"data": jsonify_poly(poly['id'], poly)})
             else:
                 self.set_status(404)
-                self.write(dict(error="not found"))
+                self.write(dict(errors=[{"title": "not found"}]))
         else:
-            self.write(dict(error="you are logged in as a nonexistent user"))
+            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
 
     @tornado.web.authenticated
     def delete(self, poly_id):
         db = self.settings['db']
         user = db.get_user(self.current_user)
         if (user is None):
-            self.write(dict(error="you are logged in as a nonexistent user"))
+            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
             return
 
         if (user['polygon_ids'] and poly_id in user['polygon_ids']):
@@ -231,7 +230,73 @@ class PolyHandler(BaseHandler):
             self.set_status(204)
         else:
             self.set_status(404)
-            self.write(dict(error="not found"))
+            self.write(dict(errors=[{"title": "not found"}]))
+
+def jsonify_poly_type(ptype):
+    return {
+        "type": "polygon_types",
+        "id": ptype["name"],
+        "attributes": {
+            "is_container": ptype["is_container"],
+            "harvest": ptype["harvest"],
+            "subtype": ptype["subtype"],
+        }
+    }
+
+class PolyTypeCollectionHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        self.set_status(500)
+
+    @tornado.web.authenticated
+    @gen.coroutine
+    def post(self):
+        # TODO: make sure user is allowed to make new polygon types
+        db = self.settings['db']
+        bodyJSON = tornado.escape.json_decode(self.request.body)
+        name = bodyJSON['data']['id']
+        attr = bodyJSON['data']['attributes']
+        ptype = db.create_poly_type(name, attr['is_container'], attr['harvest'], attr['subtype'])
+        self.write({"data": jsonify_poly_type(ptype)})
+
+class PolyTypeHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, name):
+        db = self.settings['db']
+        ptype = db.get_poly_type(name)
+        if(not ptype is None):
+            self.write({ "data": jsonify_poly_type(ptype) })
+        else:
+            self.write({ "errors": [ {"title": "not found"} ] })
+            self.set_status(404)
+
+    @tornado.web.authenticated
+    def patch(self, name):
+        db = self.settings['db']
+        ptype = db.get_poly_type(name)
+        if(not ptype is None):
+            # TODO: verify user is allowed to write polygon types
+            bodyJSON = tornado.escape.json_decode(self.request.body)
+            attrs = bodyJSON['data']['attributes']
+            for attr_name in ['is_container', 'harvest', 'subtype']:
+                if attr_name in attrs:
+                    ptype[attr_name] = attrs[attr_name]
+            db.update_poly_type(ptype)
+            self.write({"data": jsonify_poly_type(ptype)})
+        else:
+            self.set_status(404)
+
+    @tornado.web.authenticated
+    def delete(self, name):
+        db = self.settings['db']
+        # TODO: verify user is allowed to delete polygon types
+        ptype = db.get_poly_type(name)
+        if(not ptype is None):
+            db.delete_poly_type(name)
+            self.set_status(204)
+        else:
+            self.set_status(404)
+
 
 
 class Application(tornado.web.Application):
@@ -243,6 +308,8 @@ class Application(tornado.web.Application):
             (r"/api/logout", LogoutHandler),
             (r"/api/polygons", PolyCollectionHandler),
             (r"/api/polygons/([0-9]+)", PolyHandler),
+            (r"/api/polygon_types", PolyTypeCollectionHandler),
+            (r"/api/polygon_types/(.*)", PolyTypeHandler),
             (r"/(favicon.ico)", tornado.web.StaticFileHandler,{"path": os.path.join(os.path.dirname(__file__), "static")}),
             (r"/(assets/.*|ember-welcome-page/.*|fonts/.*|tests/.*|index.html|robots.txt|testem.js)", tornado.web.StaticFileHandler, dict(path=os.path.join(os.path.dirname(__file__), "../ember-proj/dist/"))),
             (r"/.*", MainHandler),

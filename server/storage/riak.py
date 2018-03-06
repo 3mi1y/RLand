@@ -12,9 +12,10 @@ class RiakDb:
         self.client = riak.RiakClient(pb_port=port)
         self.user_bucket = self.client.bucket('user')
         self.poly_bucket = self.client.bucket('polygon')
-        self.note_bucket = self.client.bucket('note')
-        self.harvest_bucket = self.client.bucket('harvest')
         self.task_bucket = self.client.bucket('task')
+        self.harvest_bucket = self.client.bucket('harvest')
+        self.note_bucket = self.client.bucket('note')
+        self.poly_type_bucket = self.client.bucket('polygon_type')
 
     # Create a user with the given email, name, password, and address.
     def create_user(self, email, name, password, address):
