@@ -8,7 +8,7 @@ export default Route.extend({
         email: this.get("username"),
         password: this.get("password")
       }).then(function () {
-          this.transitionTo('polygon');
+          this.transitionTo('dashboard');
       });
     },
 

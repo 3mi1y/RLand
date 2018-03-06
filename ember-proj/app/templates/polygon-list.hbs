@@ -1,0 +1,20 @@
+{{outlet}}
+<h1>Polygons in DB</h1>
+<div class="col-md-4">
+  {{#each model as |polygon|}}
+    <div class="row">
+      {{#polygon-list item=polygon}}
+        <div>
+           {{#link-to "polygon-info" polygon.id}}More info{{/link-to}}
+           <button>Add Task</button>
+        </div>
+        <div>
+           {{#link-to "edit-polygon" polygon.id}}Edit{{/link-to}}
+           <button {{action "deletePolygon" polygon}}>Delete</button>
+        </div>
+      {{/polygon-list}}
+    </div>
+  {{/each}}
+</div>
+
+
