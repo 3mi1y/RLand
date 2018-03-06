@@ -163,6 +163,7 @@ def jsonify_poly_type(ptype):
         "id": ptype["name"],
         "attributes": {
             "is_container": ptype["is_container"],
+            "harvest": ptype["harvest"],
             "subtype": ptype["subtype"],
         }
     }
@@ -202,7 +203,7 @@ class PolyTypeHandler(BaseHandler):
             # TODO: verify user is allowed to write polygon types
             bodyJSON = tornado.escape.json_decode(self.request.body)
             attrs = bodyJSON['data']['attributes']
-            for attr_name in ['is_container', 'subtype']:
+            for attr_name in ['is_container', 'harvest', 'subtype']:
                 if attr_name in attrs:
                     ptype[attr_name] = attrs[attr_name]
             db.update_poly_type(ptype)
@@ -211,22 +212,15 @@ class PolyTypeHandler(BaseHandler):
             self.set_status(404)
 
     @tornado.web.authenticated
-    def delete(self, poly_id):
+    def delete(self, name):
         db = self.settings['db']
-        user = db.get_user(str(self.get_secure_cookie("userEmail"),'utf-8'))
-        if (user is None):
-            self.write(dict(error="you are logged in as a nonexistent user"))
-            return
-
-        if (user['polygon_ids']):
-            user['polygon_ids'].remove(poly_id)
-            db.update_user(user)
-            db.delete_polygon(poly_id)
-            self.write(dict(status="deleted"))
+        # TODO: verify user is allowed to delete polygon types
+        ptype = db.get_poly_type(name)
+        if(not ptype is None):
+            db.delete_poly_type(name)
+            self.set_status(204)
         else:
-            # TODO: http status code
-            self.write(dict(error="not your polygon"))
-
+            self.set_status(404)
 
 
 

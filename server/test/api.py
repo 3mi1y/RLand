@@ -133,4 +133,4 @@ class TestPolygonType(AuthenticatedServerTest):
         self.assertEqual(resp["data"]["attributes"]["subtype"], "st")
 
         response = self.fetch("/api/polygon_types/Test%20Type", method="DELETE", headers=dict(cookie=self.cookie))
-        self.assertEqual(response.code, 200)
+        self.assertEqual(response.code, 204)
