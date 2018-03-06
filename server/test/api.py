@@ -69,7 +69,7 @@ class TestLogin(ServerTest):
 
         response = self.fetch("/api/users", method="POST", body=body)
         data = json.loads(str(response.body, "utf-8"))
-        self.assertEqual(data["error"], "user already exists")
+        self.assertEqual(data["errors"][0]["title"], "user already exists")
 
 
 class AuthenticatedServerTest(ServerTest):
@@ -122,19 +122,19 @@ class TestUsers(AuthenticatedServerTest):
         response = self.fetch("/api/users/" + self.id_me, method="PATCH",
                               headers=dict(cookie=self.cookie), body=body)
         resp = json.loads(str(response.body, "utf-8"))
-        self.assertEqual(resp["error"], "cannot change user email address")
+        self.assertEqual(resp["errors"][0]["title"], "cannot change user email address")
 
     def test_cant_get_other_user(self):
         response = self.fetch("/api/users/" + self.id_u1,
                               headers=dict(cookie=self.cookie))
         data = json.loads(str(response.body, "utf-8"))
-        self.assertEqual(data["error"], "not found")
+        self.assertEqual(data["errors"][0]["title"], "not found")
 
     def test_cant_delete_other_user(self):
         response = self.fetch("/api/users/" + self.id_u1, method="DELETE",
                               headers=dict(cookie=self.cookie))
         data = json.loads(str(response.body, "utf-8"))
-        self.assertEqual(data["error"], "not found")
+        self.assertEqual(data["errors"][0]["title"], "not found")
 
 
 class TestPolygons(AuthenticatedServerTest):
@@ -176,7 +176,7 @@ class TestPolygons(AuthenticatedServerTest):
         response = self.fetch("/api/polygons/" + self.id_p2,
                               headers=dict(cookie=self.cookie))
         data = json.loads(str(response.body, "utf-8"))
-        self.assertEqual(data["error"], "not found")
+        self.assertEqual(data["errors"][0]["title"], "not found")
 
     def test_create_get_delete_polygon(self):
         body = json.dumps({"data": {"attributes": {
@@ -204,8 +204,9 @@ class TestPolygons(AuthenticatedServerTest):
         response = self.fetch("/api/polygons/" + self.id_p2, method="DELETE",
                               headers=dict(cookie=self.cookie))
         data = json.loads(str(response.body, "utf-8"))
-        self.assertEqual(data["error"], "not found")
-        
+        self.assertEqual(data["errors"][0]["title"], "not found")
+
+
 class TestPolygonType(AuthenticatedServerTest):
     def setUp(self):
         super().setUp()

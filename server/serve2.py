@@ -58,21 +58,21 @@ class UsersHandler(BaseHandler):
             self.write(dict(data=jsonify_user(new_user)))
         else:
             self.set_status(400)
-            self.write(dict(error="user already exists"))
+            self.write(dict(errors=[{"title": "user already exists"}]))
 
     @tornado.web.authenticated
     def get(self,userEmail):
         db = self.settings['db']
         if self.current_user != userEmail:
             self.set_status(404)
-            self.write(dict(error="not found"))
+            self.write(dict(errors=[{"title": "not found"}]))
             return
 
         user = db.get_user(userEmail)
         if(not user is None):
             self.write({"data": jsonify_user(user)})
         else:
-            self.write(dict(error="you are logged in as a nonexistent user"))
+            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
 
 
     @tornado.web.authenticated
@@ -80,7 +80,7 @@ class UsersHandler(BaseHandler):
         db = self.settings['db']
         if self.current_user != userEmail:
             self.set_status(404)
-            self.write(dict(error="not found"))
+            self.write(dict(errors=[{"title": "not found"}]))
             return
 
         user = db.get_user(userEmail)
@@ -88,7 +88,7 @@ class UsersHandler(BaseHandler):
             bodyJSON = tornado.escape.json_decode(self.request.body)
             attrs = bodyJSON['data']['attributes']
             if 'email' in attrs and attrs['email'] != userEmail:
-                self.write(dict(error = "cannot change user email address"))
+                self.write(dict(errors=[{"title": "cannot change user email address"}]))
                 return
 
             # TODO: should users be able to change their password
@@ -99,19 +99,19 @@ class UsersHandler(BaseHandler):
             db.update_user(user)
             self.write(dict(data=jsonify_user(user)))
         else:
-            self.write(dict(error = "you are logged in as a nonexistent user"))
+            self.write(dict(errors =  [{"title": "you are logged in as a nonexistent user"}]))
 
     @tornado.web.authenticated
     def delete(self, userEmail):
         db = self.settings['db']
         if self.current_user != userEmail:
             self.set_status(404)
-            self.write(dict(error="not found"))
+            self.write(dict(errors=[{"title": "not found"}]))
             return
 
         user = db.get_user(userEmail)
         if (user is None):
-            self.write(dict(error="you are logged in as a nonexistent user"))
+            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
             return
 
         db.delete_user(userEmail)
@@ -129,7 +129,7 @@ class LoginHandler(BaseHandler):
             self.write(dict(status="success"))
         else:
             self.set_status(400)
-            self.write(dict(status="failure", error="incorrect email or password"))
+            self.write(dict(status="failure", errors=[{"title": "incorrect email or password"}]))
 
 class LogoutHandler(BaseHandler):
 
@@ -165,7 +165,7 @@ class PolyCollectionHandler(BaseHandler):
                     polys_json += [ jsonify_poly(poly_id, poly) ]
             self.write({ "data": polys_json })
         else:
-            self.write(dict(error="you are logged in as a nonexistent user"))
+            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
 
     @tornado.web.authenticated
     @gen.coroutine
@@ -190,9 +190,9 @@ class PolyHandler(BaseHandler):
                 self.write({ "data": jsonify_poly(poly_id, poly) })
             else:
                 self.set_status(404)
-                self.write(dict(error="not found"))
+                self.write(dict(errors=[{"title": "not found"}]))
         else:
-            self.write(dict(error="you are logged in as a nonexistent user"))
+            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
 
     @tornado.web.authenticated
     def patch(self, poly_id):
@@ -211,16 +211,16 @@ class PolyHandler(BaseHandler):
                 self.write({"data": jsonify_poly(poly['id'], poly)})
             else:
                 self.set_status(404)
-                self.write(dict(error="not found"))
+                self.write(dict(errors=[{"title": "not found"}]))
         else:
-            self.write(dict(error="you are logged in as a nonexistent user"))
+            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
 
     @tornado.web.authenticated
     def delete(self, poly_id):
         db = self.settings['db']
         user = db.get_user(self.current_user)
         if (user is None):
-            self.write(dict(error="you are logged in as a nonexistent user"))
+            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
             return
 
         if (user['polygon_ids'] and poly_id in user['polygon_ids']):
@@ -230,7 +230,7 @@ class PolyHandler(BaseHandler):
             self.set_status(204)
         else:
             self.set_status(404)
-            self.write(dict(error="not found"))
+            self.write(dict(errors=[{"title": "not found"}]))
 
 def jsonify_poly_type(ptype):
     return {
@@ -267,7 +267,7 @@ class PolyTypeHandler(BaseHandler):
         if(not ptype is None):
             self.write({ "data": jsonify_poly_type(ptype) })
         else:
-            self.write({ "error": "not found" })
+            self.write({ "errors": [ {"title": "not found"} ] })
             self.set_status(404)
 
     @tornado.web.authenticated
