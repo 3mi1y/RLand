@@ -12,17 +12,12 @@
       </button>
       {{ link-to 'Home' 'index' class="navbar-brand" }}
       {{ link-to 'Map' 'map' class="navbar-brand" }}
-      {{ link-to 'Polygon' 'polygon' class="navbar-brand" }}
-      {{ link-to 'Profile' 'profile' class="navbar-brand" }}
+      {{ link-to 'Dashboard' 'dashboard' class="navbar-brand" }}
     </div>
 
     <div class="collapse navbar-collapse" id="menu-collapse">
       <ul class="nav navbar-nav pull-right">
-        {{#if session.isAuthenticated}}
-          <li><a {{action 'invalidateSession'}}>Log out</a></li>
-        {{else}}
-          <li>{{ link-to 'Sign-in' 'login' }}</li>
-        {{/if}}
+        <li>{{ link-to 'Sign-in' 'sign-in' }}</li>
       </ul>
     </div>
   </div>
