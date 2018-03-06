@@ -142,7 +142,6 @@ class RiakDb:
             poly.delete()
             return ("Deleted")
 
-
     def create_note(self, poly_id,date,title,content):
         keys = self.note_bucket.get_keys()
         mx = max([int(k) for k in keys] + [0])
@@ -288,3 +287,33 @@ class RiakDb:
         if task.data:
             task.delete()
             return("Deleted")
+
+    def create_poly_type(self, name, is_container, harvest, subtype):
+        ptype = self.poly_type_bucket.new(name, data={
+            'name': name,
+            'is_container': is_container,
+            'harvest': harvest,
+            'subtype': subtype,
+        })
+        ptype.store()
+        return {'name': name, 'is_container': is_container, 'harvest': harvest, 'subtype': subtype}
+
+    def get_poly_type(self, name):
+        ptype = self.poly_type_bucket.get(name).data
+        if ptype is None:
+            return None
+        else:
+            return {'name': ptype['name'], 'is_container': ptype['is_container'], 'harvest': ptype['harvest'], 'subtype': ptype['subtype']}
+
+    def update_poly_type(self, update_ptype):
+        ptype = self.poly_type_bucket.get(update_ptype['name'])
+        if ptype.data:
+            ptype.data['is_container'] = update_ptype['is_container']
+            ptype.data['harvest'] = update_ptype['harvest']
+            ptype.data['subtype'] = update_ptype['subtype']
+            ptype.store()
+
+    def delete_poly_type(self, name):
+        ptype = self.poly_type_bucket.get(name)
+        if ptype.data:
+            ptype.delete()
