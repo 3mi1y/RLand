@@ -193,13 +193,11 @@ class TestPolygons(AuthenticatedServerTest):
                               headers=dict(cookie=self.cookie))
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "created")
-        
+
         response = self.fetch("/api/polygons/" + poly_id, method="DELETE",
                               headers=dict(cookie=self.cookie))
         self.assertEqual(response.code, 204)
 
-
-        
     def test_cant_delete_not_own_polygon(self):
         response = self.fetch("/api/polygons/" + self.id_p2, method="DELETE",
                               headers=dict(cookie=self.cookie))
@@ -225,8 +223,7 @@ class TestPolygonType(AuthenticatedServerTest):
 
     def test_update_poly_type(self):
         response = self.fetch("/api/polygon_types/Plant", method="PATCH", headers=dict(cookie=self.cookie),
-            body=json.dumps({"data":{"attributes":{"subtype":"new_subtype"}}})
-            )
+                              body=json.dumps({"data": {"attributes": {"subtype": "new_subtype"}}}))
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["subtype"], "new_subtype")
 
@@ -236,7 +233,12 @@ class TestPolygonType(AuthenticatedServerTest):
         self.assertEqual(resp["data"]["attributes"]["subtype"], "new_subtype")
 
     def test_create_get_delete_poly_type(self):
-        response = self.fetch("/api/polygon_types", method="POST", headers=dict(cookie=self.cookie), body=json.dumps({"data":{"id":"Test Type","attributes":{"is_container":False,"harvest":None,"subtype":"st"}}}))
+        response = self.fetch("/api/polygon_types", method="POST", headers=dict(cookie=self.cookie),
+                              body=json.dumps({"data": {"id": "Test Type", "attributes": {
+                                "is_container": False,
+                                "harvest": None,
+                                "subtype": "st"
+                              }}}))
         self.assertEqual(response.code, 200)
         resp = json.loads(str(response.body, "utf-8"))
 
