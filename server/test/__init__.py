@@ -1,2 +1,2 @@
-from .data import TestDbUsers, TestDbPolygons
-from .api import TestLogin, TestUsers, TestPolygons
+from .data import TestDbUsers, TestDbPolygons, TestDbPolygonTypes
+from .api import TestLogin, TestUsers, TestPolygons, TestPolygonTypes

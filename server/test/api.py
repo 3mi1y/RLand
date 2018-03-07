@@ -205,7 +205,7 @@ class TestPolygons(AuthenticatedServerTest):
         self.assertEqual(data["errors"][0]["title"], "not found")
 
 
-class TestPolygonType(AuthenticatedServerTest):
+class TestPolygonTypes(AuthenticatedServerTest):
     def setUp(self):
         super().setUp()
         self.db.create_poly_type("Plant", False, None, None)

@@ -52,7 +52,7 @@ class TestDbPolygons(unittest.TestCase):
         self.db.delete_polygon(self.poly_id)
 
 
-class PolygonTypeDbTests(unittest.TestCase):
+class TestDbPolygonTypes(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
         self.db.create_poly_type("Test", False, None, "test subtype")

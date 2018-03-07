@@ -12,6 +12,9 @@ class RiakDb:
         self.client = riak.RiakClient(pb_port=port)
         self.user_bucket = self.client.bucket('user')
         self.poly_bucket = self.client.bucket('polygon')
+        self.task_bucket = self.client.bucket('task')
+        self.harvest_bucket = self.client.bucket('harvest')
+        self.note_bucket = self.client.bucket('note')
         self.poly_type_bucket = self.client.bucket('polygon_type')
 
     # Create a user with the given email, name, password, and address.
@@ -138,6 +141,152 @@ class RiakDb:
         if poly.data:
             poly.delete()
             return ("Deleted")
+
+    def create_note(self, poly_id,date,title,content):
+        keys = self.note_bucket.get_keys()
+        mx = max([int(k) for k in keys] + [0])
+        note_id = str(mx+1)
+        note = self.note_bucket.new(note_id, data ={
+            "id" : note_id,
+            "poly_id" : poly_id,
+            "date" : date,
+            "title" : title,
+            "content" : content
+        })
+        note.store()
+        return {
+            "id" : note_id,
+            "poly_id" : poly_id,
+            "date" : date,
+            "title" : title,
+            "content" : content
+        }
+    def get_note(self,poly_id,note_id):
+        note = self.note_bucket.get(note_id).data
+        if note is None:
+            return None
+        if (note['poly_id'] == poly_id):#check if it belongs to the right polygon
+            return {
+                'id' : note['id'],
+                'poly_id': note['poly_id'],
+                'date': note['date'],
+                'title' : note['title'],
+                'content' : note['content']
+            }
+        else:
+            return None
+    def update_note(self, updateNote):
+        note = self.note_bucket.get(updateNote['id'])
+        if note.data:
+            note.data['date'] = updateNote['date']
+            note.data['title'] = updateNote['title']
+            note.data['content'] = updateNote['content']
+            if note.data['poly_id'] != updateNote['poly_id']:
+                raise Exception("Can't update a note for a different polygon")
+            note.store()
+
+    def delete_note(self,note_id):
+        note = self.note_bucket.get(note_id)
+        if note.data:
+            note.delete()
+            return("Deleted")
+
+
+    def create_harvest(self,poly_id,date,amount,units):
+        keys = self.harvest_bucket.get_keys()
+        mx = max([int(k) for k in keys] + [0])
+        harvest_id = str(mx+1)
+        harvest = self.harvest_bucket.new(harvest_id, data ={
+            'id' : harvest_id,
+            'poly_id' : poly_id,
+            'date' : date,
+            'amount' : amount,
+            'units' : units
+        })
+        harvest.store()
+        return{
+            'id' : harvest_id,
+            'poly_id' : poly_id,
+            'date' : date,
+            'amount' : amount,
+            'units' : units
+        }
+
+    def get_harvest(self,poly_id,harvest_id):
+        harvest = self.harvest_bucket.get(harves_id).data
+        if harvest is None:
+            return None
+        if (harvest['poly_id'] == poly_id): #check if it belongs to the right polygon
+            return{
+            'id' : harvest['id'],
+            'poly_id': harvest['poly_id'],
+            'date' : harvest['date'],
+            'units' : harvest['units']
+            }
+        else:
+            return None
+
+
+    def update_harvest(self,updateHarvest):
+        harvest = self.harvest_bucket.get(updateHarvest['id'])
+        if harvest.data:
+            harvest.data['date'] = updateHarvest['date']
+            harvest.data['units'] = updateHarvest['units']
+            if harvest.data['poly_id'] != updateHarvest['poly_id']:
+                raise Exception("Can't update a harvest for a different polygon")
+            harvest.store()
+    def delete_harvest(self,harvest_id):
+        harvest = self.harvest_bucket.get(harvest_id)
+        if harvest.data:
+            harvest.delete()
+            return("Deleted")
+
+
+    def create_task(self,poly_id,name,date):
+        keys = self.task_bucket.get_keys()
+        mx = max([int(k) for k in keys] + [0])
+        task_id = str(mx+1)
+        task = self.task_bucket.new(task_id, data ={
+            'id' : task_id,
+            'poly_id' : poly_id,
+            'name' : name,
+            'date' : date
+        })
+        task.store()
+        return{
+            'id' : task_id,
+            'poly_id' : poly_id,
+            'name' : name,
+            'date' : date
+        }
+    def get_task(self,poly_id,task_id):
+        task = self.task_bucket.get(task_id).data
+        if(task is None):
+            return None
+        if(task['poly_id'] == poly_id): #check if it belongs to the right polygons
+            return{
+            'id' : task_id,
+            'poly_id' : poly_id,
+            'name' : name,
+            'date' : date
+            }
+        else:
+            return None
+
+    def update_task(self, updateTask):
+        task = self.task_bucket.get(updateTask['id'])
+        if task.data:
+            task.data['name'] = updateTask['name']
+            task.data['date'] = updateTask['date']
+            if task.data['poly_id'] != updateTask['poly_id']:
+                raise Exception("Can't update a aharvest for a different polygon")
+            task.store()
+
+    def delete_task(self,task_id):
+        task = self.task_bucket.get(task_id)
+        if task.data:
+            task.delete()
+            return("Deleted")
 
     def create_poly_type(self, name, is_container, harvest, subtype):
         ptype = self.poly_type_bucket.new(name, data={
