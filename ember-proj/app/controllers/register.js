@@ -1,7 +1,7 @@
 import Controller from '@ember/controller';
+import $ from 'jquery';
 
 export default Controller.extend({
-  //todo: Add attributes to indicate potential errors and display on register page
   actions: {
     register() {
       const user = this.get('store').createRecord('user', {
@@ -14,7 +14,8 @@ export default Controller.extend({
       user.save().then(() => {
         this.transitionToRoute('login')},
         (response) => {
-        console.log(response.errors[0].title)
+          $('#errors').text(response.errors[0].title)
+          $('#errors').show()
       })
     }
   }
