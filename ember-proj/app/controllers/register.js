@@ -1,6 +1,7 @@
 import Controller from '@ember/controller';
 
 export default Controller.extend({
+  //todo: Add attributes to indicate potential errors and display on register page
   actions: {
     register() {
       const user = this.get('store').createRecord('user', {
@@ -10,7 +11,11 @@ export default Controller.extend({
         address: this.get("address"),
         polygons: []
       });
-      user.save()
+      user.save().then(() => {
+        this.transitionToRoute('login')},
+        () => {
+        console.log("error")
+      })
     }
   }
 });
