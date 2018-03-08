@@ -13,8 +13,8 @@ export default Controller.extend({
       });
       user.save().then(() => {
         this.transitionToRoute('login')},
-        () => {
-        console.log("error")
+        (response) => {
+        console.log(response.errors[0].title)
       })
     }
   }
