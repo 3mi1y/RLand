@@ -144,8 +144,8 @@ class RiakDb:
         if poly.data:
             poly.data['name'] = updatePoly['name']
             poly.data['location'] = updatePoly['location']
-            poly.data['start_date'] = updatePoly['start_date']
-            poly.data['end_date'] = updatePoly['end_date']
+            poly.data['start_date'] = updatePoly['start_date'] and str(updatePoly['start_date'])
+            poly.data['end_date'] = updatePoly['end_date'] and str(updatePoly['end_date'])
             poly.data['type'] = updatePoly['type']
             poly.data['children'] = updatePoly['children']
             if poly.data['user'] != updatePoly['user']:
