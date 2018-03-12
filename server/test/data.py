@@ -35,12 +35,13 @@ class TestDbPolygons(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
         self.db.create_user(U_EMAIL, U_NAME, U_PASS, U_ADDR)
-        p = self.db.create_polygon("Nevada", "Area 51", U_EMAIL, date.today(), ['type1'])
+        p = self.db.create_polygon("Nevada", "Area 51", U_EMAIL, date.today(), None, ['type1', 'typeB'])
         self.poly_id = p['id']
 
     def test_get_own_polygon(self):
-        name = self.db.get_polygon(self.poly_id, U_EMAIL)['name']
-        self.assertEqual(name, "Area 51")
+        poly = self.db.get_polygon(self.poly_id, U_EMAIL)
+        self.assertEqual(poly['name'], "Area 51")
+        self.assertEqual(poly['type'], ['type1', 'typeB'])
 
     def test_polygon_start_date_as_datetime(self):
         dt = self.db.get_polygon(self.poly_id, U_EMAIL)['start_date']

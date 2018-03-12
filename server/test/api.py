@@ -141,8 +141,8 @@ class TestUsers(AuthenticatedServerTest):
 class TestPolygons(AuthenticatedServerTest):
     def setUp(self):
         super().setUp()
-        p1 = self.db.create_polygon("loc1", "name1", TEST_EMAIL, date.today(), ["Plant", "Vegetable"])
-        p2 = self.db.create_polygon("loc2", "name2", "other_user", date.today(), ["Structure", "Barn"])
+        p1 = self.db.create_polygon("loc1", "name1", TEST_EMAIL, date.today(), None, ["Plant", "Vegetable"])
+        p2 = self.db.create_polygon("loc2", "name2", "other_user", date.today(), None, ["Structure", "Barn"])
         self.id_p1 = p1["id"]
         self.id_p2 = p2["id"]
 
@@ -185,6 +185,7 @@ class TestPolygons(AuthenticatedServerTest):
             "name": "created",
             "location": "loc3",
             "start_date": str(date.today()),
+            "end_date": None,
             "type": ["Animal", "Chicken"],
         }}})
         response = self.fetch("/api/polygons", method="POST",
@@ -197,6 +198,7 @@ class TestPolygons(AuthenticatedServerTest):
                               headers=dict(cookie=self.cookie))
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "created")
+        self.assertEqual(resp["data"]["attributes"]["end_date"], None)
         self.assertEqual(resp["data"]["attributes"]["type"], ["Animal", "Chicken"])
 
         response = self.fetch("/api/polygons/" + poly_id, method="DELETE",

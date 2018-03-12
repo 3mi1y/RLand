@@ -88,20 +88,20 @@ class RiakDb:
     # Creates a polygon with the specified location, name, owning
     # user, start date, and type. An ID is automatically assigned.
     # The created polygon is returned as in get_polygon()
-    def create_polygon(self, location, name, uEmail, start_date, ptype):
+    def create_polygon(self, location, name, uEmail, start_date, end_date, ptype):
         # TODO: this is really a hack
         keys = self.poly_bucket.get_keys()
         mx = max([int(k) for k in keys] + [0])
         poly_id = str(mx+1)
 
-        # TODO: make sure start_date is actually a date
+        # TODO: make sure start_date and end_date are actually dates
         poly = self.poly_bucket.new(poly_id, data={
             'id': poly_id,
             'location': location,
             'name': name,
             'user': uEmail,
-            'start_date': str(start_date),
-            'end_date': None,
+            'start_date': start_date and str(start_date),
+            'end_date': end_date and str(end_date),
             'type': ptype,
             'children': [],
         })
@@ -112,7 +112,7 @@ class RiakDb:
             'name': name,
             'user': uEmail,
             'start_date': start_date,
-            'end_date': None,
+            'end_date': end_date,
             'type': ptype,
             'children': [],
         }
