@@ -186,7 +186,7 @@ class TestPolygons(AuthenticatedServerTest):
             "location": "loc3",
             "start-date": str(date.today()),
             "end-date": None,
-            "type": ["Animal", "Chicken"],
+            "poly-type": ["Animal", "Chicken"],
         }}})
         response = self.fetch("/api/polygons", method="POST",
                               headers=dict(cookie=self.cookie), body=body)
@@ -199,7 +199,7 @@ class TestPolygons(AuthenticatedServerTest):
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "created")
         self.assertEqual(resp["data"]["attributes"]["end-date"], None)
-        self.assertEqual(resp["data"]["attributes"]["type"], ["Animal", "Chicken"])
+        self.assertEqual(resp["data"]["attributes"]["poly-type"], ["Animal", "Chicken"])
 
         response = self.fetch("/api/polygons/" + poly_id, method="DELETE",
                               headers=dict(cookie=self.cookie))
