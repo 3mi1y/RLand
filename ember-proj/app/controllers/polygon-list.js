@@ -6,6 +6,7 @@ export default Controller.extend({
          this.get('store').findAll('polygon').then(function(polygons) {
              polygons.forEach(function(p) {
              console.log(p.id);
+	     console.log(p.type);
          });
        })
      },
