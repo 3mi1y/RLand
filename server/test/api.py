@@ -160,13 +160,13 @@ class TestPolygons(AuthenticatedServerTest):
     def test_update_own_polygon(self):
         body = json.dumps({"data": {
             "id": self.id_p1,
-            "attributes": {"name": "updated_name", "end_date": "2017-03-05" }
+            "attributes": {"name": "updated_name", "end-date": "2017-03-05" }
         }})
         response = self.fetch("/api/polygons/" + self.id_p1, method="PATCH",
                               headers=dict(cookie=self.cookie), body=body)
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "updated_name")
-        self.assertEqual(resp["data"]["attributes"]["end_date"], "2017-03-05")
+        self.assertEqual(resp["data"]["attributes"]["end-date"], "2017-03-05")
 
         response = self.fetch("/api/polygons/" + self.id_p1,
                               headers=dict(cookie=self.cookie))
@@ -184,8 +184,8 @@ class TestPolygons(AuthenticatedServerTest):
         body = json.dumps({"data": {"attributes": {
             "name": "created",
             "location": "loc3",
-            "start_date": str(date.today()),
-            "end_date": None,
+            "start-date": str(date.today()),
+            "end-date": None,
             "type": ["Animal", "Chicken"],
         }}})
         response = self.fetch("/api/polygons", method="POST",
@@ -198,7 +198,7 @@ class TestPolygons(AuthenticatedServerTest):
                               headers=dict(cookie=self.cookie))
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "created")
-        self.assertEqual(resp["data"]["attributes"]["end_date"], None)
+        self.assertEqual(resp["data"]["attributes"]["end-date"], None)
         self.assertEqual(resp["data"]["attributes"]["type"], ["Animal", "Chicken"])
 
         response = self.fetch("/api/polygons/" + poly_id, method="DELETE",

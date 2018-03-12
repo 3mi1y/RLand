@@ -148,8 +148,8 @@ def jsonify_poly(poly_id, poly):
         "attributes": {
             "name": poly["name"],
             "location": poly["location"],
-            "start_date": poly["start_date"] and str(poly["start_date"]),
-            "end_date": poly["end_date"] and str(poly["end_date"]),
+            "start-date": poly["start_date"] and str(poly["start_date"]),
+            "end-date": poly["end_date"] and str(poly["end_date"]),
             "type": poly["type"],
         }
     }
@@ -177,7 +177,7 @@ class PolyCollectionHandler(BaseHandler):
         user = db.get_user(self.current_user)
         bodyJSON = tornado.escape.json_decode(self.request.body)
         attr = bodyJSON['data']['attributes']
-        poly = db.create_polygon(attr['location'], attr['name'], self.current_user, attr['start_date'], attr['end_date'], attr['type'])
+        poly = db.create_polygon(attr['location'], attr['name'], self.current_user, attr['start-date'], attr['end-date'], attr['type'])
         user['polygon_ids'] += [ poly['id'] ]
         db.update_user(user)
         self.write({"data": jsonify_poly(poly['id'], poly)})
@@ -207,9 +207,9 @@ class PolyHandler(BaseHandler):
                 # TODO: verify user owns polygon
                 bodyJSON = tornado.escape.json_decode(self.request.body)
                 attrs = bodyJSON['data']['attributes']
-                for attr_name in ['location', 'name', 'start_date', 'end_date', 'type']:
+                for attr_name in ['location', 'name', 'start-date', 'end-date', 'type']:
                     if attr_name in attrs:
-                        poly[attr_name] = attrs[attr_name]
+                        poly[attr_name.replace("-", "_")] = attrs[attr_name]
                 db.update_polygon(poly)
                 self.write({"data": jsonify_poly(poly['id'], poly)})
             else:
