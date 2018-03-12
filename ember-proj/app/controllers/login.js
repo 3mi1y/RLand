@@ -18,7 +18,7 @@ export default Controller.extend({
         password: this.get("password")
       }).then(function () {
           this.set("isProcessing", false);
-          transitionToRoute('dashboard');
+          this.transitionToRoute('dashboard');
         }.bind(this),
 
         function () {

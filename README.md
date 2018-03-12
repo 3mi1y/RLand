@@ -11,7 +11,7 @@ Riak provides [installation instructions](http://docs.basho.com/riak/kv/2.2.3/se
 for several operating systems, including several Ubuntu LTS releases and
 RHEL/CentOS. Building from source is time-consuming and prone to failure, as
 Riak uses an old version of Erland with custom patches. Installing from
-a third-party repository is recommended.
+a third-party repository or running via docker is recommended.
 
 ### Ember.js
 Ember.js requires at least version 4.5 of node.js, which is not in

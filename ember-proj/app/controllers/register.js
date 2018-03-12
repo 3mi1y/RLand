@@ -1,4 +1,5 @@
 import Controller from '@ember/controller';
+import $ from 'jquery';
 
 export default Controller.extend({
   actions: {
@@ -10,7 +11,12 @@ export default Controller.extend({
         address: this.get("address"),
         polygons: []
       });
-      user.save()
+      user.save().then(() => {
+        this.transitionToRoute('login')},
+        (response) => {
+          $('#errors').text(response.errors[0].title)
+          $('#errors').show()
+      })
     }
   }
 });
