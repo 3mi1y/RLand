@@ -57,12 +57,12 @@ export default Controller.extend({
               ]},
            ]},
            { name: 'Garden Patch/Area (NOT raised beds)', leaves: [
-              { name: 'Vegetable &amp Fruit Garden (single crop)', leaves: [
+              { name: 'Vegetable & Fruit Garden (single crop)', leaves: [
                  { name: 'all possible veggie/fruit options', leaves: [
                     { name: 'veggie/fruit species' }
                  ]}
               ]},
-              { name: 'Vegetable &amp Fruit Garden (multiple nested crops)', leaves: [
+              { name: 'Vegetable & Fruit Garden (multiple nested crops)', leaves: [
                  { name: 'all possible fruit/vegie options', leaves: [
                     { name: 'species' }
                  ]}
@@ -84,11 +84,11 @@ export default Controller.extend({
   levelThree: ['*'],
   levelFour: ['*'],
   levelFive: ['*'],
-  selectedOptionOne: '*default level 1',
-  selectedOptionTwo: '*default level 2',
-  selectedOptionThree: '*default level 3',
-  selectedOptionFour: '*default level 4',
-  selectedOptionFive: '*default level 5',
+  selectedOptionOne: 'default',
+  selectedOptionTwo: '(must specify level one)',
+  selectedOptionThree: '(must specify level two)',
+  selectedOptionFour: '(must specify level three)',
+  selectedOptionFive: '(must specify level four)',
   actions: {
    createPolygon() {
       let polygon = this.get('store').createRecord('polygon', { 'name': this.get("name"), 'location': this.get("location")});
@@ -156,6 +156,15 @@ export default Controller.extend({
     },
     setLevelFiveSelection(selectedOption) {
        this.set('selectedOptionFive', selectedOption)
+    },
+    getPolygonType() {
+       const polygonTypeArray = []
+       polygonTypeArray.push(this.selectedOptionOne)
+       polygonTypeArray.push(this.selectedOptionTwo)
+       polygonTypeArray.push(this.selectedOptionThree)
+       polygonTypeArray.push(this.selectedOptionFour)
+       polygonTypeArray.push(this.selectedOptionFive)
+       return polygonTypeArray
     }
   }
 });
