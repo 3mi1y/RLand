@@ -91,7 +91,7 @@ export default Controller.extend({
   selectedOptionFive: '(must specify level four)',
   actions: {
    createPolygon() {
-      let polygon = this.get('store').createRecord('polygon', { 'name': this.get("name"), 'polyType: getPolygonType(), 'location': this.get("location"), tasks: [], 'startDate': this.get("startDate"), 'endDate': this.get("endDate")};
+      let polygon = this.get('store').createRecord('polygon', { 'name': this.get("name"), 'polyType': this.actions.getPolygonType(), 'location': this.get("location"), tasks: [], 'startDate': this.get("startDate"), 'endDate': this.get("endDate")});
       polygon.save();
     },
     updateLevelTwo(selectedOption) {
