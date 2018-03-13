@@ -42,6 +42,23 @@
        {{level3}}
    {{/power-select}}
    <br> 
+   {{#power-select
+      options=levelFour
+      selected=selectedOptionFour
+      onchange=(action "updateLevelFive")
+      as |level4|
+   }}
+      {{level4}}
+   {{/power-select}}
+   <br>
+   {{#power-select
+     options=levelFive
+     selected=selectedOptionFive
+     onchange=(action "setLevelFiveSelection")
+     as |level5|
+   }}
+      {{level5}}
+   {{/power-select}}
    <button type="submit">Submit</button>
 </form>
 

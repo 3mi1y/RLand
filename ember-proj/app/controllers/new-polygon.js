@@ -1,64 +1,85 @@
 import Controller from '@ember/controller';
 export default Controller.extend({
   Hierarchy: [
-     { name: 'Garden', leaves: [
-           { name: 'Raised Bed', leaves: [
-              { name: 'Vegetable', leaves: [
-                 { name: 'Root Vegetable', leaves: [
-                    { name: 'Potato' }
+     { name: 'Structure/Equiptment/Other', leaves: [
+           { name: 'Structure', leaves: [
+              { name: 'House', leaves: [
+                 { name: '*', leaves: [
+                    { name: '*' }
                  ]}
               ]},
-              { name: 'Fruit', leaves: [
-                 { name: 'Tiny fruits', leaves: [
-                   { name: 'Grapes' }
+              { name: 'Barn (as is)', leaves: [
+                 { name: '*', leaves: [
+                   { name: '*' }
                  ]}
               ]},
+              { name: 'Barn (with nested entities)', leaves: [
+                 { name: '*', leaves: [
+                   { name: '*' }
+                 ]}
+              ]},
+              { name: 'Garage (as is)', leaves: [
+                 { name: '*', leaves: [
+                   { name: '*' }
+                 ]}
+              ]}
            ]},
-           { name: 'Potted Plant', leaves: [
-              { name: 'Fruit', leaves: [
-                 { name: 'somehting else here...', leaves: [
-                    { name: 'Tomatoe' }
+           { name: 'Equiptment', leaves: [
+              { name: 'Vehicle', leaves: [
+                 { name: '*', leaves: [
+                    { name: '*' }
                  ]}
               ]},
-              { name: 'Vine', leaves: [
-                 { name: 'vine one', leaves: [
-                   { name: 'some stuff' }
+              { name: 'Tractor', leaves: [
+                 { name: '*', leaves: [
+                   { name: '*' }
                  ]}
               ]},
            ]}
         ]
      },
-     { name: 'Structure', leaves: [
-           { name: 'tractor', leaves: [
-              { name: 'tractor 1', leaves: [
-                 { name: 'tractor 1 level 4', leaves: [
-                    { name: 'tractor 1 level 5' }
+     { name: 'Plant', leaves: [
+           { name: 'Beds (raised beds)', leaves: [
+              { name: 'Vegetable &amp Fruit Garden (single crop)', leaves: [
+                 { name: 'all possible veggie/fruit options', leaves: [
+                    { name: 'veggie/fruit species' }
                  ]}
               ]},
-              { name: 'tractor 2', leaves: [
-                 { name: 'tractor 2 level 4', leaves: [
-                   { name: 'tractor 2 level 5' }
+              { name: 'Vegetable &amp Fruit Garden (multiple nested crops)', leaves: [
+                 { name: 'all possible fruit/vegie options', leaves: [
+                    { name: 'species' }
+                 ]}
+              ]},
+              { name: 'Ornamental Garden (single crop)', leaves: [
+                 { name: 'all possible ornamental options', leaves: [
+                    { name: 'ornamental plants specific species names' }
                  ]}
               ]},
            ]},
-           { name: 'house', leaves: [
-              { name: 'house 1', leaves: [
-                 { name: 'house 1 level 4', leaves: [
-                    { name: 'house 1 level 5' }
+           { name: 'Garden Patch/Area (NOT raised beds)', leaves: [
+              { name: 'Vegetable &amp Fruit Garden (single crop)', leaves: [
+                 { name: 'all possible veggie/fruit options', leaves: [
+                    { name: 'veggie/fruit species' }
                  ]}
               ]},
-              { name: 'house 2', leaves: [
-                 { name: 'house 2 level 4', leaves: [
-                   { name: 'house 2 level 5' }
+              { name: 'Vegetable &amp Fruit Garden (multiple nested crops)', leaves: [
+                 { name: 'all possible fruit/vegie options', leaves: [
+                    { name: 'species' }
                  ]}
               ]},
+              { name: 'Ornamental Garden (single crop)', leaves: [
+                 { name: 'all possible ornamental options', leaves: [
+                    { name: 'ornamental plants specific species names' }
+                 ]}
+              ]},
+
            ]}
         ]
      },
 
 
   ],
-  levelOne: ['Garden', 'Structure'],
+  levelOne: ['Plant', 'Structure/Equiptment/Other'],
   levelTwo: ['*'],
   levelThree: ['*'],
   levelFour: ['*'],
@@ -81,6 +102,7 @@ export default Controller.extend({
       })[0].map(item => {
         return item.name
       })
+      //console.log(myArr)
       this.set('selectedOptionOne', selectedOption)
       this.set('levelTwo', myArr)
       return myArr
@@ -104,16 +126,36 @@ export default Controller.extend({
        }).map(item => {
           return item.leaves
        })[0].filter(item => {
-          return item.name === selectedOptionTwo
+          return item.name === this.selectedOptionTwo
        })[0].leaves.filter(item => {
           return item.name === selectedOption
-       }).leaves.map(item => {
+       })[0].leaves.map(item => {
           return item.name
        })
+
        this.set('selectedOptionThree', selectedOption)
        this.set('levelFour', levFour)
-       console.log(this.selectedOptionThree)
-       console.log(this.levelFour)
+    },
+    updateLevelFive(selectedOption) {
+       let levFive = this.Hierarchy.filter(item => {
+          return item.name === this.selectedOptionOne
+       }).map(item => {
+          return item.leaves
+       })[0].filter(item => {
+          return item.name === this.selectedOptionTwo
+       })[0].leaves.filter(item => {
+          return item.name === this.selectedOptionThree
+       })[0].leaves.filter(item => {
+          return item.name === selectedOption
+       })[0].leaves.map(item => {
+          return item.name
+       })
+
+       this.set('levelFive', levFive)
+       this.set('selectedOptionFour', selectedOption)
+    },
+    setLevelFiveSelection(selectedOption) {
+       this.set('selectedOptionFive', selectedOption)
     }
   }
 });
