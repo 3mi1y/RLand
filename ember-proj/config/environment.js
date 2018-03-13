@@ -24,10 +24,16 @@ module.exports = function(environment) {
   };
 
   ENV.contentSecurityPolicy = {
-    'connect-src': "'self' http://localhost:8000"
+    'default-src': "'none'",
+    'script-src': "'self' 'unsafe-eval' *.googleapis.com maps.gstatic.com",
+    'font-src': "'self' fonts.gstatic.com",
+    'connect-src': "'self' maps.gstatic.com",
+    'img-src': "'self' *.googleapis.com maps.gstatic.com csi.gstatic.com",
+    'style-src': "'self' 'unsafe-inline fonts.googleapis.com maps.gstatic.com"
   };
 
   if (environment === 'development') {
+    ENV.GOOGLE_MAPS_API_KEY = "AIzaSyCLY83JWDZ0glsYBfk3mFPY8aD32AzuNdE";
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;
@@ -45,9 +51,11 @@ module.exports = function(environment) {
 
     ENV.APP.rootElement = '#ember-testing';
     ENV.APP.autoboot = false;
+    ENV.GOOGLE_MAPS_API_KEY = "AIzaSyCLY83JWDZ0glsYBfk3mFPY8aD32AzuNdE";
   }
 
   if (environment === 'production') {
+    ENV.GOOGLE_MAPS_API_KEY = "AIzaSyCLY83JWDZ0glsYBfk3mFPY8aD32AzuNdE";
     // here you can enable a production-specific feature
   }
 
