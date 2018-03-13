@@ -1,3 +1,4 @@
+from datetime import date
 import json
 from tornado.testing import AsyncHTTPTestCase
 
@@ -140,8 +141,8 @@ class TestUsers(AuthenticatedServerTest):
 class TestPolygons(AuthenticatedServerTest):
     def setUp(self):
         super().setUp()
-        p1 = self.db.create_polygon("loc1", "name1", TEST_EMAIL)
-        p2 = self.db.create_polygon("loc2", "name2", "other_user")
+        p1 = self.db.create_polygon("loc1", "name1", TEST_EMAIL, date.today(), None, ["Plant", "Vegetable"])
+        p2 = self.db.create_polygon("loc2", "name2", "other_user", date.today(), None, ["Structure", "Barn"])
         self.id_p1 = p1["id"]
         self.id_p2 = p2["id"]
 
@@ -159,12 +160,13 @@ class TestPolygons(AuthenticatedServerTest):
     def test_update_own_polygon(self):
         body = json.dumps({"data": {
             "id": self.id_p1,
-            "attributes": {"name": "updated_name"}
+            "attributes": {"name": "updated_name", "end-date": "2017-03-05" }
         }})
         response = self.fetch("/api/polygons/" + self.id_p1, method="PATCH",
                               headers=dict(cookie=self.cookie), body=body)
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "updated_name")
+        self.assertEqual(resp["data"]["attributes"]["end-date"], "2017-03-05")
 
         response = self.fetch("/api/polygons/" + self.id_p1,
                               headers=dict(cookie=self.cookie))
@@ -181,7 +183,10 @@ class TestPolygons(AuthenticatedServerTest):
     def test_create_get_delete_polygon(self):
         body = json.dumps({"data": {"attributes": {
             "name": "created",
-            "location": "loc3"
+            "location": "loc3",
+            "start-date": str(date.today()),
+            "end-date": None,
+            "poly-type": ["Animal", "Chicken"],
         }}})
         response = self.fetch("/api/polygons", method="POST",
                               headers=dict(cookie=self.cookie), body=body)
@@ -193,6 +198,8 @@ class TestPolygons(AuthenticatedServerTest):
                               headers=dict(cookie=self.cookie))
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "created")
+        self.assertEqual(resp["data"]["attributes"]["end-date"], None)
+        self.assertEqual(resp["data"]["attributes"]["poly-type"], ["Animal", "Chicken"])
 
         response = self.fetch("/api/polygons/" + poly_id, method="DELETE",
                               headers=dict(cookie=self.cookie))

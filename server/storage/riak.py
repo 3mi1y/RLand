@@ -1,3 +1,4 @@
+from datetime import datetime
 import riak
 import storage.security as security
 
@@ -84,27 +85,36 @@ class RiakDb:
         if user.data:
             user.delete()
 
-    # Creates a polygon with the specified location, name, and owning
-    # user. An ID is automatically assigned. The created polygon is
-    # returned as in get_polygon()
-    def create_polygon(self, location, name, uEmail):
+    # Creates a polygon with the specified location, name, owning
+    # user, start date, and type. An ID is automatically assigned.
+    # The created polygon is returned as in get_polygon()
+    def create_polygon(self, location, name, uEmail, start_date, end_date, ptype):
         # TODO: this is really a hack
         keys = self.poly_bucket.get_keys()
         mx = max([int(k) for k in keys] + [0])
         poly_id = str(mx+1)
 
+        # TODO: make sure start_date and end_date are actually dates
         poly = self.poly_bucket.new(poly_id, data={
             'id': poly_id,
             'location': location,
             'name': name,
-            'user': uEmail
+            'user': uEmail,
+            'start_date': start_date and str(start_date),
+            'end_date': end_date and str(end_date),
+            'type': ptype,
+            'children': [],
         })
         poly.store()
         return {
             'id': poly_id,
             'location': location,
             'name': name,
-            'user': uEmail
+            'user': uEmail,
+            'start_date': start_date,
+            'end_date': end_date,
+            'type': ptype,
+            'children': [],
         }
 
     # Retrieves a polygon by id and owner. If the owner does not match,
@@ -118,7 +128,11 @@ class RiakDb:
                 'id': poly['id'],
                 'location': poly['location'],
                 'name': poly['name'],
-                'user': poly['user']
+                'user': poly['user'],
+                'start_date': poly['start_date'] and datetime.strptime(poly['start_date'], "%Y-%m-%d").date(),
+                'end_date': poly['end_date'] and datetime.strptime(poly['end_date'], "%Y-%m-%d").date(),
+                'type': poly['type'],
+                'children': poly['children'],
             }
         else:
             return None
@@ -130,6 +144,10 @@ class RiakDb:
         if poly.data:
             poly.data['name'] = updatePoly['name']
             poly.data['location'] = updatePoly['location']
+            poly.data['start_date'] = updatePoly['start_date'] and str(updatePoly['start_date'])
+            poly.data['end_date'] = updatePoly['end_date'] and str(updatePoly['end_date'])
+            poly.data['type'] = updatePoly['type']
+            poly.data['children'] = updatePoly['children']
             if poly.data['user'] != updatePoly['user']:
                 # TODO: decide on exception handling policy
                 raise Exception("Can't change the user a polygon belongs to!")
