@@ -2,10 +2,19 @@
 <h1>Edit Polygon:</h1>
 
 <form {{action "submitChangedPolygon" model.id on="submit"}}>
+
    <label>Please enter a location of your polygon</label>
    <p>{{input value=location placeholder=model.location type="text"}}</p>
+   
    <label>Please enter the name of the polygon</label>
    <p>{{input value=name placeholder=model.name type="text"}}</p>
+   
+   <label>Select a new start date for this polygon:</label>
+   {{md-input type="date" value=startDate}}   
+   
+   <label>Select a new end-date for this polygon:</label>
+   {{md-input type="date" value=endDate}}
+
    <button type="submit">Submit</button>
 </form>
 
