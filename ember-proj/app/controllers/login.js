@@ -18,11 +18,15 @@ export default Controller.extend({
         password: this.get("password")
       }).then(function () {
           this.set("isProcessing", false);
-          this.transitionToRoute('dashboard');
+          user.save().then(() => {
+              this.transitionToRoute('dashboard')},
+            (response) => {
+              $('#errors').text(response.errors[0].title);-
+              $('#errors').show();
+            })
         }.bind(this),
 
         function () {
-          console.log(arguments);
           this.set("isProcessing", false);
           this.set("loginFailed", true);
         }.bind(this));

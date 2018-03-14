@@ -12,10 +12,12 @@ export default Controller.extend({
         polygons: []
       });
       user.save().then(() => {
-        this.transitionToRoute('login')},
+          this.get('store').unloadAll();
+          this.transitionToRoute('login')
+        },
         (response) => {
-          $('#errors').text(response.errors[0].title)
-          $('#errors').show()
+          $('#errors').text(response.errors[0].title);
+          $('#errors').show();
       })
     }
   }
