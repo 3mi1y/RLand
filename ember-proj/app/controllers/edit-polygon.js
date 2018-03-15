@@ -3,12 +3,17 @@ import Controller from '@ember/controller';
 export default Controller.extend({
    actions: {
       submitChangedPolygon (id) {
-         let location = this.get('location')
-         let name = this.get('name')
+         let loc = this.get('location');
+         let name = this.get('name');
+         let startDate = this.get('startDate');
+         let endDate = this.get('endDate');
+
          this.store.findRecord('polygon', id).then((changedPolygon) => {
-            changedPolygon.set('name', name)
-            changedPolygon.set('location', location)
-            changedPolygon.save()
+	    if (name) { changedPolygon.set('name', name); }
+	    if (loc) { changedPolygon.set('location', loc); }
+	    if (startDate) { changedPolygon.set('startDate', startDate); }
+	    if (endDate) { changedPolygon.set('endDate', endDate); }
+            changedPolygon.save();
          }).then(
             this.transitionToRoute('polygon-list')
          )
