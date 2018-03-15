@@ -18,7 +18,8 @@ export default Controller.extend({
         password: this.get("password")
       }).then(function () {
           this.set("isProcessing", false);
-          user.save().then(() => {
+          
+          this.get('store').findRecord('user', this.get('email')).then(() => {
               this.transitionToRoute('dashboard')},
             (response) => {
               $('#errors').text(response.errors[0].title);-
