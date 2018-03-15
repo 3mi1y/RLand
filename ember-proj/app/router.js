@@ -17,6 +17,8 @@ Router.map(function() {
   this.route('edit-polygon', { path: '/edit-polygon/:polygon_id' });
   this.route('polygon-info', { path: '/polygon-info/:polygon_id' });
   this.route('register');
+  this.route('social');
+  this.route('charts');
 });
 
 export default Router;
