@@ -306,29 +306,29 @@ class RiakDb:
             task.delete()
             return("Deleted")
 
-    def create_poly_type(self, name, is_container, harvest, subtype):
+    def create_poly_type(self, name, is_container, harvest, children):
         ptype = self.poly_type_bucket.new(name, data={
             'name': name,
             'is_container': is_container,
             'harvest': harvest,
-            'subtype': subtype,
+            'children': children,
         })
         ptype.store()
-        return {'name': name, 'is_container': is_container, 'harvest': harvest, 'subtype': subtype}
+        return {'name': name, 'is_container': is_container, 'harvest': harvest, 'children': children}
 
     def get_poly_type(self, name):
         ptype = self.poly_type_bucket.get(name).data
         if ptype is None:
             return None
         else:
-            return {'name': ptype['name'], 'is_container': ptype['is_container'], 'harvest': ptype['harvest'], 'subtype': ptype['subtype']}
+            return {'name': ptype['name'], 'is_container': ptype['is_container'], 'harvest': ptype['harvest'], 'children': ptype['children']}
 
     def update_poly_type(self, update_ptype):
         ptype = self.poly_type_bucket.get(update_ptype['name'])
         if ptype.data:
             ptype.data['is_container'] = update_ptype['is_container']
             ptype.data['harvest'] = update_ptype['harvest']
-            ptype.data['subtype'] = update_ptype['subtype']
+            ptype.data['children'] = update_ptype['children']
             ptype.store()
 
     def delete_poly_type(self, name):

@@ -245,7 +245,7 @@ def jsonify_poly_type(ptype):
         "attributes": {
             "is_container": ptype["is_container"],
             "harvest": ptype["harvest"],
-            "subtype": ptype["subtype"],
+            "children": ptype["children"],
         }
     }
 
@@ -262,7 +262,7 @@ class PolyTypeCollectionHandler(BaseHandler):
         bodyJSON = tornado.escape.json_decode(self.request.body)
         name = bodyJSON['data']['id']
         attr = bodyJSON['data']['attributes']
-        ptype = db.create_poly_type(name, attr['is_container'], attr['harvest'], attr['subtype'])
+        ptype = db.create_poly_type(name, attr['is_container'], attr['harvest'], attr['children'])
         self.write({"data": jsonify_poly_type(ptype)})
 
 class PolyTypeHandler(BaseHandler):
@@ -284,7 +284,7 @@ class PolyTypeHandler(BaseHandler):
             # TODO: verify user is allowed to write polygon types
             bodyJSON = tornado.escape.json_decode(self.request.body)
             attrs = bodyJSON['data']['attributes']
-            for attr_name in ['is_container', 'harvest', 'subtype']:
+            for attr_name in ['is_container', 'harvest', 'children']:
                 if attr_name in attrs:
                     ptype[attr_name] = attrs[attr_name]
             db.update_poly_type(ptype)
@@ -311,7 +311,7 @@ def jsonify_poly_type(ptype):
         "attributes": {
             "is_container": ptype["is_container"],
             "harvest": ptype["harvest"],
-            "subtype": ptype["subtype"],
+            "children": ptype["children"],
         }
     }
 
@@ -328,7 +328,7 @@ class PolyTypeCollectionHandler(BaseHandler):
         bodyJSON = tornado.escape.json_decode(self.request.body)
         name = bodyJSON['data']['id']
         attr = bodyJSON['data']['attributes']
-        ptype = db.create_poly_type(name, attr['is_container'], attr['harvest'], attr['subtype'])
+        ptype = db.create_poly_type(name, attr['is_container'], attr['harvest'], attr['children'])
         self.write({"data": jsonify_poly_type(ptype)})
 
 class PolyTypeHandler(BaseHandler):
@@ -350,7 +350,7 @@ class PolyTypeHandler(BaseHandler):
             # TODO: verify user is allowed to write polygon types
             bodyJSON = tornado.escape.json_decode(self.request.body)
             attrs = bodyJSON['data']['attributes']
-            for attr_name in ['is_container', 'harvest', 'subtype']:
+            for attr_name in ['is_container', 'harvest', 'children']:
                 if attr_name in attrs:
                     ptype[attr_name] = attrs[attr_name]
             db.update_poly_type(ptype)

@@ -61,11 +61,11 @@ class TestDbPolygons(unittest.TestCase):
 class TestDbPolygonTypes(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
-        self.db.create_poly_type("Test", False, None, "test subtype")
+        self.db.create_poly_type("Test", False, None, ["child1", "child2"])
 
     def test_get_poly_type(self):
-        self.assertEqual(self.db.get_poly_type("Test")['subtype'],
-                         "test subtype")
+        self.assertEqual(self.db.get_poly_type("Test")['children'][0],
+                         "child1")
 
     # TODO: test_get_deleted_poly_type
 
