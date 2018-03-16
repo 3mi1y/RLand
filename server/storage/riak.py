@@ -323,6 +323,14 @@ class RiakDb:
         else:
             return {'name': ptype['name'], 'is_container': ptype['is_container'], 'harvest': ptype['harvest'], 'children': ptype['children']}
 
+    def get_poly_types(self):
+        keys = self.poly_type_bucket.get_keys()
+        pts = []
+        for k in keys:
+            ptype = self.poly_type_bucket.get(k).data
+            pts += [{'name': ptype['name'], 'is_container': ptype['is_container'], 'harvest': ptype['harvest'], 'children': ptype['children']}]
+        return pts
+
     def update_poly_type(self, update_ptype):
         ptype = self.poly_type_bucket.get(update_ptype['name'])
         if ptype.data:
