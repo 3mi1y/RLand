@@ -245,25 +245,24 @@ class RiakDb:
             'units': units
         }
 
-    def get_harvest(self, poly_id, harvest_id):
+    def get_harvest(self, harvest_id):
         harvest = self.harvest_bucket.get(harvest_id).data
         if harvest is None:
             return None
-        # check if it belongs to the right polygon
-        if (harvest['poly_id'] == poly_id):
-            return {
-                'id': harvest['id'],
-                'poly_id': harvest['poly_id'],
-                'date': harvest['date'],
-                'units': harvest['units']
-            }
-        else:
-            return None
+
+        return {
+            'id': harvest['id'],
+            'poly_id': harvest['poly_id'],
+            'date': harvest['date'],
+            'amount': harvest['amount'],
+            'units': harvest['units']
+        }
 
     def update_harvest(self, updateHarvest):
         harvest = self.harvest_bucket.get(updateHarvest['id'])
         if harvest.data:
             harvest.data['date'] = updateHarvest['date']
+            harvest.data['amount'] = updateHarvest['amount']
             harvest.data['units'] = updateHarvest['units']
             if harvest.data['poly_id'] != updateHarvest['poly_id']:
                 raise Exception("Can't update a harvest for a different polygon")
@@ -293,20 +292,17 @@ class RiakDb:
             'date': date
         }
 
-    def get_task(self, poly_id, task_id):
+    def get_task(self, task_id):
         task = self.task_bucket.get(task_id).data
         if(task is None):
             return None
-        # check if it belongs to the right polygon
-        if(task['poly_id'] == poly_id):
-            return {
-                'id': task_id,
-                'poly_id': poly_id,
-                'name': task['name'],
-                'date': task['date']
-            }
-        else:
-            return None
+
+        return {
+            'id': task_id,
+            'poly_id': task['poly_id'],
+            'name': task['name'],
+            'date': task['date']
+        }
 
     def update_task(self, updateTask):
         task = self.task_bucket.get(updateTask['id'])
