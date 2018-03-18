@@ -1,11 +1,7 @@
 .map-components {
-
-}
-
-.rland-map {
   display: flex;
-  overflow: hidden;
   position: absolute;
+  overflow: hidden;
   top: 70px;
   bottom: 0;
   left: 0;
@@ -15,11 +11,20 @@
 .polygon-container {
   flex-grow: 1;
   order: 2;
+  overflow: scroll;
+  padding-right: 10px;
+  padding-left: 10px;
+  margin-right: 10px;
+}
+
+.rland-map {
+  order: 1;
+  flex-grow: 4;
 }
 
 .map-container {
-  order: 1;
-  flex-grow: 4;
+  height: 100%;
+  width: 100%;
 }
 
 .map {

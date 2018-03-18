@@ -31,8 +31,9 @@ export default Ember.Component.extend({
     this.send('polygonSelected', selected);
 
     if (selected)
-      this.$('.polygon-info').velocity({translateX: "-400px"}, {duration: 'fast'});
+      $('.poly-list').hide();
     else
+      $('.poly-list').show();
       this.$('.polygon-info').velocity({translateX: "0px"}, {duration: 'fast'});
   },
 
@@ -40,9 +41,8 @@ export default Ember.Component.extend({
     polygonSelected(polygon)
     {
       //todo: initiates request to save polygon, currently causes error
-      // this.get('polygonSelected')(polygon);
+      this.get('polygonSelected')(polygon);
     },
-
     // select_year(year)
     // {
     //   let maps = this.get('maps');
