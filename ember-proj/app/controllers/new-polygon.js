@@ -93,6 +93,7 @@ export default Controller.extend({
    createPolygon() {
       let polygon = this.get('store').createRecord('polygon', { 'name': this.get("name"), 'polyType': this.actions.getPolygonType.call(this), 'location': this.get("location"), tasks: [], 'startDate': this.get("startDate"), 'endDate': this.get("endDate")});
       polygon.save();
+      this.transitionToRoute('polygon-list')
     },
     updateLevelTwo(selectedOption) {
       let myArr = this.Hierarchy.filter(item => {
