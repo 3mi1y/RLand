@@ -258,6 +258,21 @@ class RiakDb:
             'units': harvest['units']
         }
 
+    def get_harvests(self, poly_ids):
+        harvest_ids = self.harvest_bucket.get_keys()
+        harvests = []
+        for hid in harvest_ids:
+            data = self.harvest_bucket.get(hid).data
+            if data and data['poly_id'] in poly_ids:
+                harvests += [{
+                    'id': data['id'],
+                    'poly_id': data['poly_id'],
+                    'date': data['date'],
+                    'amount': data['amount'],
+                    'units': data['units']
+                }]
+        return harvests
+
     def update_harvest(self, updateHarvest):
         harvest = self.harvest_bucket.get(updateHarvest['id'])
         if harvest.data:
@@ -303,6 +318,20 @@ class RiakDb:
             'name': task['name'],
             'date': task['date']
         }
+
+    def get_tasks(self, poly_ids):
+        task_ids = self.task_bucket.get_keys()
+        tasks = []
+        for tid in task_ids:
+            data = self.task_bucket.get(tid).data
+            if data and data['poly_id'] in poly_ids:
+                tasks += [{
+                    'id': data['id'],
+                    'poly_id': data['poly_id'],
+                    'name': data['name'],
+                    'date': data['date'],
+                }]
+        return tasks
 
     def update_task(self, updateTask):
         task = self.task_bucket.get(updateTask['id'])
