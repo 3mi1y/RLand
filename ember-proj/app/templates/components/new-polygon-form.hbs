@@ -1,0 +1,63 @@
+{{yield}}
+<h1>This form lets you insert a new polygon</h1>
+
+<form {{action "createPolygon" on="submit"}}>
+   <label>Please enter a location of your polygon</label>
+   <p>{{input value=location type="text"}}</p>
+
+   <label>Please enter the name of the polygon</label>
+   <p>{{input value=name type="text"}}</p>
+
+   <label>Select start date (default is today)</label>
+   {{md-input type="date" value=startDate}}
+
+   <label>Select end date (this is the date you will harvest/move this polygon</label>
+   {{md-input type="date" value=endDate}}
+
+   <label>Polygon Type (will this even change):</label>
+   {{#power-select
+      options=levelOne
+      selected=selectedOptionOne
+      onchange=(action "updateLevelTwo")
+      as |level|
+   }}
+     {{level}}
+   {{/power-select}}
+   <br>
+   {{#power-select
+      options=levelTwo
+      selected=selectedOptionTwo
+      onchange=(action "updateLevelThree")
+      as |num|
+   }}
+      {{num}}
+   {{/power-select}}
+   <br>
+   {{#power-select
+      options=levelThree
+      selected=selectedOptionThree
+      onchange=(action "updateLevelFour")
+      as |level3|
+   }}
+       {{level3}}
+   {{/power-select}}
+   <br>
+   {{#power-select
+      options=levelFour
+      selected=selectedOptionFour
+      onchange=(action "updateLevelFive")
+      as |level4|
+   }}
+      {{level4}}
+   {{/power-select}}
+   <br>
+   {{#power-select
+     options=levelFive
+     selected=selectedOptionFive
+     onchange=(action "setLevelFiveSelection")
+     as |level5|
+   }}
+      {{level5}}
+   {{/power-select}}
+   <button type="submit">Submit</button>
+</form>
