@@ -231,7 +231,7 @@ class RiakDb:
         }
 
     def get_harvest(self,poly_id,harvest_id):
-        harvest = self.harvest_bucket.get(harves_id).data
+        harvest = self.harvest_bucket.get(harvest_id).data
         if harvest is None:
             return None
         if (harvest['poly_id'] == poly_id): #check if it belongs to the right polygon
@@ -285,8 +285,8 @@ class RiakDb:
             return{
             'id' : task_id,
             'poly_id' : poly_id,
-            'name' : name,
-            'date' : date
+            'name' : task['name'],
+            'date' : task['date']
             }
         else:
             return None

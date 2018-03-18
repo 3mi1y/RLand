@@ -19,12 +19,10 @@ class TestDbUsers(unittest.TestCase):
         self.assertEqual(self.db.get_user(U_EMAIL)['name'], U_NAME)
 
     def test_check_correct_password(self):
-        pwhash = self.db.get_user(U_EMAIL)['password']
-        self.assertTrue(security.check_password(U_PASS, pwhash))
+        self.assertTrue(self.db.login(U_EMAIL, U_PASS))
 
     def test_check_incorrect_password(self):
-        pwhash = self.db.get_user(U_EMAIL)['password']
-        self.assertFalse(security.check_password("bad", pwhash))
+        self.assertFalse(self.db.login(U_EMAIL, "bad"))
 
     def test_delete_user(self):
         self.db.delete_user(U_EMAIL)
@@ -76,7 +74,8 @@ class TestDbPolygonTypes(unittest.TestCase):
     def tearDown(self):
         self.db.delete_polygon("Test")
 
-class TestDbPolygonTasks:
+
+class TestDbPolygonTasks(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
         task = self.db.create_task(1,"water tomatoes",str(date.today()))
@@ -87,16 +86,14 @@ class TestDbPolygonTasks:
     def test_get_other_task(self):
         self.assertIsNone(self.db.get_task(2,self.task_id))
     def test_delete_task(self):
-        self.db.delete_polygon(self.task_id)
+        self.db.delete_task(self.task_id)
         self.assertIsNone(self.db.get_task(1,self.task_id))
     def tearDown(self):
         self.db.delete_task(self.task_id)
 
 
-
-
-class TestDbPolygonNotes:
-    def setup(self):
+class TestDbPolygonNotes(unittest.TestCase):
+    def setUp(self):
         self.db = RiakDb()
         note = self.db.create_note(1,str(date.today()),"NoteTitle","NoteContent")
         self.note_id = note['id']
@@ -112,11 +109,10 @@ class TestDbPolygonNotes:
         self.db.delete_note(self.note_id)
 
 
-
-class TestDbPolygonHarvest:
+class TestDbPolygonHarvest(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
-        harveset = self.db.create_harvest(1,str(date.today()),5,"bushels")
+        harvest = self.db.create_harvest(1,str(date.today()),5,"bushels")
         self.harvest_id = harvest['id']
     def test_get_own_harvest(self):
         units = self.db.get_harvest(1,self.harvest_id)['units']
@@ -128,5 +124,3 @@ class TestDbPolygonHarvest:
         self.assertIsNone(self.db.get_harvest(1,self.harvest_id))
     def tearDown(self):
         self.db.delete_harvest(self.harvest_id)
-        
-	
