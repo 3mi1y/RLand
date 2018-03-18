@@ -230,6 +230,72 @@ class TestPolygons(AuthenticatedServerTest):
         self.assertEqual(data["errors"][0]["title"], "not found")
 
 
+class TestNotes(AuthenticatedServerTest):
+    def setUp(self):
+        super().setUp()
+        poly = self.db.create_polygon("location", "name", TEST_EMAIL, date.today(), None, [])
+        self.id_poly = poly["id"]
+
+        user = self.db.get_user(TEST_EMAIL)
+        user['polygon_ids'] += [self.id_poly]
+        self.db.update_user(user)
+
+        note = self.db.create_note(self.id_poly, "2018-07-12", "test", "test content")
+        self.id_note = note["id"]
+
+    def tearDown(self):
+        self.db.delete_note(self.id_note)
+        self.db.delete_polygon(self.id_poly)
+        super().tearDown()
+
+    def test_get_note(self):
+        response = self.fetch("/api/notes/" + self.id_note,
+                              headers=dict(cookie=self.cookie))
+        resp = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(resp["data"]["attributes"]["title"], "test")
+
+    def test_update_note(self):
+        body = json.dumps({"data": {
+            "id": self.id_note,
+            "attributes": {"date": "2017-05-12"}
+        }})
+        response = self.fetch("/api/notes/" + self.id_note, method="PATCH",
+                              headers=dict(cookie=self.cookie), body=body)
+        resp = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(resp["data"]["attributes"]["title"], "test")
+        self.assertEqual(resp["data"]["attributes"]["date"], "2017-05-12")
+
+        response = self.fetch("/api/notes/" + self.id_note,
+                              headers=dict(cookie=self.cookie))
+        resp = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(resp["data"]["attributes"]["date"], "2017-05-12")
+        self.assertEqual(resp["data"]["attributes"]["title"], "test")
+
+    def test_create_get_delete_note(self):
+        body = json.dumps({"data": {"attributes": {
+            "poly-id": self.id_poly,
+            "date": None,
+            "title": "new note",
+            "content": "hello world",
+        }}})
+        response = self.fetch("/api/notes", method="POST",
+                              headers=dict(cookie=self.cookie), body=body)
+        self.assertEqual(response.code, 200)
+        resp = json.loads(str(response.body, "utf-8"))
+        note_id = resp['data']['id']
+
+        response = self.fetch("/api/notes/" + note_id,
+                              headers=dict(cookie=self.cookie))
+        resp = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(resp["data"]["attributes"]["poly-id"], self.id_poly)
+        self.assertEqual(resp["data"]["attributes"]["date"], None)
+        self.assertEqual(resp["data"]["attributes"]["title"], "new note")
+
+        response = self.fetch("/api/notes/" + note_id, method="DELETE",
+                              headers=dict(cookie=self.cookie))
+        self.assertEqual(response.code, 204)
+
+
 class TestPolygonTypes(AuthenticatedServerTest):
     def setUp(self):
         super().setUp()

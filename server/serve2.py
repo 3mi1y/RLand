@@ -230,6 +230,93 @@ class PolyHandler(BaseHandler):
             self.write(dict(errors=[{"title": "not found"}]))
 
 
+def jsonify_note(note):
+    return {
+        "type": "notes",
+        "id": note["id"],
+        "attributes": {
+            "poly-id": note["poly_id"],
+            "date": note["date"] and str(note["date"]),
+            "title": note["title"],
+            "content": note["content"],
+        }
+    }
+
+
+class NoteCollectionHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        db = self.settings['db']
+        user = self.current_user
+        pids = user['polygon_ids']
+        notes = db.get_notes(pids)
+        notes_json = [jsonify_note(note) for note in notes]
+        self.write({"data": notes_json})
+
+    @tornado.web.authenticated
+    @gen.coroutine
+    def post(self):
+        db = self.settings['db']
+        bodyJSON = tornado.escape.json_decode(self.request.body)
+        attr = bodyJSON['data']['attributes']
+
+        user = self.current_user
+        poly = db.get_polygon(attr['poly-id'], user['email'])
+        if(poly is None):
+            self.set_status(404)
+            self.write({"errors":[{"title": "polygon not found"}]})
+            return
+
+        note = db.create_note(attr['poly-id'], attr['date'], attr['title'], attr['content'])
+        print(note)
+        self.write({"data": jsonify_note(note)})
+
+
+class NoteHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, note_id):
+        db = self.settings['db']
+        # TODO verify user owns note
+        note = db.get_note(str(note_id))
+        if(note is not None):
+            self.write({"data": jsonify_note(note)})
+        else:
+            self.set_status(404)
+            self.write(dict(errors=[{"title": "not found"}]))
+
+    @tornado.web.authenticated
+    def patch(self, note_id):
+        db = self.settings['db']
+        user = self.current_user
+        note = db.get_note(str(note_id))
+
+        if (note is not None and note['poly_id'] in user['polygon_ids']):
+            bodyJSON = tornado.escape.json_decode(self.request.body)
+            attrs = bodyJSON['data']['attributes']
+            for attr_name in ['date', 'title', 'content']:
+                if attr_name in attrs:
+                    note[attr_name] = attrs[attr_name]
+            db.update_note(note)
+            self.write({"data": jsonify_note(note)})
+        else:
+            self.set_status(404)
+            self.write(dict(errors=[{"title": "not found"}]))
+
+    @tornado.web.authenticated
+    def delete(self, note_id):
+        db = self.settings['db']
+
+        user = self.current_user
+        note = db.get_note(str(note_id))
+
+        if (note is not None and note['poly_id'] in user['polygon_ids']):
+            db.delete_note(str(note_id))
+            self.set_status(204)
+        else:
+            self.set_status(404)
+            self.write(dict(errors=[{"title": "not found"}]))
+
+
 def jsonify_poly_type(ptype):
     return {
         "type": "polygon_types",
@@ -309,6 +396,8 @@ class Application(tornado.web.Application):
             (r"/api/logout", LogoutHandler),
             (r"/api/polygons", PolyCollectionHandler),
             (r"/api/polygons/([0-9]+)", PolyHandler),
+            (r"/api/notes", NoteCollectionHandler),
+            (r"/api/notes/([0-9]+)", NoteHandler),
             (r"/api/polygon_types", PolyTypeCollectionHandler),
             (r"/api/polygon_types/(.*)", PolyTypeHandler),
             (r"/(favicon.ico)", tornado.web.StaticFileHandler, {"path": os.path.join(os.path.dirname(__file__), "static")}),

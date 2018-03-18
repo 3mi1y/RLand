@@ -101,16 +101,13 @@ class TestDbPolygonNotes(unittest.TestCase):
         note = self.db.create_note(1, str(date.today()), "NoteTitle", "NoteContent")
         self.note_id = note['id']
 
-    def test_get_own_note(self):
-        title = self.db.get_note(1, self.note_id)['title']
+    def test_get_note(self):
+        title = self.db.get_note(self.note_id)['title']
         self.assertEqual(title, "NoteTitle")
-
-    def test_get_other_note(self):
-        self.assertIsNone(self.db.get_note(2, self.note_id))
 
     def test_delete_note(self):
         self.db.delete_note(self.note_id)
-        self.assertIsNone(self.db.get_note(1, self.note_id))
+        self.assertIsNone(self.db.get_note(self.note_id))
 
     def tearDown(self):
         self.db.delete_note(self.note_id)

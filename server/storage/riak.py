@@ -181,21 +181,33 @@ class RiakDb:
             "content": content
         }
 
-    def get_note(self, poly_id, note_id):
+    def get_note(self, note_id):
         note = self.note_bucket.get(note_id).data
         if note is None:
             return None
-        # check if it belongs to the right polygon
-        if (note['poly_id'] == poly_id):
-            return {
-                'id': note['id'],
-                'poly_id': note['poly_id'],
-                'date': note['date'],
-                'title': note['title'],
-                'content': note['content']
-            }
-        else:
-            return None
+
+        return {
+            'id': note['id'],
+            'poly_id': note['poly_id'],
+            'date': note['date'],
+            'title': note['title'],
+            'content': note['content']
+        }
+
+    def get_notes(self, poly_ids):
+        note_ids = self.note_bucket.get_keys()
+        notes = []
+        for nid in note_ids:
+            data = self.note_bucket.get(nid).data
+            if data and data['poly_id'] in poly_ids:
+                notes += [{
+                    'id': note['id'],
+                    'poly_id': note['poly_id'],
+                    'date': note['date'],
+                    'title': note['title'],
+                    'content': note['content']
+                }]
+        return notes
 
     def update_note(self, updateNote):
         note = self.note_bucket.get(updateNote['id'])
