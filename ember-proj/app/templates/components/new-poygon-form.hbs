@@ -1,4 +1,4 @@
-{{outlet}}
+{{yield}}
 <h1>This form lets you insert a new polygon</h1>
 
 <form {{action "createPolygon" on="submit"}}>
@@ -12,8 +12,8 @@
    {{md-input type="date" value=startDate}}
 
    <label>Select end date (this is the date you will harvest/move this polygon</label>
-   {{md-input type="date" value=endDate}}    
-   
+   {{md-input type="date" value=endDate}}
+
    <label>Polygon Type (will this even change):</label>
    {{#power-select
       options=levelOne
@@ -23,7 +23,7 @@
    }}
      {{level}}
    {{/power-select}}
-   <br> 
+   <br>
    {{#power-select
       options=levelTwo
       selected=selectedOptionTwo
@@ -37,11 +37,11 @@
       options=levelThree
       selected=selectedOptionThree
       onchange=(action "updateLevelFour")
-      as |level3| 
+      as |level3|
    }}
        {{level3}}
    {{/power-select}}
-   <br> 
+   <br>
    {{#power-select
       options=levelFour
       selected=selectedOptionFour
@@ -61,4 +61,3 @@
    {{/power-select}}
    <button type="submit">Submit</button>
 </form>
-{{ new-polygon-form }}
