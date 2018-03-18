@@ -1,8 +1,7 @@
 import unittest
 
 from storage.riak import RiakDb
-import storage.security as security
-from datetime import datetime, date
+from datetime import date
 
 U_EMAIL = "test@example.com"
 U_NAME = "Test User"
@@ -78,16 +77,20 @@ class TestDbPolygonTypes(unittest.TestCase):
 class TestDbPolygonTasks(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
-        task = self.db.create_task(1,"water tomatoes",str(date.today()))
+        task = self.db.create_task(1, "water tomatoes", str(date.today()))
         self.task_id = task['id']
+
     def test_get_own_task(self):
-        name = self.db.get_task(1,self.task_id)['name']
-        self.assertEqual(name,"water tomatoes")
+        name = self.db.get_task(1, self.task_id)['name']
+        self.assertEqual(name, "water tomatoes")
+
     def test_get_other_task(self):
-        self.assertIsNone(self.db.get_task(2,self.task_id))
+        self.assertIsNone(self.db.get_task(2, self.task_id))
+
     def test_delete_task(self):
         self.db.delete_task(self.task_id)
-        self.assertIsNone(self.db.get_task(1,self.task_id))
+        self.assertIsNone(self.db.get_task(1, self.task_id))
+
     def tearDown(self):
         self.db.delete_task(self.task_id)
 
@@ -95,16 +98,20 @@ class TestDbPolygonTasks(unittest.TestCase):
 class TestDbPolygonNotes(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
-        note = self.db.create_note(1,str(date.today()),"NoteTitle","NoteContent")
+        note = self.db.create_note(1, str(date.today()), "NoteTitle", "NoteContent")
         self.note_id = note['id']
+
     def test_get_own_note(self):
-        title = self.db.get_note(1,self.note_id)['title']
-        self.assertEqual(title,"NoteTitle")
+        title = self.db.get_note(1, self.note_id)['title']
+        self.assertEqual(title, "NoteTitle")
+
     def test_get_other_note(self):
-        self.assertIsNone(self.db.get_note(2,self.note_id))
+        self.assertIsNone(self.db.get_note(2, self.note_id))
+
     def test_delete_note(self):
         self.db.delete_note(self.note_id)
-        self.assertIsNone(self.db.get_note(1,self.note_id))
+        self.assertIsNone(self.db.get_note(1, self.note_id))
+
     def tearDown(self):
         self.db.delete_note(self.note_id)
 
@@ -112,15 +119,19 @@ class TestDbPolygonNotes(unittest.TestCase):
 class TestDbPolygonHarvest(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
-        harvest = self.db.create_harvest(1,str(date.today()),5,"bushels")
+        harvest = self.db.create_harvest(1, str(date.today()), 5, "bushels")
         self.harvest_id = harvest['id']
+
     def test_get_own_harvest(self):
-        units = self.db.get_harvest(1,self.harvest_id)['units']
-        self.assertEqual(units,"bushels")
+        units = self.db.get_harvest(1, self.harvest_id)['units']
+        self.assertEqual(units, "bushels")
+
     def test_get_other_task(self):
-        self.assertIsNone(self.db.get_harvest(2,self.harvest_id))
+        self.assertIsNone(self.db.get_harvest(2, self.harvest_id))
+
     def test_delete_task(self):
         self.db.delete_harvest(self.harvest_id)
-        self.assertIsNone(self.db.get_harvest(1,self.harvest_id))
+        self.assertIsNone(self.db.get_harvest(1, self.harvest_id))
+
     def tearDown(self):
         self.db.delete_harvest(self.harvest_id)

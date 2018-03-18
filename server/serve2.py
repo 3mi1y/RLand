@@ -13,7 +13,9 @@ from tornado.options import define, options
 
 from storage.riak import RiakDb
 
-define("port", default = 8000, help="run on the given port", type=int)
+define("port", default=8000, help="run on the given port", type=int)
+
+
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         cookie_bytes = self.get_secure_cookie("userEmail")
@@ -26,12 +28,14 @@ class BaseHandler(tornado.web.RequestHandler):
         self.set_status(204)
         self.finish()
 
+
 class MainHandler(BaseHandler):
 
     def get(self):
         f = open(os.path.join(os.path.dirname(__file__), "../ember-proj/dist/index.html"))
         index = f.read()
         self.write(index)
+
 
 def jsonify_user(user):
     return {
@@ -43,6 +47,7 @@ def jsonify_user(user):
             "polygon_ids": user["polygon_ids"],
         }
     }
+
 
 class UsersHandler(BaseHandler):
 
@@ -61,7 +66,7 @@ class UsersHandler(BaseHandler):
             self.write(dict(errors=[{"title": "user already exists"}]))
 
     @tornado.web.authenticated
-    def get(self,userEmail):
+    def get(self, userEmail):
         db = self.settings['db']
         if self.current_user != userEmail:
             self.set_status(404)
@@ -69,14 +74,13 @@ class UsersHandler(BaseHandler):
             return
 
         user = db.get_user(userEmail)
-        if(not user is None):
+        if(user is not None):
             self.write({"data": jsonify_user(user)})
         else:
             self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
 
-
     @tornado.web.authenticated
-    def patch(self,userEmail):
+    def patch(self, userEmail):
         db = self.settings['db']
         if self.current_user != userEmail:
             self.set_status(404)
@@ -84,7 +88,7 @@ class UsersHandler(BaseHandler):
             return
 
         user = db.get_user(userEmail)
-        if(not user is None):
+        if(user is not None):
             bodyJSON = tornado.escape.json_decode(self.request.body)
             attrs = bodyJSON['data']['attributes']
             if 'email' in attrs and attrs['email'] != userEmail:
@@ -99,7 +103,7 @@ class UsersHandler(BaseHandler):
             db.update_user(user)
             self.write(dict(data=jsonify_user(user)))
         else:
-            self.write(dict(errors =  [{"title": "you are logged in as a nonexistent user"}]))
+            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
 
     @tornado.web.authenticated
     def delete(self, userEmail):
@@ -124,12 +128,13 @@ class LoginHandler(BaseHandler):
     def post(self):
         email = self.get_argument("email")
         password = self.get_argument("password")
-        if(self.settings['db'].login(email,password)):
-            self.set_secure_cookie("userEmail",email)
+        if(self.settings['db'].login(email, password)):
+            self.set_secure_cookie("userEmail", email)
             self.write(dict(status="success"))
         else:
             self.set_status(400)
             self.write(dict(status="failure", errors=[{"title": "incorrect email or password"}]))
+
 
 class LogoutHandler(BaseHandler):
 
@@ -140,6 +145,7 @@ class LogoutHandler(BaseHandler):
     def post(self):
         self.clear_cookie("userEmail")
         self.redirect("/")
+
 
 def jsonify_poly(poly_id, poly):
     return {
@@ -154,19 +160,20 @@ def jsonify_poly(poly_id, poly):
         }
     }
 
+
 class PolyCollectionHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         db = self.settings['db']
         user = db.get_user(self.current_user)
-        if(not user is None):
+        if(user is not None):
             ids = user['polygon_ids']
             polys_json = []
             for poly_id in ids:
                 poly = db.get_polygon(str(poly_id), user['email'])
                 if poly:
-                    polys_json += [ jsonify_poly(poly_id, poly) ]
-            self.write({ "data": polys_json })
+                    polys_json += [jsonify_poly(poly_id, poly)]
+            self.write({"data": polys_json})
         else:
             self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
 
@@ -178,9 +185,10 @@ class PolyCollectionHandler(BaseHandler):
         bodyJSON = tornado.escape.json_decode(self.request.body)
         attr = bodyJSON['data']['attributes']
         poly = db.create_polygon(attr['location'], attr['name'], self.current_user, attr['start-date'], attr['end-date'], attr['poly-type'])
-        user['polygon_ids'] += [ poly['id'] ]
+        user['polygon_ids'] += [poly['id']]
         db.update_user(user)
         self.write({"data": jsonify_poly(poly['id'], poly)})
+
 
 class PolyHandler(BaseHandler):
     @tornado.web.authenticated
@@ -188,9 +196,9 @@ class PolyHandler(BaseHandler):
         db = self.settings['db']
         user = db.get_user(self.current_user)
         poly = db.get_polygon(str(poly_id), user['email'])
-        if(not user is None):
-            if(not poly is None):
-                self.write({ "data": jsonify_poly(poly_id, poly) })
+        if(user is not None):
+            if(poly is not None):
+                self.write({"data": jsonify_poly(poly_id, poly)})
             else:
                 self.set_status(404)
                 self.write(dict(errors=[{"title": "not found"}]))
@@ -202,8 +210,8 @@ class PolyHandler(BaseHandler):
         db = self.settings['db']
         user = db.get_user(self.current_user)
         poly = db.get_polygon(str(poly_id), user['email'])
-        if(not user is None):
-            if(not poly is None):
+        if(user is not None):
+            if(poly is not None):
                 # TODO: verify user owns polygon
                 bodyJSON = tornado.escape.json_decode(self.request.body)
                 attrs = bodyJSON['data']['attributes']
@@ -238,6 +246,7 @@ class PolyHandler(BaseHandler):
             self.set_status(404)
             self.write(dict(errors=[{"title": "not found"}]))
 
+
 def jsonify_poly_type(ptype):
     return {
         "type": "polygon_types",
@@ -249,12 +258,13 @@ def jsonify_poly_type(ptype):
         }
     }
 
+
 class PolyTypeCollectionHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         db = self.settings['db']
         ptypes = db.get_poly_types()
-        self.write({ "data": [ jsonify_poly_type(ptype) for ptype in ptypes ] })
+        self.write({"data": [jsonify_poly_type(ptype) for ptype in ptypes]})
 
     @tornado.web.authenticated
     @gen.coroutine
@@ -267,22 +277,23 @@ class PolyTypeCollectionHandler(BaseHandler):
         ptype = db.create_poly_type(name, attr['is_container'], attr['harvest'], attr['children'])
         self.write({"data": jsonify_poly_type(ptype)})
 
+
 class PolyTypeHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, name):
         db = self.settings['db']
         ptype = db.get_poly_type(name)
-        if(not ptype is None):
-            self.write({ "data": jsonify_poly_type(ptype) })
+        if(ptype is not None):
+            self.write({"data": jsonify_poly_type(ptype)})
         else:
-            self.write({ "errors": [ {"title": "not found"} ] })
+            self.write({"errors": [{"title": "not found"}]})
             self.set_status(404)
 
     @tornado.web.authenticated
     def patch(self, name):
         db = self.settings['db']
         ptype = db.get_poly_type(name)
-        if(not ptype is None):
+        if(ptype is not None):
             # TODO: verify user is allowed to write polygon types
             bodyJSON = tornado.escape.json_decode(self.request.body)
             attrs = bodyJSON['data']['attributes']
@@ -299,7 +310,7 @@ class PolyTypeHandler(BaseHandler):
         db = self.settings['db']
         # TODO: verify user is allowed to delete polygon types
         ptype = db.get_poly_type(name)
-        if(not ptype is None):
+        if(ptype is not None):
             db.delete_poly_type(name)
             self.set_status(204)
         else:
@@ -308,32 +319,33 @@ class PolyTypeHandler(BaseHandler):
 
 class Application(tornado.web.Application):
     def __init__(self, database):
-        handlers =[
+        handlers = [
             (r"/api/users", UsersHandler),
-            (r"/api/users/(.*)",UsersHandler),
+            (r"/api/users/(.*)", UsersHandler),
             (r"/api/login", LoginHandler),
             (r"/api/logout", LogoutHandler),
             (r"/api/polygons", PolyCollectionHandler),
             (r"/api/polygons/([0-9]+)", PolyHandler),
             (r"/api/polygon_types", PolyTypeCollectionHandler),
             (r"/api/polygon_types/(.*)", PolyTypeHandler),
-            (r"/(favicon.ico)", tornado.web.StaticFileHandler,{"path": os.path.join(os.path.dirname(__file__), "static")}),
+            (r"/(favicon.ico)", tornado.web.StaticFileHandler, {"path": os.path.join(os.path.dirname(__file__), "static")}),
             (r"/(assets/.*|ember-welcome-page/.*|fonts/.*|tests/.*|index.html|robots.txt|testem.js)", tornado.web.StaticFileHandler, dict(path=os.path.join(os.path.dirname(__file__), "../ember-proj/dist/"))),
             (r"/.*", MainHandler),
         ]
         settings = dict(
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
-            login_url= "/login",
-            cookie_secret ="__TODO:__GENERATE__YOUR_OWN_RANDOM_VALUE_HERE:  42",
+            login_url="/login",
+            cookie_secret="__TODO:__GENERATE__YOUR_OWN_RANDOM_VALUE_HERE:  42",
             db=database,
         )
-        super(Application,self).__init__(handlers, **settings)
+        super(Application, self).__init__(handlers, **settings)
+
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
     db = RiakDb()
     http_server = tornado.httpserver.HTTPServer(Application(db))
     http_server.listen(options.port)
-    print("IM RUNNING ON PORT: " + str( options.port))
+    print("IM RUNNING ON PORT: " + str(options.port))
     tornado.ioloop.IOLoop.current().start()

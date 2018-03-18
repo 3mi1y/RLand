@@ -160,7 +160,7 @@ class TestPolygons(AuthenticatedServerTest):
     def test_update_own_polygon(self):
         body = json.dumps({"data": {
             "id": self.id_p1,
-            "attributes": {"name": "updated_name", "end-date": "2017-03-05" }
+            "attributes": {"name": "updated_name", "end-date": "2017-03-05"}
         }})
         response = self.fetch("/api/polygons/" + self.id_p1, method="PATCH",
                               headers=dict(cookie=self.cookie), body=body)
