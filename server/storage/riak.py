@@ -201,11 +201,11 @@ class RiakDb:
             data = self.note_bucket.get(nid).data
             if data and data['poly_id'] in poly_ids:
                 notes += [{
-                    'id': note['id'],
-                    'poly_id': note['poly_id'],
-                    'date': note['date'],
-                    'title': note['title'],
-                    'content': note['content']
+                    'id': data['id'],
+                    'poly_id': data['poly_id'],
+                    'date': data['date'],
+                    'title': data['title'],
+                    'content': data['content']
                 }]
         return notes
 

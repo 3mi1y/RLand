@@ -68,7 +68,6 @@ class TestDbPolygonTypes(unittest.TestCase):
         self.db.delete_polygon("Test")
         self.db.delete_user(U_EMAIL)
 
-
     def test_get_poly_type(self):
         self.assertEqual(self.db.get_poly_type("Test")['children'][0],
                          "child1")

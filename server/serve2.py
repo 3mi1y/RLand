@@ -70,7 +70,6 @@ class UsersHandler(BaseHandler):
     def get(self, userEmail):
         if userEmail == "@CURRENT_USER":
             userEmail = self.current_user['email']
-
         if self.current_user['email'] != userEmail:
             self.set_status(404)
             self.write(dict(errors=[{"title": "not found"}]))
@@ -264,7 +263,7 @@ class NoteCollectionHandler(BaseHandler):
         poly = db.get_polygon(attr['poly-id'], user['email'])
         if(poly is None):
             self.set_status(404)
-            self.write({"errors":[{"title": "polygon not found"}]})
+            self.write({"errors": [{"title": "polygon not found"}]})
             return
 
         note = db.create_note(attr['poly-id'], attr['date'], attr['title'], attr['content'])
@@ -350,7 +349,7 @@ class HarvestCollectionHandler(BaseHandler):
         poly = db.get_polygon(attr['poly-id'], user['email'])
         if(poly is None):
             self.set_status(404)
-            self.write({"errors":[{"title": "polygon not found"}]})
+            self.write({"errors": [{"title": "polygon not found"}]})
             return
 
         harvest = db.create_harvest(attr['poly-id'], attr['date'], attr['amount'], attr['units'])
@@ -435,7 +434,7 @@ class TaskCollectionHandler(BaseHandler):
         poly = db.get_polygon(attr['poly-id'], user['email'])
         if(poly is None):
             self.set_status(404)
-            self.write({"errors":[{"title": "polygon not found"}]})
+            self.write({"errors": [{"title": "polygon not found"}]})
             return
 
         task = db.create_task(attr['poly-id'], attr['name'], attr['date'])
