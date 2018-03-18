@@ -68,7 +68,9 @@ class UsersHandler(BaseHandler):
 
     @tornado.web.authenticated
     def get(self, userEmail):
-        db = self.settings['db']
+        if userEmail == "@CURRENT_USER":
+            userEmail = self.current_user['email']
+
         if self.current_user['email'] != userEmail:
             self.set_status(404)
             self.write(dict(errors=[{"title": "not found"}]))
