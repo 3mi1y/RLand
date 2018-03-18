@@ -21,7 +21,8 @@ class BaseHandler(tornado.web.RequestHandler):
         cookie_bytes = self.get_secure_cookie("userEmail")
         if not cookie_bytes:
             return None
-        return str(cookie_bytes, "utf-8")
+        email = str(cookie_bytes, "utf-8")
+        return self.settings['db'].get_user(email)
 
     def options(self):
         # no body
@@ -68,57 +69,45 @@ class UsersHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, userEmail):
         db = self.settings['db']
-        if self.current_user != userEmail:
+        if self.current_user['email'] != userEmail:
             self.set_status(404)
             self.write(dict(errors=[{"title": "not found"}]))
             return
 
-        user = db.get_user(userEmail)
-        if(user is not None):
-            self.write({"data": jsonify_user(user)})
-        else:
-            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
+        self.write({"data": jsonify_user(self.current_user)})
 
     @tornado.web.authenticated
     def patch(self, userEmail):
         db = self.settings['db']
-        if self.current_user != userEmail:
+        if self.current_user['email'] != userEmail:
             self.set_status(404)
             self.write(dict(errors=[{"title": "not found"}]))
             return
 
-        user = db.get_user(userEmail)
-        if(user is not None):
-            bodyJSON = tornado.escape.json_decode(self.request.body)
-            attrs = bodyJSON['data']['attributes']
-            if 'email' in attrs and attrs['email'] != userEmail:
-                self.write(dict(errors=[{"title": "cannot change user email address"}]))
-                return
+        user = self.current_user
+        bodyJSON = tornado.escape.json_decode(self.request.body)
+        attrs = bodyJSON['data']['attributes']
+        if 'email' in attrs and attrs['email'] != userEmail:
+            self.write(dict(errors=[{"title": "cannot change user email address"}]))
+            return
 
-            # TODO: should users be able to change their password
-            # through this same API?
-            for attr_name in ['name', 'polygon_ids', 'address']:
-                if attr_name in attrs:
-                    user[attr_name] = attrs[attr_name]
-            db.update_user(user)
-            self.write(dict(data=jsonify_user(user)))
-        else:
-            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
+        # TODO: should users be able to change their password
+        # through this same API?
+        for attr_name in ['name', 'polygon_ids', 'address']:
+            if attr_name in attrs:
+                user[attr_name] = attrs[attr_name]
+        db.update_user(user)
+        self.write(dict(data=jsonify_user(user)))
 
     @tornado.web.authenticated
     def delete(self, userEmail):
         db = self.settings['db']
-        if self.current_user != userEmail:
+        if self.current_user['email'] != userEmail:
             self.set_status(404)
             self.write(dict(errors=[{"title": "not found"}]))
             return
 
-        user = db.get_user(userEmail)
-        if (user is None):
-            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
-            return
-
-        db.delete_user(userEmail)
+        db.delete_user(self.current_user['email'])
         self.set_status(204)
 
 
@@ -165,26 +154,23 @@ class PolyCollectionHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
         db = self.settings['db']
-        user = db.get_user(self.current_user)
-        if(user is not None):
-            ids = user['polygon_ids']
-            polys_json = []
-            for poly_id in ids:
-                poly = db.get_polygon(str(poly_id), user['email'])
-                if poly:
-                    polys_json += [jsonify_poly(poly_id, poly)]
-            self.write({"data": polys_json})
-        else:
-            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
+        user = self.current_user
+        ids = user['polygon_ids']
+        polys_json = []
+        for poly_id in ids:
+            poly = db.get_polygon(str(poly_id), user['email'])
+            if poly:
+                polys_json += [jsonify_poly(poly_id, poly)]
+        self.write({"data": polys_json})
 
     @tornado.web.authenticated
     @gen.coroutine
     def post(self):
         db = self.settings['db']
-        user = db.get_user(self.current_user)
+        user = self.current_user
         bodyJSON = tornado.escape.json_decode(self.request.body)
         attr = bodyJSON['data']['attributes']
-        poly = db.create_polygon(attr['location'], attr['name'], self.current_user, attr['start-date'], attr['end-date'], attr['poly-type'])
+        poly = db.create_polygon(attr['location'], attr['name'], user['email'], attr['start-date'], attr['end-date'], attr['poly-type'])
         user['polygon_ids'] += [poly['id']]
         db.update_user(user)
         self.write({"data": jsonify_poly(poly['id'], poly)})
@@ -194,49 +180,38 @@ class PolyHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, poly_id):
         db = self.settings['db']
-        user = db.get_user(self.current_user)
-        poly = db.get_polygon(str(poly_id), user['email'])
-        if(user is not None):
-            if(poly is not None):
-                self.write({"data": jsonify_poly(poly_id, poly)})
-            else:
-                self.set_status(404)
-                self.write(dict(errors=[{"title": "not found"}]))
+        poly = db.get_polygon(str(poly_id), self.current_user['email'])
+        if(poly is not None):
+            self.write({"data": jsonify_poly(poly_id, poly)})
         else:
-            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
+            self.set_status(404)
+            self.write(dict(errors=[{"title": "not found"}]))
 
     @tornado.web.authenticated
     def patch(self, poly_id):
         db = self.settings['db']
-        user = db.get_user(self.current_user)
+        user = self.current_user
         poly = db.get_polygon(str(poly_id), user['email'])
-        if(user is not None):
-            if(poly is not None):
-                # TODO: verify user owns polygon
-                bodyJSON = tornado.escape.json_decode(self.request.body)
-                attrs = bodyJSON['data']['attributes']
-                for attr_name in ['location', 'name', 'start-date', 'end-date']:
-                    if attr_name in attrs:
-                        # TODO: do each individual field instead of this .replace
-                        poly[attr_name.replace("-", "_")] = attrs[attr_name]
-                if 'poly-type' in attrs:
-                    poly['type'] = attrs['poly-type']
-                db.update_polygon(poly)
-                self.write({"data": jsonify_poly(poly['id'], poly)})
-            else:
-                self.set_status(404)
-                self.write(dict(errors=[{"title": "not found"}]))
+        if(poly is not None):
+            bodyJSON = tornado.escape.json_decode(self.request.body)
+            attrs = bodyJSON['data']['attributes']
+            for attr_name in ['location', 'name', 'start-date', 'end-date']:
+                if attr_name in attrs:
+                    # TODO: do each individual field instead of this .replace
+                    poly[attr_name.replace("-", "_")] = attrs[attr_name]
+            if 'poly-type' in attrs:
+                poly['type'] = attrs['poly-type']
+            db.update_polygon(poly)
+            self.write({"data": jsonify_poly(poly['id'], poly)})
         else:
-            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
+            self.set_status(404)
+            self.write(dict(errors=[{"title": "not found"}]))
 
     @tornado.web.authenticated
     def delete(self, poly_id):
         db = self.settings['db']
-        user = db.get_user(self.current_user)
-        if (user is None):
-            self.write(dict(errors=[{"title": "you are logged in as a nonexistent user"}]))
-            return
 
+        user = self.current_user
         if (user['polygon_ids'] and poly_id in user['polygon_ids']):
             user['polygon_ids'].remove(poly_id)
             db.update_user(user)
