@@ -115,6 +115,24 @@ class TestUsers(AuthenticatedServerTest):
         self.assertEqual(resp["data"]["attributes"]["name"], "test name")
         self.assertEqual(resp["data"]["attributes"]["address"], "Paris")
 
+    def test_change_password(self):
+        body = json.dumps({"data": {
+            "attributes": {"password": "newpass", "old-password": "testpass"}
+        }})
+        response = self.fetch("/api/users/" + self.id_me, method="PATCH",
+                              headers=dict(cookie=self.cookie), body=body)
+        self.assertEqual(response.code, 200)
+
+        response = self.fetch("/api/login", method="POST",
+                              body="email=test@example.com&password=testpass")
+        data = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(data["status"], "failure")
+
+        response = self.fetch("/api/login", method="POST",
+                              body="email=test@example.com&password=newpass")
+        data = json.loads(str(response.body, "utf-8"))
+        self.assertEqual(data["status"], "success")
+
     def test_cant_update_email_address(self):
         body = json.dumps({"data": {
             "id": self.id_me,

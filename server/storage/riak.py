@@ -74,7 +74,8 @@ class RiakDb:
         user = self.user_bucket.get(updateUser['email'])
         if user.data:
             user.data['name'] = updateUser['name']
-            user.data['password'] = updateUser['password']
+            if user.data['password'] != updateUser['password']:
+                user.data['password'] = security.hash_password(updateUser['password'])
             user.data['address'] = updateUser['address']
             user.data['polygon_ids'] = updateUser['polygon_ids']
             user.store()

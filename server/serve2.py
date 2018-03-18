@@ -89,12 +89,18 @@ class UsersHandler(BaseHandler):
         user = self.current_user
         bodyJSON = tornado.escape.json_decode(self.request.body)
         attrs = bodyJSON['data']['attributes']
-        if 'email' in attrs and attrs['email'] != userEmail:
+
+        if 'email' in attrs and attrs['email'] and attrs['email'] != userEmail:
             self.write(dict(errors=[{"title": "cannot change user email address"}]))
             return
 
-        # TODO: should users be able to change their password
-        # through this same API?
+        if 'password' in attrs and 'old-password' in attrs and attrs['password']:
+            if not db.login(userEmail, attrs['old-password']):
+                self.set_status(400)
+                self.write(dict(errors=[{"title": "old password does not match"}]))
+                return
+            user['password'] = attrs['password']
+
         for attr_name in ['name', 'polygon_ids', 'address']:
             if attr_name in attrs:
                 user[attr_name] = attrs[attr_name]
