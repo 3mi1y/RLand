@@ -30,11 +30,14 @@ export default Ember.Component.extend({
     let selected = sender.get('selected');
     this.send('polygonSelected', selected);
 
-    if (selected)
+    if (selected) {
       $('.poly-list').hide();
-    else
+      $('.new-poly').show();
+    }
+    else {
       $('.poly-list').show();
-      this.$('.polygon-info').velocity({translateX: "0px"}, {duration: 'fast'});
+      $('.new-poly').hide();
+    }
   },
 
   actions: {

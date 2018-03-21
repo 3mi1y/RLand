@@ -1,12 +1,13 @@
 import Service from '@ember/service';
 import { camelize } from '@ember/string';
 import EmberObject from '@ember/object';
-
+import Ember from 'ember';
 import MapUtil from '../utils/google-maps';
 
 const google = window.google;
 
 export default Service.extend({
+  store: Ember.inject.service(),
 
   selected: null,
   on_map_polygons: new Array(),
@@ -115,10 +116,11 @@ export default Service.extend({
 
     google.maps.event.addDomListener(document, 'keyup', function (e) {
       let code = e.which;
-      if (code === 8 || code === 46)
+      if (code === 46)
       {
         let selected = getSelected();
         selected.setMap(null);
+        //selected.model.destroyRecord();
         clearSelected();
       }
     });
