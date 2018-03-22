@@ -1,0 +1,24 @@
+.footer-container {
+   background-color: rgba(229, 229, 229, .7);
+   width: 100%;
+   display: flex;
+   flex-direction: row;
+   align-items: flex-start;
+   justify-content: space-around;
+   padding: 1%;
+   position: fixed;
+   bottom: -3px;
+}
+.footer-column {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+   width: 20%;
+   padding-left: 20px;
+   font-size: 14px;
+   margin-top: 2%;
+}
+.footer-column-header {
+   font-size: 30px;
+   border-bottom: 1px solid black;
+}
