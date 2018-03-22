@@ -20,7 +20,7 @@ export default Controller.extend({
           this.set("isProcessing", false);
           
           this.get('store').findRecord('user', this.get('email')).then(() => {
-              this.transitionToRoute('dashboard')},
+              this.transitionToRoute('map')},
             (response) => {
               $('#errors').text(response.errors[0].title);-
               $('#errors').show();
@@ -31,6 +31,10 @@ export default Controller.extend({
           this.set("isProcessing", false);
           this.set("loginFailed", true);
         }.bind(this));
+    },
+
+    register() {
+      this.transitionToRoute('register');
     }
   }
 });

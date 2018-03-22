@@ -1,6 +1,4 @@
 {{outlet}}
-Sign-in form to RLand
-
 <div class="container">
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
@@ -15,12 +13,10 @@ Sign-in form to RLand
                   <div class="row">
                     {{md-input value=email label="email" class="col s12" validate=True}}
                     {{md-input value=password type="password" label="Password" class="col s12"}}
-                    {{md-btn-submit text='Log in!'}}
+                    {{md-btn-submit text='Log in'}}
+		    {{ md-btn action="register" text="Sign up" }}
                   </div>
               </form>
-              <div>
-                {{ link-to 'Not registered? Click here!' 'register' class="navbar-brand" }}
-              </div>
             </div>
           </div>
         </div>
