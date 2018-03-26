@@ -1,0 +1,13 @@
+[Unit]
+Description=riak docker container
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/docker start riak
+ExecStop=/usr/bin/docker stop riak
+
+[Install]
+WantedBy=default.target

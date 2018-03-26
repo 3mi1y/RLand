@@ -1,0 +1,10 @@
+[Unit]
+Description=rland web server
+
+[Service]
+User=rland
+ExecStart=/home/rland/update-run.sh
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
