@@ -593,7 +593,6 @@ class Application(tornado.web.Application):
             (r"/.*", MainHandler),
         ]
         settings = dict(
-            template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
             login_url="/login",
             # TODO: change the cookie secret for production
