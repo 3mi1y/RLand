@@ -242,6 +242,14 @@ def jsonify_poly_type(ptype):
     }
 
 
+class PolyTypeTreeHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        db = self.settings['db']
+        tree = db.get_poly_type_tree()
+        self.write({"data": tree})
+
+
 class PolyTypeCollectionHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
@@ -309,6 +317,7 @@ class Application(tornado.web.Application):
             (r"/api/logout", LogoutHandler),
             (r"/api/polygons", PolyCollectionHandler),
             (r"/api/polygons/([0-9]+)", PolyHandler),
+            (r"/api/polygon_type_tree", PolyTypeTreeHandler),
             (r"/api/polygon_types", PolyTypeCollectionHandler),
             (r"/api/polygon_types/(.*)", PolyTypeHandler),
             (r"/(favicon.ico)", tornado.web.StaticFileHandler, {"path": os.path.join(os.path.dirname(__file__), "static")}),

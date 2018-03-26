@@ -348,3 +348,10 @@ class RiakDb:
         ptype = self.poly_type_bucket.get(name)
         if ptype.data:
             ptype.delete()
+
+    def get_poly_type_tree(self):
+        def map_fields(ptype):
+            return { "name": ptype["name"], "leaves": [map_fields(self.get_poly_type(c)) for c in ptype["children"]] }
+
+        root = map_fields(self.get_poly_type("root"))
+        return root["leaves"]
