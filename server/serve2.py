@@ -203,12 +203,15 @@ class PolyHandler(BaseHandler):
         if(poly is not None):
             bodyJSON = tornado.escape.json_decode(self.request.body)
             attrs = bodyJSON['data']['attributes']
-            for attr_name in ['location', 'name', 'start-date', 'end-date']:
-                if attr_name in attrs:
-                    # TODO: do each individual field instead of this .replace
-                    poly[attr_name.replace("-", "_")] = attrs[attr_name]
-            if 'poly-type' in attrs:
-                poly['type'] = attrs['poly-type']
+            for (json_attr, poly_attr) in {
+                    'location': 'location',
+                    'name': 'name',
+                    'start-date': 'start_date',
+                    'end-date': 'end_date',
+                    'poly-type': 'type'
+                    }.items():
+                if json_attr in attrs:
+                    poly[poly_attr] = attrs[json_attr]
             db.update_polygon(poly)
             self.write({"data": jsonify_poly(poly['id'], poly)})
         else:
