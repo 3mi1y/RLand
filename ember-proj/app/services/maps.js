@@ -90,17 +90,29 @@ export default Service.extend({
 
     });
 
-    var setSelected = (shape) => this.setSelectedShape(shape);
-    var addPolygonListener = (overlay) => this.addPolygonListener(overlay);
+    let setSelected = (shape) => this.setSelectedShape(shape);
+    let addPolygonListener = (overlay) => this.addPolygonListener(overlay);
+    let showPath = () => this.showPath();
+    let parent = this;
+
     google.maps.event.addListener(this.get('map'), 'click', () => this.clearSelected());
     google.maps.event.addListener(drawing, 'overlaycomplete', function (e) {
       drawing.setDrawingMode(null);
       e.overlay.setEditable(false);
       setSelected(e.overlay);
-
       addPolygonListener(e.overlay);
+      if (e.type == google.maps.drawing.OverlayType.CIRCLE) {
+        console.log("omg its a circle");
+      }
+      else if (e.type == google.maps.drawing.OverlayType.RECTANGLE) {
+        console.log("omg its a rectangle");
+      }
+      else {
+        console.log("omg its a polygon");
+        parent.get('selected').model.set('location', e.overlay.getPath().getArray());
+        console.log(parent.get('selected').model.get('location'));
+      }
     });
-
 
     drawing.setMap(this.get('map'));
   },
@@ -112,6 +124,7 @@ export default Service.extend({
     var clearSelected = () => this.clearSelected();
     google.maps.event.addListener(overlay, 'click', function () {
       setSelected(this);
+      console.log(this.getPath().getArray());
     });
 
     google.maps.event.addDomListener(document, 'keyup', function (e) {
@@ -144,6 +157,10 @@ export default Service.extend({
     this.on_map_polygons.forEach((polygon) => polygon.setMap(null));
     this.on_map_polygons = new Array();
     this.clearSelected();
-  }
+  },
 
+  showPath()
+  {
+    console.log(this);
+  }
 });

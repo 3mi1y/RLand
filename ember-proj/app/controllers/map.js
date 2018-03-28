@@ -63,7 +63,6 @@ export default Controller.extend({
         let polygon = this.get('selected');
         polygon.set('name', this.get("name"));
         polygon.set('polyType', this.actions.getPolygonType.call(this));
-        polygon.set('location', this.get("location"));
         polygon.set('startDate', this.get("startDate"));
         polygon.set('endDate', this.get("endDate"));
         polygon.save();

@@ -31,6 +31,7 @@ export default Ember.Component.extend({
     this.send('polygonSelected', selected);
 
     if (selected) {
+      // this.get('maps').showPath();
       $('.poly-list').hide();
       $('.new-poly').show();
     }
