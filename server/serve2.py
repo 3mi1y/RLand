@@ -263,7 +263,7 @@ class PolyTypeCollectionHandler(BaseHandler):
     @tornado.web.authenticated
     @gen.coroutine
     def post(self):
-        # TODO: make sure user is allowed to make new polygon types
+        # TODO: only admins should be able to make new predefined polygon types
         db = self.settings['db']
         bodyJSON = tornado.escape.json_decode(self.request.body)
         name = bodyJSON['data']['id']
@@ -288,7 +288,7 @@ class PolyTypeHandler(BaseHandler):
         db = self.settings['db']
         ptype = db.get_poly_type(name)
         if(ptype is not None):
-            # TODO: verify user is allowed to write polygon types
+            # TODO: only admins should be able to modify predefined polygon types
             bodyJSON = tornado.escape.json_decode(self.request.body)
             attrs = bodyJSON['data']['attributes']
             for attr_name in ['is_container', 'harvest', 'children']:
@@ -302,7 +302,7 @@ class PolyTypeHandler(BaseHandler):
     @tornado.web.authenticated
     def delete(self, name):
         db = self.settings['db']
-        # TODO: verify user is allowed to delete polygon types
+        # TODO: only admins should be able to delete predefined polygon types
         ptype = db.get_poly_type(name)
         if(ptype is not None):
             db.delete_poly_type(name)
