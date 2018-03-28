@@ -331,7 +331,8 @@ class Application(tornado.web.Application):
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
             login_url="/login",
-            cookie_secret="__TODO:__GENERATE__YOUR_OWN_RANDOM_VALUE_HERE:  42",
+            # TODO: change the cookie secret for production
+            cookie_secret=b'\xaf\x07\xee0]DN\xe1R\xac\xd3\xe6\xcbO\xa5\xd7oo\xf9)\xef\xad\xc4L\xbf\xe9\x1c\x93\xfa\xd5\x90\xb9',
             db=database,
         )
         super(Application, self).__init__(handlers, **settings)
