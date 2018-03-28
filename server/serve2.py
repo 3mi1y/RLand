@@ -202,12 +202,15 @@ class PolyHandler(BaseHandler):
         if(poly is not None):
             bodyJSON = tornado.escape.json_decode(self.request.body)
             attrs = bodyJSON['data']['attributes']
-            for attr_name in ['location', 'name', 'start-date', 'end-date']:
-                if attr_name in attrs:
-                    # TODO: do each individual field instead of this .replace
-                    poly[attr_name.replace("-", "_")] = attrs[attr_name]
-            if 'poly-type' in attrs:
-                poly['type'] = attrs['poly-type']
+            for (json_attr, poly_attr) in {
+                    'location': 'location',
+                    'name': 'name',
+                    'start-date': 'start_date',
+                    'end-date': 'end_date',
+                    'poly-type': 'type'
+                    }.items():
+                if json_attr in attrs:
+                    poly[poly_attr] = attrs[json_attr]
             db.update_polygon(poly)
             self.write({"data": jsonify_poly(poly['id'], poly)})
         else:
@@ -498,6 +501,14 @@ def jsonify_poly_type(ptype):
     }
 
 
+class PolyTypeTreeHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        db = self.settings['db']
+        tree = db.get_poly_type_tree()
+        self.write({"data": tree})
+
+
 class PolyTypeCollectionHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self):
@@ -508,7 +519,7 @@ class PolyTypeCollectionHandler(BaseHandler):
     @tornado.web.authenticated
     @gen.coroutine
     def post(self):
-        # TODO: make sure user is allowed to make new polygon types
+        # TODO: only admins should be able to make new predefined polygon types
         db = self.settings['db']
         bodyJSON = tornado.escape.json_decode(self.request.body)
         name = bodyJSON['data']['id']
@@ -533,7 +544,7 @@ class PolyTypeHandler(BaseHandler):
         db = self.settings['db']
         ptype = db.get_poly_type(name)
         if(ptype is not None):
-            # TODO: verify user is allowed to write polygon types
+            # TODO: only admins should be able to modify predefined polygon types
             bodyJSON = tornado.escape.json_decode(self.request.body)
             attrs = bodyJSON['data']['attributes']
             for attr_name in ['is_container', 'harvest', 'children']:
@@ -547,7 +558,7 @@ class PolyTypeHandler(BaseHandler):
     @tornado.web.authenticated
     def delete(self, name):
         db = self.settings['db']
-        # TODO: verify user is allowed to delete polygon types
+        # TODO: only admins should be able to delete predefined polygon types
         ptype = db.get_poly_type(name)
         if(ptype is not None):
             db.delete_poly_type(name)
@@ -571,6 +582,7 @@ class Application(tornado.web.Application):
             (r"/api/harvests/([0-9]+)", HarvestHandler),
             (r"/api/tasks", TaskCollectionHandler),
             (r"/api/tasks/([0-9]+)", TaskHandler),
+            (r"/api/polygon_type_tree", PolyTypeTreeHandler),
             (r"/api/polygon_types", PolyTypeCollectionHandler),
             (r"/api/polygon_types/(.*)", PolyTypeHandler),
             (r"/(favicon.ico)", tornado.web.StaticFileHandler, {"path": os.path.join(os.path.dirname(__file__), "static")}),
@@ -581,7 +593,8 @@ class Application(tornado.web.Application):
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
             login_url="/login",
-            cookie_secret="__TODO:__GENERATE__YOUR_OWN_RANDOM_VALUE_HERE:  42",
+            # TODO: change the cookie secret for production
+            cookie_secret=b'\xaf\x07\xee0]DN\xe1R\xac\xd3\xe6\xcbO\xa5\xd7oo\xf9)\xef\xad\xc4L\xbf\xe9\x1c\x93\xfa\xd5\x90\xb9',
             db=database,
         )
         super(Application, self).__init__(handlers, **settings)

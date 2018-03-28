@@ -1,28 +1,49 @@
 {{outlet}}
-Profile page
 
 <div class="container">
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
       <div class="panel">
         <div class="panel-body">
+	  <div>
+	    Email Address: {{model.id}}<br>
+	    Name: {{model.name}}
+	  </div>
 	  <form {{action "change_password" on="submit"}}>
             <div class="row" style="border: solid thin; text-align: center; padding: 10px">
               {{md-input value=current_pw type="password" label="Enter Current Password" class="col s12" validate=True}}
-              {{md-input value=password type="password" label="Enter New Password" class="col s12" validate=True}}
+              {{md-input value=new_pw type="password" label="Enter New Password" class="col s12" validate=True}}
+              {{md-input value=verify_pw type="password" label="Verify New Password" class="col s12" validate=True}}
               {{md-btn-submit text='Change Password!'}}
+	      <br>
+	      {{#if password-success}}
+	        Password changed successfully.
+	      {{/if}}
+	      {{#if password-error}}
+	        Error changing password. Make sure your old password is correct.
+	      {{/if}}
+	      {{#if password-mismatch}}
+	        Passwords do not match.
+	      {{/if}}
             </div>
 	  </form>
 	  <form {{action "update_address" on="submit"}}>
             <div class="row" style="border: solid thin; text-align: center; padding: 10px">
               <div class="row">
-                Current Address: 1234 Easy St. Peace City, NJ 29292
+                Current Address: {{ model.address }}
               </div>
               {{md-input value=street label="New Street" class="col s12"}}
               {{md-input value=city label="New City" class="col s12"}}
               {{md-input value=state label="New State" class="col s12"}}
               {{md-input value=zip label="New Zipcode" class="col s12"}}
               {{md-btn-submit text='Update Address'}}
+	      <br>
+	      {{#if address-success }}
+	        Address changed successfully.
+	      {{/if}}
+	      {{#if address-error }}
+	        Error changing address. Please try again.
+	      {{/if}}
             </div>
 	  </form>
         </div>

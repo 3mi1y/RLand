@@ -428,29 +428,29 @@ class TestTasks(AuthenticatedServerTest):
 class TestPolygonTypes(AuthenticatedServerTest):
     def setUp(self):
         super().setUp()
-        self.db.create_poly_type("Plant", False, None, ["Vegetable Garden"])
-        self.db.create_poly_type("Vegetable Garden", True, "crop", ["Tomato"])
+        self.db.create_poly_type("Test Plant", False, None, ["Test Vegetable Garden"])
+        self.db.create_poly_type("Test Vegetable Garden", True, "crop", ["Test Tomato"])
 
     def tearDown(self):
-        self.db.delete_poly_type("Plant")
-        self.db.delete_poly_type("Plant:Vegetable Garden")
+        self.db.delete_poly_type("Test Plant")
+        self.db.delete_poly_type("Test Vegetable Garden")
         super().tearDown()
 
     def test_get_poly_type(self):
-        response = self.fetch("/api/polygon_types/Plant", headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/polygon_types/Test%20Plant", headers=dict(cookie=self.cookie))
         resp = json.loads(str(response.body, "utf-8"))
-        self.assertEqual(resp["data"]["attributes"]["children"][0], "Vegetable Garden")
+        self.assertEqual(resp["data"]["attributes"]["children"][0], "Test Vegetable Garden")
 
     def test_update_poly_type(self):
-        response = self.fetch("/api/polygon_types/Plant", method="PATCH", headers=dict(cookie=self.cookie),
-                              body=json.dumps({"data": {"attributes": {"children": ["Tomato", "Potato"]}}}))
+        response = self.fetch("/api/polygon_types/Test%20Plant", method="PATCH", headers=dict(cookie=self.cookie),
+                              body=json.dumps({"data": {"attributes": {"children": ["Test Tomato", "Test Potato"]}}}))
         resp = json.loads(str(response.body, "utf-8"))
-        self.assertEqual(resp["data"]["attributes"]["children"][1], "Potato")
+        self.assertEqual(resp["data"]["attributes"]["children"][1], "Test Potato")
 
-        response = self.fetch("/api/polygon_types/Plant", headers=dict(cookie=self.cookie))
+        response = self.fetch("/api/polygon_types/Test%20Plant", headers=dict(cookie=self.cookie))
         resp = json.loads(str(response.body, "utf-8"))
-        self.assertEqual(resp["data"]["id"], "Plant")
-        self.assertEqual(resp["data"]["attributes"]["children"][0], "Tomato")
+        self.assertEqual(resp["data"]["id"], "Test Plant")
+        self.assertEqual(resp["data"]["attributes"]["children"][0], "Test Tomato")
 
     def test_create_get_delete_poly_type(self):
         response = self.fetch("/api/polygon_types", method="POST", headers=dict(cookie=self.cookie),

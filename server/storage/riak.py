@@ -367,9 +367,10 @@ class RiakDb:
 
     def get_poly_types(self):
         keys = self.poly_type_bucket.get_keys()
+        objs = self.poly_type_bucket.multiget(keys)
         pts = []
-        for k in keys:
-            ptype = self.poly_type_bucket.get(k).data
+        for o in objs:
+            ptype = o.data
             pts += [{'name': ptype['name'], 'is_container': ptype['is_container'], 'harvest': ptype['harvest'], 'children': ptype['children']}]
         return pts
 
@@ -385,3 +386,18 @@ class RiakDb:
         ptype = self.poly_type_bucket.get(name)
         if ptype.data:
             ptype.delete()
+
+    def get_poly_type_tree(self):
+        types_list = self.get_poly_types()
+        types = dict([(t["name"], t) for t in types_list])
+
+        def map_fields(ptype_name):
+            ptype = types[ptype_name]
+            if ptype:
+                return { "name": ptype["name"], "leaves": [map_fields(c) for c in ptype["children"]] }
+            else:
+                print("Warning: polygon type not found:", ptype_name)
+                return None
+
+        root = map_fields("root")
+        return root["leaves"]

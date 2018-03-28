@@ -26,13 +26,14 @@ is recommended to isolate these dependences from the rest of the system.
 
 ## Installation
 * Recommended Operating System: Ubuntu 16.04
-* Install Riak according to the official installation guide
+* Install Riak according to the official installation guide or via docker
 * Install node.js via `nvm`. RLand is currently tested on the 'carbon'
   LTS branch.
   * Activate the nvm-installed node.js, and use `npm -g` to install
     `ember-cli` and `bower`
+  * In the `ember-proj` folder: `npm install; bower install`
 * Install python 3. Create a python virtualenv and activate it.
-  * RLand dependencies can be installed by running `pip3 install -r requirements.txt`
+  * RLand dependencies can be installed by running `pip install -r requirements.txt`
 
 ## Developing and Running
 In the `ember-proj` folder: `ember build`. `ember build -w` can be used

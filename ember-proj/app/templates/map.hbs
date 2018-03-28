@@ -1,6 +1,6 @@
 RLand map page
 <div class="map-components">
-  {{rland-map location="1809 S 6th St W, Missoula, MT 59801" polygonSelected=(action "polygonSelected")}}
+  {{rland-map location=model.address polygonSelected=(action "polygonSelected")}}
   <div class="polygon-container">
     <div class="new-poly" style="display:none;">
       <form {{action "createPolygon" on="submit"}}>
@@ -66,7 +66,7 @@ RLand map page
       </form>
     </div>
     <div class="poly-list">
-      {{#each model as |polygon|}}
+      {{#each model.polygons as |polygon|}}
         <div class="row">
           {{#polygon-list item=polygon}}
             <div>
