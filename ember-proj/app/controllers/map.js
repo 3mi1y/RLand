@@ -150,8 +150,8 @@ export default Controller.extend({
       },
 
       deletePolygon(polygon) {
-        this.store.findRecord('polygon', polygon.get('id')).then((post) => {
-          post.destroyRecord();
+        this.get('store').findRecord('polygon', polygon.get('id'), {backgroundReload: false}).then((polygon) => {
+          polygon.destroyRecord();
         })
       }
     }

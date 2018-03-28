@@ -92,7 +92,6 @@ export default Service.extend({
 
     let setSelected = (shape) => this.setSelectedShape(shape);
     let addPolygonListener = (overlay) => this.addPolygonListener(overlay);
-    let showPath = () => this.showPath();
     let parent = this;
 
     google.maps.event.addListener(this.get('map'), 'click', () => this.clearSelected());
@@ -105,11 +104,12 @@ export default Service.extend({
         console.log("omg its a circle");
       }
       else if (e.type == google.maps.drawing.OverlayType.RECTANGLE) {
+        console.log(e.overlay.getBounds());
         console.log("omg its a rectangle");
       }
       else {
         console.log("omg its a polygon");
-        parent.get('selected').model.set('location', e.overlay.getPath().getArray());
+        parent.get('selected').model.set('location', JSON.stringify({path: e.overlay.getPath().getArray()}));
         console.log(parent.get('selected').model.get('location'));
       }
     });
@@ -127,13 +127,14 @@ export default Service.extend({
       console.log(this.getPath().getArray());
     });
 
+    parent = this;
     google.maps.event.addDomListener(document, 'keyup', function (e) {
       let code = e.which;
       if (code === 46)
       {
         let selected = getSelected();
-        selected.setMap(null);
-        //selected.model.destroyRecord();
+        parent.get('controllers.map').send('deletepolygon', selected.model);
+        deletePolygon(selected.model);
         clearSelected();
       }
     });
@@ -157,10 +158,5 @@ export default Service.extend({
     this.on_map_polygons.forEach((polygon) => polygon.setMap(null));
     this.on_map_polygons = new Array();
     this.clearSelected();
-  },
-
-  showPath()
-  {
-    console.log(this);
   }
 });
