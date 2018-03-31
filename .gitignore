@@ -3,5 +3,6 @@ __pycache__
 venv/
 .idea
 
+*.swp
 server/.coverage
 server/htmlcov
