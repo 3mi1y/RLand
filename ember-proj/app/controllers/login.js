@@ -2,7 +2,8 @@ import Controller from '@ember/controller';
 import $ from 'jquery'
 
 export default Controller.extend({
-  loginFailed: false,
+  authentication: Ember.inject.service('authentication'),
+  //loginFailed: false,
   isProcessing: false,
 
   actions: {
@@ -31,6 +32,7 @@ export default Controller.extend({
           this.set("isProcessing", false);
           this.set("loginFailed", true);
         }.bind(this));
+        this.get('authentication').login();
     },
 
     register() {

@@ -1,11 +1,14 @@
 import Controller from '@ember/controller';
 
 export default Controller.extend({
-  // session: Ember.inject.service('session'),
-  //
-  // actions: {
-  //   invalidateSession() {
-  //     this.get('session').invalidate();
-  //   }
-  // }
+  authentication: Ember.inject.service('authentication'),
+  //loggedIn: true,
+  actions: {
+     logout() {
+       // console.log("From authentication service", this.get('authentication).isLoggedIn)
+        this.store.unloadAll()
+        this.get('authentication').logout()
+        this.transitionToRoute('index')
+     }
+   }
 });
