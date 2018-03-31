@@ -181,21 +181,33 @@ class RiakDb:
             "content": content
         }
 
-    def get_note(self, poly_id, note_id):
+    def get_note(self, note_id):
         note = self.note_bucket.get(note_id).data
         if note is None:
             return None
-        # check if it belongs to the right polygon
-        if (note['poly_id'] == poly_id):
-            return {
-                'id': note['id'],
-                'poly_id': note['poly_id'],
-                'date': note['date'],
-                'title': note['title'],
-                'content': note['content']
-            }
-        else:
-            return None
+
+        return {
+            'id': note['id'],
+            'poly_id': note['poly_id'],
+            'date': note['date'],
+            'title': note['title'],
+            'content': note['content']
+        }
+
+    def get_notes(self, poly_ids):
+        note_ids = self.note_bucket.get_keys()
+        notes = []
+        for nid in note_ids:
+            data = self.note_bucket.get(nid).data
+            if data and data['poly_id'] in poly_ids:
+                notes += [{
+                    'id': data['id'],
+                    'poly_id': data['poly_id'],
+                    'date': data['date'],
+                    'title': data['title'],
+                    'content': data['content']
+                }]
+        return notes
 
     def update_note(self, updateNote):
         note = self.note_bucket.get(updateNote['id'])
@@ -233,25 +245,39 @@ class RiakDb:
             'units': units
         }
 
-    def get_harvest(self, poly_id, harvest_id):
+    def get_harvest(self, harvest_id):
         harvest = self.harvest_bucket.get(harvest_id).data
         if harvest is None:
             return None
-        # check if it belongs to the right polygon
-        if (harvest['poly_id'] == poly_id):
-            return {
-                'id': harvest['id'],
-                'poly_id': harvest['poly_id'],
-                'date': harvest['date'],
-                'units': harvest['units']
-            }
-        else:
-            return None
+
+        return {
+            'id': harvest['id'],
+            'poly_id': harvest['poly_id'],
+            'date': harvest['date'],
+            'amount': harvest['amount'],
+            'units': harvest['units']
+        }
+
+    def get_harvests(self, poly_ids):
+        harvest_ids = self.harvest_bucket.get_keys()
+        harvests = []
+        for hid in harvest_ids:
+            data = self.harvest_bucket.get(hid).data
+            if data and data['poly_id'] in poly_ids:
+                harvests += [{
+                    'id': data['id'],
+                    'poly_id': data['poly_id'],
+                    'date': data['date'],
+                    'amount': data['amount'],
+                    'units': data['units']
+                }]
+        return harvests
 
     def update_harvest(self, updateHarvest):
         harvest = self.harvest_bucket.get(updateHarvest['id'])
         if harvest.data:
             harvest.data['date'] = updateHarvest['date']
+            harvest.data['amount'] = updateHarvest['amount']
             harvest.data['units'] = updateHarvest['units']
             if harvest.data['poly_id'] != updateHarvest['poly_id']:
                 raise Exception("Can't update a harvest for a different polygon")
@@ -281,20 +307,31 @@ class RiakDb:
             'date': date
         }
 
-    def get_task(self, poly_id, task_id):
+    def get_task(self, task_id):
         task = self.task_bucket.get(task_id).data
         if(task is None):
             return None
-        # check if it belongs to the right polygon
-        if(task['poly_id'] == poly_id):
-            return {
-                'id': task_id,
-                'poly_id': poly_id,
-                'name': task['name'],
-                'date': task['date']
-            }
-        else:
-            return None
+
+        return {
+            'id': task_id,
+            'poly_id': task['poly_id'],
+            'name': task['name'],
+            'date': task['date']
+        }
+
+    def get_tasks(self, poly_ids):
+        task_ids = self.task_bucket.get_keys()
+        tasks = []
+        for tid in task_ids:
+            data = self.task_bucket.get(tid).data
+            if data and data['poly_id'] in poly_ids:
+                tasks += [{
+                    'id': data['id'],
+                    'poly_id': data['poly_id'],
+                    'name': data['name'],
+                    'date': data['date'],
+                }]
+        return tasks
 
     def update_task(self, updateTask):
         task = self.task_bucket.get(updateTask['id'])
