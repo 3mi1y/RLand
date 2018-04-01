@@ -13,13 +13,13 @@ Router.map(function() {
   this.route('task');
   this.route('dashboard');
   this.route('polygon-list');
-  this.route('new-polygon', { path: '/new-polygon/:polygon_id' });
+  this.route('new-polygon');
   this.route('edit-polygon', { path: '/edit-polygon/:polygon_id' });
   this.route('polygon-info', { path: '/polygon-info/:polygon_id' });
   this.route('register');
   this.route('social');
   this.route('charts');
-  this.route('new-task');
+  this.route('new-task', { path: '/new-task/:polygon_id' });
 });
 
 export default Router;
