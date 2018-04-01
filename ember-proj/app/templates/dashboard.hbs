@@ -1,5 +1,9 @@
 {{outlet}}
-<h1>Welcome to your dashboard, {{ model.name }}!</h1>
+{{#each model as |user|}}
+   {{if user.name}}
+      <h1>Welcome to your dashboard, {{ user.name }}!</h1>
+   {{/if}}
+{{/each}}
 <div>
    <h2>Quick Links</h2>
    <div>
