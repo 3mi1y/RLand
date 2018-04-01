@@ -1,2 +1,13 @@
 {{outlet}}
-<h1>{{ model.name }}</h1>
+<h1>This form lets you insert a new task for polygon: {{ model.name }}</h1>
+
+<form {{action "addTask" on="submit"}}>
+   <label>Task Name:</label>
+   <p>{{input value=name type="text"}}</p>
+
+   <label>Task Description:</label>
+   <p>{{input value=description type="textarea"}}</p>
+
+   <label>Select due date (default is today):</label>
+   {{md-input type="date" value=dueDate}}
+</form>
