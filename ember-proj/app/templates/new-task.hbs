@@ -22,7 +22,7 @@
    </datalist>
 
    <label>Priority:</label>
-   {{input value=priority type="range" list="tickmarks"}}
+   {{input value=priority type="range" min="1" max="10" list="tickmarks"}}
 
    <label>Select due date (default is today):</label>
    {{md-input type="date" value=dueDate}}
