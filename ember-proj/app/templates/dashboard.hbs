@@ -1,6 +1,6 @@
 {{outlet}}
 {{#each model as |user|}}
-   {{if user.name}}
+   {{#if user.name }}
       <h1>Welcome to your dashboard, {{ user.name }}!</h1>
    {{/if}}
 {{/each}}
