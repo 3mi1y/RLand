@@ -432,7 +432,6 @@ class TaskCollectionHandler(BaseHandler):
         db = self.settings['db']
         bodyJSON = tornado.escape.json_decode(self.request.body)
         attr = bodyJSON['data']['attributes']
-
         user = self.current_user
         poly = db.get_polygon(attr['poly-id'], user['email'])
         if(poly is None):

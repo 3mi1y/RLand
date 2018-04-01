@@ -20,6 +20,8 @@ Router.map(function() {
   this.route('social');
   this.route('charts');
   this.route('new-task', { path: '/new-task/:polygon_id' });
+  this.route('new-harvest');
+  this.route('new-note');
 });
 
 export default Router;
