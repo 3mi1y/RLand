@@ -167,7 +167,7 @@ class RiakDb:
         note_id = str(mx+1)
         note = self.note_bucket.new(note_id, data={
             "id": note_id,
-            "poly_id": poly_id,
+            "poly_id": str(poly_id),
             "date": date,
             "title": title,
             "content": content
@@ -175,7 +175,7 @@ class RiakDb:
         note.store()
         return {
             "id": note_id,
-            "poly_id": poly_id,
+            "poly_id": str(poly_id),
             "date": date,
             "title": title,
             "content": content
@@ -231,7 +231,7 @@ class RiakDb:
         harvest_id = str(mx+1)
         harvest = self.harvest_bucket.new(harvest_id, data={
             'id': harvest_id,
-            'poly_id': poly_id,
+            'poly_id': str(poly_id),
             'date': date,
             'amount': amount,
             'units': units
@@ -239,7 +239,7 @@ class RiakDb:
         harvest.store()
         return{
             'id': harvest_id,
-            'poly_id': poly_id,
+            'poly_id': str(poly_id),
             'date': date,
             'amount': amount,
             'units': units
@@ -295,14 +295,14 @@ class RiakDb:
         task_id = str(mx+1)
         task = self.task_bucket.new(task_id, data={
             'id': task_id,
-            'poly_id': poly_id,
+            'poly_id': str(poly_id),
             'name': name,
             'date': date
         })
         task.store()
-        return{
+        return {
             'id': task_id,
-            'poly_id': poly_id,
+            'poly_id': str(poly_id),
             'name': name,
             'date': date
         }
