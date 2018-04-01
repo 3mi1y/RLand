@@ -263,7 +263,7 @@ class NoteCollectionHandler(BaseHandler):
         attr = bodyJSON['data']['attributes']
 
         user = self.current_user
-        poly = db.get_polygon(attr['poly-id'], user['email'])
+        poly = db.get_polygon(str(attr['poly-id']), user['email'])
         if(poly is None):
             self.set_status(404)
             self.write({"errors": [{"title": "polygon not found"}]})
@@ -349,7 +349,7 @@ class HarvestCollectionHandler(BaseHandler):
         attr = bodyJSON['data']['attributes']
 
         user = self.current_user
-        poly = db.get_polygon(attr['poly-id'], user['email'])
+        poly = db.get_polygon(str(attr['poly-id']), user['email'])
         if(poly is None):
             self.set_status(404)
             self.write({"errors": [{"title": "polygon not found"}]})
@@ -433,7 +433,7 @@ class TaskCollectionHandler(BaseHandler):
         bodyJSON = tornado.escape.json_decode(self.request.body)
         attr = bodyJSON['data']['attributes']
         user = self.current_user
-        poly = db.get_polygon(attr['poly-id'], user['email'])
+        poly = db.get_polygon(str(attr['poly-id']), user['email'])
         if(poly is None):
             self.set_status(404)
             self.write({"errors": [{"title": "polygon not found"}]})
