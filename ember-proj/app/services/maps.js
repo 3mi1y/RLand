@@ -153,21 +153,23 @@ export default Service.extend({
     let polygon = e.overlay;
     if (e.type == google.maps.drawing.OverlayType.CIRCLE) {
       polygon.model.set('location', JSON.stringify({
+        shape: "circle",
         center: polygon.getCenter(),
         radius: polygon.getRadius()
       }));
-      console.log("omg its a circle , " + polygon.model.get('location'));
+      console.log(polygon.model.get('location'));
     }
     else if (e.type == google.maps.drawing.OverlayType.RECTANGLE) {
       let bounds = polygon.getBounds();
       polygon.model.set('location', JSON.stringify({
+        shape: "rectangle",
         neBounds: bounds.getNorthEast(),
         swBounds: bounds.getSouthWest()}));
-      console.log("omg its a rectangle , " + polygon.model.get('location'));
+      console.log(polygon.model.get('location'));
     }
     else {
-      polygon.model.set('location', JSON.stringify({path: polygon.getPath().getArray()}));
-      console.log("omg its a polygon , " + polygon.model.get('location'));
+      polygon.model.set('location', JSON.stringify({shape: "polygon", path: polygon.getPath().getArray()}));
+      console.log(polygon.model.get('location'));
     }
   }
 });

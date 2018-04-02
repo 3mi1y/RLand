@@ -21,7 +21,7 @@ export default Ember.Component.extend({
     //todo: Modify for our polygon models, as is causes transaction is null error
     // let polygons = this.get('polygons')();
     // polygons.then((results) => results.forEach((model) => {
-    //   map.addPolygon(model.get('type'), model.get('shape'), model);
+    //   map.addPolygon(model.get('type'), model.get('location'), model);
     // }, this));
   },
 

@@ -38,7 +38,7 @@ export default Controller.extend({
           model = this.get('store').createRecord('polygon', {
             name: '',
             polytype: '',
-            location: '',
+            location: model.location,
             category: '',
             subcategory: '',
             tasks: [],
