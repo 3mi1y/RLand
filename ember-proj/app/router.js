@@ -22,6 +22,7 @@ Router.map(function() {
   this.route('new-task', { path: '/new-task/:polygon_id' });
   this.route('new-harvest', { path: '/new-harvest/:polygon_id' });
   this.route('new-note', { path: '/new-note/:polygon_id' });
+  this.route('all-tasks');
 });
 
 export default Router;

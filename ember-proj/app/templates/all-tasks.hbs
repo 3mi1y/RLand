@@ -1,0 +1,9 @@
+{{outlet}}
+<h1>All of your tasks:</h1>
+{{#each model as |task|}}
+   <h3>{{ task.name }}</h3>
+   <label>Priority</label>
+   <p>{{ task.priority }}</p> 
+   <label>Description</label>
+   <p>{{ task.description }}</p>
+{{/each}}
