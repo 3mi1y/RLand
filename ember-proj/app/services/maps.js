@@ -92,7 +92,7 @@ export default Service.extend({
 
     let setSelected = (shape) => this.setSelectedShape(shape);
     let addPolygonListener = (overlay) => this.addPolygonListener(overlay);
-    let parent = this;
+    let setPolyModel = (polyObject) => this.setPolyModel(polyObject);
 
     google.maps.event.addListener(this.get('map'), 'click', () => this.clearSelected());
     google.maps.event.addListener(drawing, 'overlaycomplete', function (e) {
@@ -100,18 +100,7 @@ export default Service.extend({
       e.overlay.setEditable(false);
       setSelected(e.overlay);
       addPolygonListener(e.overlay);
-      if (e.type == google.maps.drawing.OverlayType.CIRCLE) {
-        console.log("omg its a circle");
-      }
-      else if (e.type == google.maps.drawing.OverlayType.RECTANGLE) {
-        console.log(e.overlay.getBounds());
-        console.log("omg its a rectangle");
-      }
-      else {
-        console.log("omg its a polygon");
-        parent.get('selected').model.set('location', JSON.stringify({path: e.overlay.getPath().getArray()}));
-        console.log(parent.get('selected').model.get('location'));
-      }
+      setPolyModel(e);
     });
 
     drawing.setMap(this.get('map'));
@@ -124,17 +113,16 @@ export default Service.extend({
     var clearSelected = () => this.clearSelected();
     google.maps.event.addListener(overlay, 'click', function () {
       setSelected(this);
-      console.log(this.getPath().getArray());
     });
 
-    parent = this;
+    let parent = this;
     google.maps.event.addDomListener(document, 'keyup', function (e) {
       let code = e.which;
       if (code === 46)
       {
         let selected = getSelected();
         parent.get('controllers.map').send('deletepolygon', selected.model);
-        deletePolygon(selected.model);
+        //deletePolygon(selected.model);
         clearSelected();
       }
     });
@@ -158,5 +146,28 @@ export default Service.extend({
     this.on_map_polygons.forEach((polygon) => polygon.setMap(null));
     this.on_map_polygons = new Array();
     this.clearSelected();
+  },
+
+  setPolyModel(e)
+  {
+    let polygon = e.overlay;
+    if (e.type == google.maps.drawing.OverlayType.CIRCLE) {
+      polygon.model.set('location', JSON.stringify({
+        center: polygon.getCenter(),
+        radius: polygon.getRadius()
+      }));
+      console.log("omg its a circle , " + polygon.model.get('location'));
+    }
+    else if (e.type == google.maps.drawing.OverlayType.RECTANGLE) {
+      let bounds = polygon.getBounds();
+      polygon.model.set('location', JSON.stringify({
+        neBounds: bounds.getNorthEast(),
+        swBounds: bounds.getSouthWest()}));
+      console.log("omg its a rectangle , " + polygon.model.get('location'));
+    }
+    else {
+      polygon.model.set('location', JSON.stringify({path: polygon.getPath().getArray()}));
+      console.log("omg its a polygon , " + polygon.model.get('location'));
+    }
   }
 });
