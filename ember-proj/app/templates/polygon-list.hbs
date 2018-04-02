@@ -20,6 +20,9 @@
         </div>
         <div>
            <div>
+              {{#link-to "notes" polygon.id}}Notes{{/link-to}}
+           </div>
+           <div>
            	  {{#link-to "edit-polygon" polygon.id}}Edit{{/link-to}}
   			  </div>
            <button {{action "deletePolygon" polygon}}>Delete</button>

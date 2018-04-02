@@ -23,6 +23,7 @@ Router.map(function() {
   this.route('new-harvest', { path: '/new-harvest/:polygon_id' });
   this.route('new-note', { path: '/new-note/:polygon_id' });
   this.route('all-tasks');
+  this.route('notes', { path: '/notes/:polygon_id' });
 });
 
 export default Router;
