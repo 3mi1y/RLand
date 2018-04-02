@@ -1,2 +1,8 @@
 {{outlet}}
 <h1>Notes for polygon {{model.id}}</h1>
+{{#each model as |note|}}
+  <div>
+     <h2>{{ note.title }}</h2>
+     <p>{{ note.content }}</p>
+  </div>
+{{/each}}

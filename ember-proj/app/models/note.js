@@ -6,5 +6,6 @@ export default DS.Model.extend({
       defaultValue() { return new Date(); }
    }),
    title: DS.attr('string'),
-   content: DS.attr('string')
+   content: DS.attr('string'),
+   polygon: DS.belongsTo('polygon')
 });
