@@ -441,7 +441,7 @@ class TaskCollectionHandler(BaseHandler):
 
         # TODO: should probably be 'due-date' on database side
         # instead of 'date', in case we add start-date later
-        task = db.create_task(attr['poly-id'], attr['name'], attr['due-date'])
+        task = db.create_task(attr['poly-id'], attr['name'], attr['due-date'], attr['priority'], attr['description'])
         self.write({"data": jsonify_task(task)})
 
 
