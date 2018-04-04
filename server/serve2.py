@@ -412,6 +412,8 @@ def jsonify_task(task):
             "poly-id": task["poly_id"],
             "name": task["name"],
             "due-date": task["date"] and str(task["date"]),
+            "priority" : task["priority"],
+            "completed" : task["completed"]
         }
     }
 
@@ -471,6 +473,10 @@ class TaskHandler(BaseHandler):
                 task['name'] = attrs['name']
             if 'due-date' in attrs:
                 task['date'] = attrs['due-date']
+            if 'completed' in attrs:
+                task['completed'] = attrs['completed']
+            if 'priority' in attrs:
+                task['priority'] = attrs['priority']
             db.update_task(task)
             self.write({"data": jsonify_task(task)})
         else:
