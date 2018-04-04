@@ -1,11 +1,16 @@
 import Controller from '@ember/controller';
+import $ from 'jquery';
 
 export default Controller.extend({
-  // session: Ember.inject.service('session'),
-  //
-  // actions: {
-  //   invalidateSession() {
-  //     this.get('session').invalidate();
-  //   }
-  // }
+  authentication: Ember.inject.service('authentication'),
+  //loggedIn: true,
+  actions: {
+     logout() {
+        Ember.run(() => this.store.unloadAll())
+        Ember.run(() => console.log(this.store.peekAll('polygon').get('length')))
+        this.get('authentication').logout()
+        $.get("api/logout").then(() => { console.log("Logged out on the server")})
+        this.transitionToRoute('index')
+     }
+   }
 });

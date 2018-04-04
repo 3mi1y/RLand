@@ -394,18 +394,18 @@ class TestTasks(AuthenticatedServerTest):
                               headers=dict(cookie=self.cookie), body=body)
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "new name")
-        self.assertEqual(resp["data"]["attributes"]["date"], "2018-08-11")
+        self.assertEqual(resp["data"]["attributes"]["due-date"], "2018-08-11")
 
         response = self.fetch("/api/tasks/" + self.id_task,
                               headers=dict(cookie=self.cookie))
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "new name")
-        self.assertEqual(resp["data"]["attributes"]["date"], "2018-08-11")
+        self.assertEqual(resp["data"]["attributes"]["due-date"], "2018-08-11")
 
     def test_create_get_delete_task(self):
         body = json.dumps({"data": {"attributes": {
             "poly-id": self.id_poly,
-            "date": None,
+            "due-date": None,
             "name": "hello world",
         }}})
         response = self.fetch("/api/tasks", method="POST",

@@ -263,7 +263,7 @@ class NoteCollectionHandler(BaseHandler):
         attr = bodyJSON['data']['attributes']
 
         user = self.current_user
-        poly = db.get_polygon(attr['poly-id'], user['email'])
+        poly = db.get_polygon(str(attr['poly-id']), user['email'])
         if(poly is None):
             self.set_status(404)
             self.write({"errors": [{"title": "polygon not found"}]})
@@ -349,7 +349,7 @@ class HarvestCollectionHandler(BaseHandler):
         attr = bodyJSON['data']['attributes']
 
         user = self.current_user
-        poly = db.get_polygon(attr['poly-id'], user['email'])
+        poly = db.get_polygon(str(attr['poly-id']), user['email'])
         if(poly is None):
             self.set_status(404)
             self.write({"errors": [{"title": "polygon not found"}]})
@@ -411,7 +411,7 @@ def jsonify_task(task):
         "attributes": {
             "poly-id": task["poly_id"],
             "name": task["name"],
-            "date": task["date"] and str(task["date"]),
+            "due-date": task["date"] and str(task["date"]),
         }
     }
 
@@ -432,15 +432,17 @@ class TaskCollectionHandler(BaseHandler):
         db = self.settings['db']
         bodyJSON = tornado.escape.json_decode(self.request.body)
         attr = bodyJSON['data']['attributes']
-
         user = self.current_user
-        poly = db.get_polygon(attr['poly-id'], user['email'])
+        poly = db.get_polygon(str(attr['poly-id']), user['email'])
         if(poly is None):
             self.set_status(404)
             self.write({"errors": [{"title": "polygon not found"}]})
             return
 
-        task = db.create_task(attr['poly-id'], attr['name'], attr['date'])
+        # TODO: should probably be 'due-date' on database side
+        # instead of 'date', in case we add start-date later
+        # TODO: should also include 'description' and 'priority' for a task
+        task = db.create_task(attr['poly-id'], attr['name'], attr['due-date'])
         self.write({"data": jsonify_task(task)})
 
 
@@ -465,9 +467,10 @@ class TaskHandler(BaseHandler):
         if (task is not None and task['poly_id'] in user['polygon_ids']):
             bodyJSON = tornado.escape.json_decode(self.request.body)
             attrs = bodyJSON['data']['attributes']
-            for attr_name in ['name', 'date']:
-                if attr_name in attrs:
-                    task[attr_name] = attrs[attr_name]
+            if 'name' in attrs:
+                task['name'] = attrs['name']
+            if 'due-date' in attrs:
+                task['date'] = attrs['due-date']
             db.update_task(task)
             self.write({"data": jsonify_task(task)})
         else:

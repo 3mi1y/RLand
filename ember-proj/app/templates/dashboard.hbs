@@ -1,9 +1,14 @@
 {{outlet}}
 {{#each model as |user|}}
-   <h1>Welcome to your dashboard, {{ user.name }}!</h1>
+   {{#if user.name }}
+      <h1>Welcome to your dashboard, {{ user.name }}!</h1>
+   {{/if}}
 {{/each}}
 <div>
    <h2>Quick Links</h2>
+   <div>
+      {{#link-to 'all-tasks'}}Your tasks{{/link-to}}
+   </div>
    <div>
       {{#link-to 'new-polygon'}}Create a New Polygon{{/link-to}}
    </div>

@@ -1,0 +1,31 @@
+{{outlet}}
+<h1>New task for polygon: {{ model.name }}</h1>
+
+<form {{action "addTask" on="submit"}}>
+   <label>Task Name:</label>
+   <p>{{input value=name type="text"}}</p>
+
+   <label>Task Description:</label>
+   <p>{{input value=description type="textarea"}}</p>
+   
+   <datalist id="tickmarks">
+   	<option value="1" label="1" />
+        <option value="2" />
+        <option value="3" />
+        <option value="4" />
+        <option value="5" label="5" />
+        <option value="6" />
+        <option value="7" />
+        <option value="8" />
+        <option value="9" />
+        <option value="10" label="10" />
+   </datalist>
+
+   <label>Priority:</label>
+   {{input value=priority type="range" min="1" max="10" list="tickmarks"}}
+
+   <label>Select due date (default is today):</label>
+   {{md-input type="date" value=dueDate}}
+
+   {{md-btn-submit text="Submit"}}
+</form>

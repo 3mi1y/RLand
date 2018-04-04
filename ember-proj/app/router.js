@@ -19,6 +19,14 @@ Router.map(function() {
   this.route('register');
   this.route('social');
   this.route('charts');
+  this.route('new-task', { path: '/new-task/:polygon_id' });
+  this.route('new-harvest', { path: '/new-harvest/:polygon_id' });
+  this.route('new-note', { path: '/new-note/:polygon_id' });
+  this.route('all-tasks');
+  this.route('notes', { path: '/notes/:polygon_id' });
+  this.route('harvests', { path: '/harvests/:polygon_id' });
+  this.route('tasks', { path: '/tasks/:polygon_id' });
+  this.route('task-info', { path: '/task-info/:task_id '});
 });
 
 export default Router;
