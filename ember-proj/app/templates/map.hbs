@@ -69,16 +69,30 @@ RLand map page
       {{#each model.polygons as |polygon|}}
         <div class="row">
           {{#polygon-list item=polygon}}
-            <div>
-              {{#link-to "polygon-info" polygon.id}}More info{{/link-to}}
-              {{md-btn text="Add Task"}}
-            </div>
-          <br>
-            <div>
-              {{#link-to "edit-polygon" polygon.id}}Edit{{/link-to}}
-              {{md-btn action = "deletePolygon" actionArg=polygon text="Delete"}}
-            </div>
-          {{/polygon-list}}
+        <div>
+           {{#link-to "notes" polygon.id}}Your notes{{/link-to}}
+           {{#link-to "harvests" polygon.id}}Your harvests{{/link-to}}
+           {{#link-to "tasks" polygon.id}}Your tasks{{/link-to}}
+           <div>
+                        {{#link-to "polygon-info" polygon.id}}More info{{/link-to}}
+           </div>
+           <div>
+                        {{#link-to "new-task" polygon.id}}Add a Task{{/link-to}}
+           </div>
+           <div>
+              {{#link-to "new-harvest" polygon.id}}Add a Harvest{{/link-to}}
+           </div>
+           <div>
+              {{#link-to "new-note" polygon.id}}Add Note{{/link-to}}
+           </div>
+        </div>
+        <div>
+           <div>
+                  {{#link-to "edit-polygon" polygon.id}}Edit{{/link-to}}
+                          </div>
+           <button {{action "deletePolygon" polygon}}>Delete</button>
+        </div>
+      {{/polygon-list}}
         </div>
       {{/each}}
     </div>
