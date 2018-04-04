@@ -9,7 +9,7 @@ export default Controller.extend({
                content: this.get('notecontent')
             })
             note.save()
-            //this.transitionToRoute('notes', this.get('model').get('id')) 
+            this.transitionToRoute('notes', this.get('model').get('id')) 
          }
    }
 });

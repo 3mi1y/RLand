@@ -1,2 +1,12 @@
 {{outlet}}
 <h1>Add a new harvest for polygon: {{ model.name }}</h1>
+
+<form {{action "newHarvest" on="submit"}}>
+   <label>What are you harvesting?</label>
+   <p>{{input value=units type="text"}}</p>
+
+   <label>Amount:</label>
+   <p>{{input value=amount type="number"}}</p>
+
+   {{md-btn-submit text="Submit"}}
+</form>

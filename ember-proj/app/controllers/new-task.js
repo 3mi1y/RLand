@@ -12,7 +12,7 @@ export default Controller.extend({
             priority: this.get('priority')
          })
          task.save()
-         this.transitionToRoute('all-tasks')
+         this.transitionToRoute('tasks', this.get('model').get('id'))
       }
    }
 });
