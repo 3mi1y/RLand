@@ -3,11 +3,14 @@ import RSVP from 'rsvp';
 
 export default Route.extend({
    model(params) {
-    // return this.store.findRecord('polygon', params.polygon_id)
       return RSVP.hash({
         polygon: this.store.findRecord('polygon', params.polygon_id),
-        tasks: this.store.query('task', { polyId: params.polygon_id }),
-        notes: this.store.query('note', { polyId: params.polygon_id})
+        tasks: this.get('store').findAll('task').then((list) => {
+           return list.filterBy('polyId', parseInt(params.polygon_id));
+        }),
+        notes: this.get('store').findAll('note').then((list) => {
+           return list.filterBy('polyId', parseInt(params.polygon_id));
+        })
       })
    }
 });
