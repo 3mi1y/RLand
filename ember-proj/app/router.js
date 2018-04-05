@@ -10,7 +10,7 @@ Router.map(function() {
   this.route('map');
   this.route('profile');
   this.route('login');
-  this.route('task');
+  this.route('task', { path: '/task/:task_id' });
   this.route('dashboard');
   this.route('polygon-list');
   this.route('new-polygon');

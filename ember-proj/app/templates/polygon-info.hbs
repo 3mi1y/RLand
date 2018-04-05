@@ -23,32 +23,46 @@
    </div>
    <div class="polyInfoNotes">
       <h2>Notes:</h2>
-      <div class="polyInfoNotesList">
-         {{#each model.notes as |note|}}
-            <div class="noteItem">
-               <div class="noteHeader">
-               <h5><strong>{{ note.title }}</strong></h5>
-               <button {{action "deleteNote" note}} class="deleteButton">
-                  {{fa-icon "trash" class="trashIcon"}}
-               </button>
-             </div>
-             <p>{{ note.content }}</p>
+      {{#if model.notes}}
+         <div class="polyInfoNotesList">
+            {{#each model.notes as |note|}}
+               <div class="noteItem">
+                  <div class="noteHeader">
+                  <h5><strong>{{ note.title }}</strong></h5>
+                  <button {{action "deleteNote" note}} class="deleteButton">
+                     {{fa-icon "trash" class="trashIcon"}}
+                  </button>
+                </div>
+                <p>{{ note.content }}</p>
+              </div>
+             {{/each}}
+        {{else}}
+           <div class="noNotesContainer">
+              <h4>No notes yet!</h4>
+              {{#link-to "new-note" model.polygon.id}}New Note{{/link-to}}
            </div>
-         {{/each}}
+        {{/if}}
       </div>
    </div>
 </div>
 <hr>
 <div class="polyInfoTaskContainer">
    <h1>Tasks for this polygon:</h1>
-   <div class="polyInfoTaskList">
-      {{#each model.tasks as |task|}}
-         <div class='taskItem {{tasks task.priority}}'>
-            <h4>{{ task.name }}</h4>
-            {{#link-to "task" task.id class="btn btn-outline-light"}}More Info{{/link-to}} 
-             <button class="btn btn-outline-light" {{action "deleteTask" task}}>Delete</button>
-          </div>
-       {{/each}}
-   </div>
+   {{#if model.tasks}}
+      <div class="polyInfoTaskList">
+         {{#each model.tasks as |task|}}
+            <div class='taskItem {{tasks task.priority}}'>
+               <h4>{{ task.name }}</h4>
+               {{#link-to "task-info" task.id class="btn btn-outline-light"}}More Info{{/link-to}} 
+                <button class="btn btn-outline-light" {{action "deleteTask" task}}>Delete</button>
+             </div>
+          {{/each}}
+      </div>
+    {{else}}
+       <div class="noTasksContainer">
+          <h4>Looks like you don't have any tasks yet! Get crackin!</h4>
+          {{#link-to "new-task" model.polygon.id}}Add a Task{{/link-to}}
+       </div>
+    {{/if}}
 </div>
 </div>
