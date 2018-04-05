@@ -371,7 +371,7 @@ class TestTasks(AuthenticatedServerTest):
         user['polygon_ids'] += [self.id_poly]
         self.db.update_user(user)
 
-        task = self.db.create_task(self.id_poly, "do task", "2018-08-11")
+        task = self.db.create_task(self.id_poly, "do task", "2018-08-11", 3, True)
         self.id_task = task["id"]
 
     def tearDown(self):
@@ -388,13 +388,14 @@ class TestTasks(AuthenticatedServerTest):
     def test_update_task(self):
         body = json.dumps({"data": {
             "id": self.id_task,
-            "attributes": {"name": "new name"}
+            "attributes": {"name": "new name", "completed": False}
         }})
         response = self.fetch("/api/tasks/" + self.id_task, method="PATCH",
                               headers=dict(cookie=self.cookie), body=body)
         resp = json.loads(str(response.body, "utf-8"))
         self.assertEqual(resp["data"]["attributes"]["name"], "new name")
         self.assertEqual(resp["data"]["attributes"]["due-date"], "2018-08-11")
+        self.assertEqual(resp["data"]["attributes"]["completed"], False)
 
         response = self.fetch("/api/tasks/" + self.id_task,
                               headers=dict(cookie=self.cookie))
@@ -407,6 +408,8 @@ class TestTasks(AuthenticatedServerTest):
             "poly-id": self.id_poly,
             "due-date": None,
             "name": "hello world",
+            "priority": 2,
+            "completed": False,
         }}})
         response = self.fetch("/api/tasks", method="POST",
                               headers=dict(cookie=self.cookie), body=body)
