@@ -10,6 +10,10 @@ export default Controller.extend({
   levelThree: ['*'],
   levelFour: ['*'],
   levelFive: ['*'],
+  showLevelTwo: false,
+  showLevelThree: false,
+  showLevelFour: false,
+  showLevelFive: false,
   selectedOptionOne: 'default',
   selectedOptionTwo: '(must specify level one)',
   selectedOptionThree: '(must specify level two)',
@@ -81,7 +85,15 @@ export default Controller.extend({
         });
         //console.log(myArr)
         this.set('selectedOptionOne', selectedOption);
+	this.set('selectedOptionTwo', '');
+	this.set('selectedOptionThree', '');
+	this.set('selectedOptionFour', '');
+	this.set('selectedOptionFive', '');
         this.set('levelTwo', myArr);
+	this.set('showLevelTwo', true);
+	this.set('showLevelThree', false);
+	this.set('showLevelFour', false);
+	this.set('showLevelFive', false);
         return myArr
       },
 
@@ -95,8 +107,14 @@ export default Controller.extend({
         })[0].leaves.map(item => {
           return item.name
         });
-        this.set('selectedOptionTwo', selectedOption);
+	this.set('selectedOptionTwo', selectedOption);
+	this.set('selectedOptionThree', '');
+	this.set('selectedOptionFour', '');
+	this.set('selectedOptionFive', '');
         this.set('levelThree', levThree);
+	this.set('showLevelThree', true);
+	this.set('showLevelFour', false);
+	this.set('showLevelFive', false);
       },
 
       updateLevelFour(selectedOption) {
@@ -112,8 +130,12 @@ export default Controller.extend({
           return item.name
         });
 
-        this.set('selectedOptionThree', selectedOption);
+	this.set('selectedOptionThree', selectedOption);
+	this.set('selectedOptionFour', '');
+	this.set('selectedOptionFive', '');
         this.set('levelFour', levFour);
+	this.set('showLevelFour', true);
+	this.set('showLevelFive', false);
       },
 
       updateLevelFive(selectedOption) {
@@ -131,8 +153,10 @@ export default Controller.extend({
           return item.name
         });
 
+	this.set('selectedOptionFour', selectedOption);
+	this.set('selectedOptionFive', '');
         this.set('levelFive', levFive);
-        this.set('selectedOptionFour', selectedOption);
+	this.set('showLevelFive', true);
       },
 
       setLevelFiveSelection(selectedOption) {

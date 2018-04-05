@@ -21,20 +21,25 @@ RLand map page
           options=levelOne
           selected=selectedOptionOne
           onchange=(action "updateLevelTwo")
-        as |level|
+        as |level1|
         }}
-          {{level}}
+          {{level1}}
         {{/power-select}}
         <br>
+
+	{{#if showLevelTwo}}
         {{#power-select
           options=levelTwo
           selected=selectedOptionTwo
           onchange=(action "updateLevelThree")
-        as |num|
+        as |level2|
         }}
-          {{num}}
+          {{level2}}
         {{/power-select}}
+	{{/if}}
         <br>
+
+	{{#if showLevelThree}}
         {{#power-select
           options=levelThree
           selected=selectedOptionThree
@@ -43,7 +48,10 @@ RLand map page
         }}
           {{level3}}
         {{/power-select}}
+	{{/if}}
+
         <br>
+	{{#if showLevelFour}}
         {{#power-select
           options=levelFour
           selected=selectedOptionFour
@@ -52,7 +60,10 @@ RLand map page
         }}
           {{level4}}
         {{/power-select}}
+	{{/if}}
+
         <br>
+	{{#if showLevelFive}}
         {{#power-select
           options=levelFive
           selected=selectedOptionFive
@@ -61,6 +72,7 @@ RLand map page
         }}
           {{level5}}
         {{/power-select}}
+	{{/if}}
         <br>
         {{md-btn-submit text="Submit"}}
       </form>
