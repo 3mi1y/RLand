@@ -289,7 +289,7 @@ class RiakDb:
             harvest.delete()
             return("Deleted")
 
-    def create_task(self, poly_id, name, date):
+    def create_task(self, poly_id, name, date,priority,completed):
         keys = self.task_bucket.get_keys()
         mx = max([int(k) for k in keys] + [0])
         task_id = str(mx+1)
@@ -297,14 +297,18 @@ class RiakDb:
             'id': task_id,
             'poly_id': str(poly_id),
             'name': name,
-            'date': date
+            'date': date,
+            'priority' : priority,
+            'completed' : completed
         })
         task.store()
         return {
             'id': task_id,
             'poly_id': str(poly_id),
             'name': name,
-            'date': date
+            'date': date,
+            'priority':priority,
+            'completed':completed
         }
 
     def get_task(self, task_id):
@@ -316,7 +320,9 @@ class RiakDb:
             'id': task_id,
             'poly_id': task['poly_id'],
             'name': task['name'],
-            'date': task['date']
+            'date': task['date'],
+            'priority':task['priority'],
+            'completed':task['completed']
         }
 
     def get_tasks(self, poly_ids):
@@ -330,6 +336,8 @@ class RiakDb:
                     'poly_id': data['poly_id'],
                     'name': data['name'],
                     'date': data['date'],
+                    'priority':data['priority'],
+                    'completed':data['completed']
                 }]
         return tasks
 
@@ -338,6 +346,8 @@ class RiakDb:
         if task.data:
             task.data['name'] = updateTask['name']
             task.data['date'] = updateTask['date']
+            task.data['priority'] = updateTask['priority']
+            task.data['completed'] = updateTask['completed']
             if task.data['poly_id'] != updateTask['poly_id']:
                 raise Exception("Can't update a aharvest for a different polygon")
             task.store()
