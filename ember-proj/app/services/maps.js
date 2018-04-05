@@ -98,6 +98,7 @@ export default Service.extend({
     google.maps.event.addListener(drawing, 'overlaycomplete', function (e) {
       drawing.setDrawingMode(null);
       e.overlay.setEditable(false);
+      console.log(e.overlay);
       setSelected(e.overlay);
       addPolygonListener(e.overlay);
       setPolyModel(e);
@@ -128,17 +129,57 @@ export default Service.extend({
     });
   },
 
-  addPolygon(type, shape, model)
+  addPolygon(location, model)
   {
-    let rectangle = new google.maps.Rectangle({
-      map: this.get('map'),
-      bounds: shape,
-      clickable: true,
-    });
-
-    rectangle.set('model', model);
-    this.addPolygonListener(rectangle);
-    this.on_map_polygons.push(rectangle);
+    if(location) {
+      location = JSON.parse(location);
+      let map = this.get('map');
+      let shape = location.shape;
+      let polygon = null;
+      if (shape == google.maps.drawing.OverlayType.CIRCLE) {
+        let center = location.center;
+        let radius = location.radius;
+        polygon = new google.maps.Circle({
+          clickable: true,
+          center: center,
+          radius: radius,
+          map: map
+        });
+      }
+      else if (shape == google.maps.drawing.OverlayType.RECTANGLE) {
+        let neBounds = location.neBounds;
+        let swBounds = location.swBounds;
+        polygon = new google.maps.Rectangle({
+          clickable: true,
+          map: map,
+          bounds: {
+            north: neBounds.lat,
+            south: swBounds.lat,
+            east: neBounds.lng,
+            west: swBounds.lng
+          }
+        });
+      }
+      else {
+        let path = location.path;
+        console.log(path);
+        polygon = new google.maps.Polygon({
+          clickable: true,
+          map: map,
+          path: path
+        });
+      }
+      this.addPolygonListener(polygon);
+    }
+    // let rectangle = new google.maps.Rectangle({
+    //   map: this.get('map'),
+    //   bounds: shape,
+    //   clickable: true,
+    // });
+    //
+    // rectangle.set('model', model);
+    // this.addPolygonListener(rectangle);
+    // this.on_map_polygons.push(rectangle);
   },
 
   clearAllPolygons()
@@ -153,7 +194,7 @@ export default Service.extend({
     let polygon = e.overlay;
     if (e.type == google.maps.drawing.OverlayType.CIRCLE) {
       polygon.model.set('location', JSON.stringify({
-        shape: "circle",
+        shape: e.type,
         center: polygon.getCenter(),
         radius: polygon.getRadius()
       }));
@@ -162,13 +203,13 @@ export default Service.extend({
     else if (e.type == google.maps.drawing.OverlayType.RECTANGLE) {
       let bounds = polygon.getBounds();
       polygon.model.set('location', JSON.stringify({
-        shape: "rectangle",
+        shape: e.type,
         neBounds: bounds.getNorthEast(),
         swBounds: bounds.getSouthWest()}));
       console.log(polygon.model.get('location'));
     }
     else {
-      polygon.model.set('location', JSON.stringify({shape: "polygon", path: polygon.getPath().getArray()}));
+      polygon.model.set('location', JSON.stringify({shape: e.type, path: polygon.getPath().getArray()}));
       console.log(polygon.model.get('location'));
     }
   }

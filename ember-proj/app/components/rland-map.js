@@ -19,9 +19,11 @@ export default Ember.Component.extend({
     this.$('.map-container').append(mapElement);
 
     //todo: Modify for our polygon models, as is causes transaction is null error
-    // let polygons = this.get('polygons')();
+    this.get('polygons').forEach((model) => {
+      map.addPolygon(model.get('location'), model);
+    });
     // polygons.then((results) => results.forEach((model) => {
-    //   map.addPolygon(model.get('type'), model.get('location'), model);
+    //   map.addPolygon(model.get('location'), model.get('location').shape, model);
     // }, this));
   },
 
