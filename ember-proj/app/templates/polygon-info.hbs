@@ -36,13 +36,13 @@
                 <p>{{ note.content }}</p>
               </div>
              {{/each}}
+           </div>
         {{else}}
            <div class="noNotesContainer">
               <h4>No notes yet!</h4>
               {{#link-to "new-note" model.polygon.id}}New Note{{/link-to}}
            </div>
         {{/if}}
-      </div>
    </div>
 </div>
 <hr>
