@@ -1,4 +1,4 @@
-// Fix for Roboto font path
+//Fix for Roboto font path
 $roboto-font-path: '../assets/';
 
 // Materialize styles
@@ -15,5 +15,9 @@ $roboto-font-path: '../assets/';
 @import 'map.scss';
 
 @import 'tasks.scss';
+
+@import 'notes.scss';
+
+@import 'polygon-info.scss';
 
 @import "ember-power-select";

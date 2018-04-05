@@ -39,6 +39,7 @@
     "ember-composability": "^0.3.8",
     "ember-data": "~3.0.0",
     "ember-export-application-global": "^2.0.0",
+    "ember-font-awesome": "^4.0.0-rc.2",
     "ember-jquery": "^1.0.5",
     "ember-keyboard": "^3.0.0",
     "ember-load-initializers": "^1.0.0",

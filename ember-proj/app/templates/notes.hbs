@@ -1,8 +1,13 @@
 {{outlet}}
 <h1>Notes for polygon {{model.id}}</h1>
 {{#each model as |note|}}
-  <div>
-     <h2>{{ note.title }}</h2>
+  <div class="noteItem">
+     <div class="noteHeader">
+     	<h5><strong>{{ note.title }}</strong></h5>
+        <button {{action "deleteNote" note}} class="deleteButton">
+           {{fa-icon "trash" class="trashIcon"}}
+        </button>
+     </div>
      <p>{{ note.content }}</p>
   </div>
 {{/each}}
