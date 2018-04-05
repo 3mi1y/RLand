@@ -5,6 +5,11 @@ export default Service.extend({
    init() {
       this._super(...arguments);
       this.set('isLoggedIn', false);
+      $.get("api/users/@CURRENT_USER").then((data) => {
+	if (data.data) {
+          this.set('isLoggedIn', true);
+        }
+      });
    },
    login() {
       this.set('isLoggedIn', true);
