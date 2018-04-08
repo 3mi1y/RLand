@@ -14,7 +14,7 @@ export default Controller.extend({
         isProcessing: false
       });
 
-      $.post("api/login", {
+      $.post("/api/login", {
         email: this.get("email"),
         password: this.get("password")
       }).then(() => {
