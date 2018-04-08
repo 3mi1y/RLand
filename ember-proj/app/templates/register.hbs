@@ -5,10 +5,18 @@
       <form id="register" class="form-horizontal" style="display:block;" {{action "register" on="submit"}}>
         <div class="row">
           <div id="errors" class="alert alert-warning" style="display:none;"></div>
+
+	  <p>Profile</p>
           {{md-input value=name label="Your Name" class="col s12"}}
           {{md-input value=email label="Email" class="col s12" validate=True}}
           {{md-input value=password type="password" label="Password" class="col s12"}}
-          {{md-input value=address label="Address" class="col s12"}}
+
+	  <p>Address</p>
+          {{md-input value=street label="Street" class="col s12"}}
+          {{md-input value=city label="City" class="col s12"}}
+          {{md-input value=state label="State" class="col s12"}}
+          {{md-input value=zip label="Zipcode" class="col s12"}}
+
           {{md-btn-submit text='Create Account' type="submit" action=register}}
         </div>
       </form>

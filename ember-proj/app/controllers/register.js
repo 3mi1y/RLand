@@ -4,11 +4,13 @@ import $ from 'jquery';
 export default Controller.extend({
   actions: {
     register() {
+      const address = this.get("street") + " " + this.get("city") + ", " + this.get("state") + " " + this.get("zip");
+
       const user = this.get('store').createRecord('user', {
         name: this.get("name"),
         email: this.get("email"),
         password: this.get("password"),
-        address: this.get("address"),
+        address: address,
         polygons: []
       });
       user.save().then(() => {
