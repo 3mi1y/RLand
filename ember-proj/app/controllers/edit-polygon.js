@@ -9,10 +9,10 @@ export default Controller.extend({
          let endDate = this.get('endDate');
 
          this.store.findRecord('polygon', id).then((changedPolygon) => {
-	    if (name) { changedPolygon.set('name', name); }
-	    if (loc) { changedPolygon.set('location', loc); }
-	    if (startDate) { changedPolygon.set('startDate', startDate); }
-	    if (endDate) { changedPolygon.set('endDate', endDate); }
+            if (name) { changedPolygon.set('name', name); }
+            if (loc) { changedPolygon.set('location', loc); }
+            if (startDate) { changedPolygon.set('startDate', startDate); }
+            if (endDate) { changedPolygon.set('endDate', endDate); }
             changedPolygon.save();
          }).then(
             this.transitionToRoute('polygon-list')

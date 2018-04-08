@@ -1,6 +1,6 @@
 import Controller from '@ember/controller';
 import { inject } from '@ember/service';
-import DS from "ember-data";
+import $ from 'jquery';
 
 export default Controller.extend({
   polyTypeTree: inject(),
