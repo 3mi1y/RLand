@@ -98,7 +98,6 @@ export default Service.extend({
     google.maps.event.addListener(drawing, 'overlaycomplete', function (e) {
       drawing.setDrawingMode(null);
       e.overlay.setEditable(false);
-      console.log(e.overlay);
       setSelected(e.overlay);
       addPolygonListener(e.overlay);
       setPolyModel(e);
@@ -115,14 +114,10 @@ export default Service.extend({
       setSelected(this);
     });
 
-    let parent = this;
     google.maps.event.addDomListener(document, 'keyup', function (e) {
       let code = e.which;
       if (code === 46)
       {
-        let selected = parent.get('selected');
-        //parent.get('controllers.map').send('deletepolygon', selected.model);
-        parent.deletePolygon(selected.get('model'));
         clearSelected();
       }
     });
@@ -161,7 +156,6 @@ export default Service.extend({
       }
       else {
         let path = location.path;
-        console.log(path);
         polygon = new google.maps.Polygon({
           clickable: true,
           map: map,
@@ -190,7 +184,6 @@ export default Service.extend({
         center: polygon.getCenter(),
         radius: polygon.getRadius()
       }));
-      console.log(polygon.model.get('location'));
     }
     else if (e.type == google.maps.drawing.OverlayType.RECTANGLE) {
       let bounds = polygon.getBounds();
@@ -202,7 +195,6 @@ export default Service.extend({
     }
     else {
       polygon.model.set('location', JSON.stringify({shape: e.type, path: polygon.getPath().getArray()}));
-      console.log(polygon.model.get('location'));
     }
   },
 

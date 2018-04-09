@@ -1,6 +1,5 @@
 import Controller from '@ember/controller';
 import { inject } from '@ember/service';
-import DS from "ember-data";
 
 export default Controller.extend({
   polyTypeTree: inject(),
@@ -145,7 +144,6 @@ export default Controller.extend({
         polygonTypeArray.push(this.get('selectedOptionThree'));
         polygonTypeArray.push(this.get('selectedOptionFour'));
         polygonTypeArray.push(this.get('selectedOptionFive'));
-        //console.log(polygonTypeArray)
         return polygonTypeArray
       },
 
