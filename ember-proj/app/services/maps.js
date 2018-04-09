@@ -110,7 +110,6 @@ export default Service.extend({
   addPolygonListener(overlay)
   {
     var setSelected = (shape) => this.setSelectedShape(shape);
-    var getSelected = () => this.get('selected');
     var clearSelected = () => this.clearSelected();
     google.maps.event.addListener(overlay, 'click', function () {
       setSelected(this);
@@ -121,9 +120,9 @@ export default Service.extend({
       let code = e.which;
       if (code === 46)
       {
-        let selected = getSelected();
-        parent.get('controllers.map').send('deletepolygon', selected.model);
-        //deletePolygon(selected.model);
+        let selected = parent.get('selected');
+        //parent.get('controllers.map').send('deletepolygon', selected.model);
+        parent.deletePolygon(selected.get('model'));
         clearSelected();
       }
     });
@@ -169,17 +168,10 @@ export default Service.extend({
           path: path
         });
       }
+      polygon.set('model', model);
       this.addPolygonListener(polygon);
+      this.on_map_polygons.push(polygon);
     }
-    // let rectangle = new google.maps.Rectangle({
-    //   map: this.get('map'),
-    //   bounds: shape,
-    //   clickable: true,
-    // });
-    //
-    // rectangle.set('model', model);
-    // this.addPolygonListener(rectangle);
-    // this.on_map_polygons.push(rectangle);
   },
 
   clearAllPolygons()
@@ -212,5 +204,9 @@ export default Service.extend({
       polygon.model.set('location', JSON.stringify({shape: e.type, path: polygon.getPath().getArray()}));
       console.log(polygon.model.get('location'));
     }
+  },
+
+  deletePolygon(model) {
+    model.destroyRecord();
   }
 });
