@@ -1,0 +1,10 @@
+{{outlet}}
+<h1>All of your tasks:</h1>
+{{#each model as |task|}}
+      <div class='taskItem {{tasks task.priority}}'>
+         <h4>{{ task.name }}</h4>
+         {{#link-to "task-info" task.id class="btn btn-outline-light"}}Task Info{{/link-to}}
+         <button class="btn btn-outline-light" {{action "deleteTask" task}}>Delete</button>
+      </div>
+{{/each}}
+

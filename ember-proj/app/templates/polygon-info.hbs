@@ -1,16 +1,68 @@
 {{outlet}}
-<h1>Polygon Info</h1>
-<div>
-   <h3>Name: {{model.name}}</h3>
-   <h3>Location: {{model.location}}</h3>
-   <h3>Id: {{model.id}}</h3>
-   <h3>Start Date: {{model.startDate}}</h3>
-   <h3>End Date: {{model.endDate}}</h3>
-   <h3>Polygon Type: {{model.polyType}}</h3>
+<div class="polyInfoContainer">
+<div class="polyInfoTitle">
+   <h1>{{ model.polygon.name }} Info</h1>
+   <label>{{ model.polygon.polyType }}</label>
+   <label>{{ model.polygon.endDate }}</label>
+</div>
+<div class="polyInfoHeader">
+   <div class="polyInfoLinks">
+      <h2>Quick Links:</h2>
+      <div class="linkContainer">
+         {{#link-to "edit-polygon" model.polygon.id}}Edit {{ model.polygon.name }}{{/link-to}}
+      </div>
+      <div class="linkContainer">
+         {{#link-to "new-harvest" model.polygon.id}}New Harvest{{/link-to}}
+      </div>
+      <div class="linkContainer">
+         {{#link-to "new-task" model.polygon.id}}New Task{{/link-to}}
+      </div>
+      <div class="linkContainer">
+         {{#link-to "new-note" model.polygon.id}}New Note{{/link-to}}
+      </div>
+   </div>
+   <div class="polyInfoNotes">
+      <h2>Notes:</h2>
+      {{#if model.notes}}
+         <div class="polyInfoNotesList">
+            {{#each model.notes as |note|}}
+               <div class="noteItem">
+                  <div class="noteHeader">
+                  <h5><strong>{{ note.title }}</strong></h5>
+                  <button {{action "deleteNote" note}} class="deleteButton">
+                     {{fa-icon "trash" class="trashIcon"}}
+                  </button>
+                </div>
+                <p>{{ note.content }}</p>
+              </div>
+             {{/each}}
+           </div>
+        {{else}}
+           <div class="noNotesContainer">
+              <h4>No notes yet!</h4>
+              {{#link-to "new-note" model.polygon.id}}New Note{{/link-to}}
+           </div>
+        {{/if}}
+   </div>
 </div>
 <hr>
-<h1>Tasks for this polygon:</h1>
-<div>
-   <p>Coming soon</p>
+<div class="polyInfoTaskContainer">
+   <h1>Tasks for this polygon:</h1>
+   {{#if model.tasks}}
+      <div class="polyInfoTaskList">
+         {{#each model.tasks as |task|}}
+            <div class='taskItem {{tasks task.priority}}'>
+               <h4>{{ task.name }}</h4>
+               {{#link-to "task-info" task.id class="btn btn-outline-light"}}More Info{{/link-to}} 
+                <button class="btn btn-outline-light" {{action "deleteTask" task}}>Delete</button>
+             </div>
+          {{/each}}
+      </div>
+    {{else}}
+       <div class="noTasksContainer">
+          <h4>Looks like you don't have any tasks yet! Get crackin!</h4>
+          {{#link-to "new-task" model.polygon.id}}Add a Task{{/link-to}}
+       </div>
+    {{/if}}
 </div>
-   
+</div>

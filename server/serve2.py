@@ -70,7 +70,6 @@ class UsersHandler(BaseHandler):
     def get(self, userEmail):
         if userEmail == "@CURRENT_USER":
             userEmail = self.current_user['email']
-
         if self.current_user['email'] != userEmail:
             self.set_status(404)
             self.write(dict(errors=[{"title": "not found"}]))
@@ -233,6 +232,274 @@ class PolyHandler(BaseHandler):
             self.write(dict(errors=[{"title": "not found"}]))
 
 
+def jsonify_note(note):
+    return {
+        "type": "notes",
+        "id": note["id"],
+        "attributes": {
+            "poly-id": note["poly_id"],
+            "date": note["date"] and str(note["date"]),
+            "title": note["title"],
+            "content": note["content"],
+        }
+    }
+
+
+class NoteCollectionHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        db = self.settings['db']
+        user = self.current_user
+        pids = user['polygon_ids']
+        notes = db.get_notes(pids)
+        notes_json = [jsonify_note(note) for note in notes]
+        self.write({"data": notes_json})
+
+    @tornado.web.authenticated
+    @gen.coroutine
+    def post(self):
+        db = self.settings['db']
+        bodyJSON = tornado.escape.json_decode(self.request.body)
+        attr = bodyJSON['data']['attributes']
+
+        user = self.current_user
+        poly = db.get_polygon(str(attr['poly-id']), user['email'])
+        if(poly is None):
+            self.set_status(404)
+            self.write({"errors": [{"title": "polygon not found"}]})
+            return
+
+        note = db.create_note(attr['poly-id'], attr['date'], attr['title'], attr['content'])
+        self.write({"data": jsonify_note(note)})
+
+
+class NoteHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, note_id):
+        db = self.settings['db']
+        # TODO verify user owns note
+        note = db.get_note(str(note_id))
+        if(note is not None):
+            self.write({"data": jsonify_note(note)})
+        else:
+            self.set_status(404)
+            self.write(dict(errors=[{"title": "not found"}]))
+
+    @tornado.web.authenticated
+    def patch(self, note_id):
+        db = self.settings['db']
+        user = self.current_user
+        note = db.get_note(str(note_id))
+
+        if (note is not None and note['poly_id'] in user['polygon_ids']):
+            bodyJSON = tornado.escape.json_decode(self.request.body)
+            attrs = bodyJSON['data']['attributes']
+            for attr_name in ['date', 'title', 'content']:
+                if attr_name in attrs:
+                    note[attr_name] = attrs[attr_name]
+            db.update_note(note)
+            self.write({"data": jsonify_note(note)})
+        else:
+            self.set_status(404)
+            self.write(dict(errors=[{"title": "not found"}]))
+
+    @tornado.web.authenticated
+    def delete(self, note_id):
+        db = self.settings['db']
+
+        user = self.current_user
+        note = db.get_note(str(note_id))
+
+        if (note is not None and note['poly_id'] in user['polygon_ids']):
+            db.delete_note(str(note_id))
+            self.set_status(204)
+        else:
+            self.set_status(404)
+            self.write(dict(errors=[{"title": "not found"}]))
+
+
+def jsonify_harvest(harvest):
+    return {
+        "type": "harvests",
+        "id": harvest["id"],
+        "attributes": {
+            "poly-id": harvest["poly_id"],
+            "date": harvest["date"] and str(harvest["date"]),
+            "amount": harvest["amount"],
+            "units": harvest["units"],
+        }
+    }
+
+
+class HarvestCollectionHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        db = self.settings['db']
+        user = self.current_user
+        pids = user['polygon_ids']
+        harvests = db.get_harvests(pids)
+        harvests_json = [jsonify_harvest(harvest) for harvest in harvests]
+        self.write({"data": harvests_json})
+
+    @tornado.web.authenticated
+    @gen.coroutine
+    def post(self):
+        db = self.settings['db']
+        bodyJSON = tornado.escape.json_decode(self.request.body)
+        attr = bodyJSON['data']['attributes']
+
+        user = self.current_user
+        poly = db.get_polygon(str(attr['poly-id']), user['email'])
+        if(poly is None):
+            self.set_status(404)
+            self.write({"errors": [{"title": "polygon not found"}]})
+            return
+
+        harvest = db.create_harvest(attr['poly-id'], attr['date'], attr['amount'], attr['units'])
+        self.write({"data": jsonify_harvest(harvest)})
+
+
+class HarvestHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, harvest_id):
+        db = self.settings['db']
+        # TODO verify user owns harvest
+        harvest = db.get_harvest(str(harvest_id))
+        if(harvest is not None):
+            self.write({"data": jsonify_harvest(harvest)})
+        else:
+            self.set_status(404)
+            self.write(dict(errors=[{"title": "not found"}]))
+
+    @tornado.web.authenticated
+    def patch(self, harvest_id):
+        db = self.settings['db']
+        user = self.current_user
+        harvest = db.get_harvest(str(harvest_id))
+
+        if (harvest is not None and harvest['poly_id'] in user['polygon_ids']):
+            bodyJSON = tornado.escape.json_decode(self.request.body)
+            attrs = bodyJSON['data']['attributes']
+            for attr_name in ['date', 'amount', 'units']:
+                if attr_name in attrs:
+                    harvest[attr_name] = attrs[attr_name]
+            db.update_harvest(harvest)
+            self.write({"data": jsonify_harvest(harvest)})
+        else:
+            self.set_status(404)
+            self.write(dict(errors=[{"title": "not found"}]))
+
+    @tornado.web.authenticated
+    def delete(self, harvest_id):
+        db = self.settings['db']
+
+        user = self.current_user
+        harvest = db.get_harvest(str(harvest_id))
+
+        if (harvest is not None and harvest['poly_id'] in user['polygon_ids']):
+            db.delete_harvest(str(harvest_id))
+            self.set_status(204)
+        else:
+            self.set_status(404)
+            self.write(dict(errors=[{"title": "not found"}]))
+
+
+def jsonify_task(task):
+    return {
+        "type": "tasks",
+        "id": task["id"],
+        "attributes": {
+            "poly-id": task["poly_id"],
+            "name": task["name"],
+            "due-date": task["date"] and str(task["date"]),
+            "description": task["description"],
+            "priority" : task["priority"],
+            "completed" : task["completed"]
+        }
+    }
+
+
+class TaskCollectionHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        db = self.settings['db']
+        user = self.current_user
+        pids = user['polygon_ids']
+        tasks = db.get_tasks(pids)
+        tasks_json = [jsonify_task(task) for task in tasks]
+        self.write({"data": tasks_json})
+
+    @tornado.web.authenticated
+    @gen.coroutine
+    def post(self):
+        db = self.settings['db']
+        bodyJSON = tornado.escape.json_decode(self.request.body)
+        attr = bodyJSON['data']['attributes']
+        user = self.current_user
+        poly = db.get_polygon(str(attr['poly-id']), user['email'])
+        if(poly is None):
+            self.set_status(404)
+            self.write({"errors": [{"title": "polygon not found"}]})
+            return
+
+        # TODO: should probably be 'due-date' on database side
+        # instead of 'date', in case we add start-date later
+        task = db.create_task(attr['poly-id'], attr['name'], attr['due-date'], attr['priority'], attr['completed'], attr['description'])
+        self.write({"data": jsonify_task(task)})
+
+
+class TaskHandler(BaseHandler):
+    @tornado.web.authenticated
+    def get(self, task_id):
+        db = self.settings['db']
+        # TODO verify user owns task
+        task = db.get_task(str(task_id))
+        if(task is not None):
+            self.write({"data": jsonify_task(task)})
+        else:
+            self.set_status(404)
+            self.write(dict(errors=[{"title": "not found"}]))
+
+    @tornado.web.authenticated
+    def patch(self, task_id):
+        db = self.settings['db']
+        user = self.current_user
+        task = db.get_task(str(task_id))
+
+        if (task is not None and task['poly_id'] in user['polygon_ids']):
+            bodyJSON = tornado.escape.json_decode(self.request.body)
+            attrs = bodyJSON['data']['attributes']
+            if 'name' in attrs:
+                task['name'] = attrs['name']
+            if 'due-date' in attrs:
+                task['date'] = attrs['due-date']
+            if 'description' in attrs:
+                task['description'] = attrs['description']
+            if 'completed' in attrs:
+                task['completed'] = attrs['completed']
+            if 'priority' in attrs:
+                task['priority'] = attrs['priority']
+            db.update_task(task)
+            self.write({"data": jsonify_task(task)})
+        else:
+            self.set_status(404)
+            self.write(dict(errors=[{"title": "not found"}]))
+
+    @tornado.web.authenticated
+    def delete(self, task_id):
+        db = self.settings['db']
+
+        user = self.current_user
+        task = db.get_task(str(task_id))
+
+        if (task is not None and task['poly_id'] in user['polygon_ids']):
+            db.delete_task(str(task_id))
+            self.set_status(204)
+        else:
+            self.set_status(404)
+            self.write(dict(errors=[{"title": "not found"}]))
+
+
 def jsonify_poly_type(ptype):
     return {
         "type": "polygon_types",
@@ -320,6 +587,12 @@ class Application(tornado.web.Application):
             (r"/api/logout", LogoutHandler),
             (r"/api/polygons", PolyCollectionHandler),
             (r"/api/polygons/([0-9]+)", PolyHandler),
+            (r"/api/notes", NoteCollectionHandler),
+            (r"/api/notes/([0-9]+)", NoteHandler),
+            (r"/api/harvests", HarvestCollectionHandler),
+            (r"/api/harvests/([0-9]+)", HarvestHandler),
+            (r"/api/tasks", TaskCollectionHandler),
+            (r"/api/tasks/([0-9]+)", TaskHandler),
             (r"/api/polygon_type_tree", PolyTypeTreeHandler),
             (r"/api/polygon_types", PolyTypeCollectionHandler),
             (r"/api/polygon_types/(.*)", PolyTypeHandler),
@@ -328,7 +601,6 @@ class Application(tornado.web.Application):
             (r"/.*", MainHandler),
         ]
         settings = dict(
-            template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
             login_url="/login",
             # TODO: change the cookie secret for production

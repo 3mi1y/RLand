@@ -1,0 +1,11 @@
+{{outlet}}
+<h1>New note for polygon: {{ model.name }}</h1>
+
+<form {{action "newNote" on="submit"}}>
+   <label>Title:</label>
+   <p>{{input value=title type="text"}}</p>
+
+   <p>{{md-textarea label="Content:" value=notecontent}}</p>
+
+   {{md-btn-submit text="Submit"}}
+</form>
