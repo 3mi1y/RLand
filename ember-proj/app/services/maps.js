@@ -191,7 +191,6 @@ export default Service.extend({
         shape: e.type,
         neBounds: bounds.getNorthEast(),
         swBounds: bounds.getSouthWest()}));
-      console.log(polygon.model.get('location'));
     }
     else {
       polygon.model.set('location', JSON.stringify({shape: e.type, path: polygon.getPath().getArray()}));
