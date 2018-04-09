@@ -25,13 +25,13 @@ export default Component.extend({
     let mapElement = map.getMapElement(location);
     this.$('.map-container').append(mapElement);
 
-    //todo: Modify for our polygon models, as is causes transaction is null error
+    this.get('maps').on_map_polygons.forEach((polygon) => {
+      polygon.setMap(null);
+    });
+
     this.get('polygons').forEach((model) => {
       map.addPolygon(model.get('location'), model);
     });
-    // polygons.then((results) => results.forEach((model) => {
-    //   map.addPolygon(model.get('location'), model.get('location').shape, model);
-    // }, this));
   },
 
   polygon_selected(sender/*, key, value, rev*/)
