@@ -1,0 +1,8 @@
+{{outlet}}
+<h1>You are viewing all tasks for polygon: </h1>
+{{#each model as |task|}}
+      <div class='taskItem {{tasks task.priority}}'>
+         <h4>{{ task.name }}</h4> 
+         <button class="btn btn-outline-light" {{action "deleteTask" task}}>Delete</button>
+      </div>
+{{/each}}

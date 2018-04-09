@@ -10,16 +10,22 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      {{ link-to 'Dashboard' 'dashboard' class="nav-link" }}
-      {{ link-to 'Map' 'map' class="nav-link" }}
-      {{ link-to 'Social' 'social' class="nav-link" }}
-      {{ link-to 'Charts' 'charts' class="nav-link" }}
-      {{ link-to 'Profile' 'profile' class="nav-link" }}
+      {{#if authentication.isLoggedIn}}
+         {{ link-to 'Dashboard' 'dashboard' class="nav-link" }}
+         {{ link-to 'Map' 'map' class="nav-link" }}
+         {{ link-to 'Social' 'social' class="nav-link" }}
+         {{ link-to 'Charts' 'charts' class="nav-link" }}
+         {{ link-to 'Profile' 'profile' class="nav-link" }}
+      {{/if}}
     </div>
 
     <div class="collapse navbar-collapse" id="menu-collapse">
       <ul class="nav navbar-nav pull-right">
-        <li>{{ link-to 'Sign-in' 'login' class="nav-link" }}</li>
+        {{#if authentication.isLoggedIn}}
+           <li><a href="#" {{action "logout"}}>Logout</a></li>
+        {{else}}
+           <li>{{ link-to 'Sign-in' 'login' class="nav-link" }}</li>
+        {{/if}}
       </ul>
     </div>
   </div>

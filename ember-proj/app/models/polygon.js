@@ -6,6 +6,7 @@ export default DS.Model.extend({
    location: DS.attr('string'),
    user: DS.belongsTo('user'),
    tasks: DS.hasMany('task'),
+   notes: DS.hasMany('note'),
    startDate: DS.attr('string'),
    endDate: DS.attr('string'),
 });

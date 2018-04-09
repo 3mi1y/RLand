@@ -1,6 +1,8 @@
 import Ember from 'ember';
+import Component from '@ember/component';
+import $ from 'jquery';
 
-export default Ember.Component.extend({
+export default Component.extend({
   maps: Ember.inject.service(),
   classNames: "rland-map",
 
@@ -13,7 +15,12 @@ export default Ember.Component.extend({
   didInsertElement()
   {
     this._super(...arguments);
-    let location = this.get('location');
+    let location = this.get('location').toString().trim();
+    if (!location) {
+      // no location set, so pick a default
+      location = "Montana";
+      // TODO: the location is set to Montana, but the map is zoomed in too far
+    }
     let map = this.get('maps');
     let mapElement = map.getMapElement(location);
     this.$('.map-container').append(mapElement);

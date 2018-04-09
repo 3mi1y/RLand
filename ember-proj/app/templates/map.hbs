@@ -1,4 +1,3 @@
-RLand map page
 <div class="map-components">
   {{rland-map location=model.address polygons=model.polygons polygonSelected=(action "polygonSelected")}}
   <div class="polygon-container">
@@ -13,24 +12,29 @@ RLand map page
         <label>Select end date (this is the date you will harvest/move this polygon</label>
         {{md-input type="date" value=endDate}}
 
-        <label>Polygon Type:</label>
+        <label>Select what this polygon contains:</label>
         {{#power-select
           options=levelOne
           selected=selectedOptionOne
           onchange=(action "updateLevelTwo")
-        as |level|
+        as |level1|
         }}
-          {{level}}
+          {{level1}}
         {{/power-select}}
+
+	{{#if showLevelTwo}}
         <br>
         {{#power-select
           options=levelTwo
           selected=selectedOptionTwo
           onchange=(action "updateLevelThree")
-        as |num|
+        as |level2|
         }}
-          {{num}}
+          {{level2}}
         {{/power-select}}
+	{{/if}}
+
+	{{#if showLevelThree}}
         <br>
         {{#power-select
           options=levelThree
@@ -40,6 +44,9 @@ RLand map page
         }}
           {{level3}}
         {{/power-select}}
+	{{/if}}
+
+	{{#if showLevelFour}}
         <br>
         {{#power-select
           options=levelFour
@@ -49,6 +56,9 @@ RLand map page
         }}
           {{level4}}
         {{/power-select}}
+	{{/if}}
+
+	{{#if showLevelFive}}
         <br>
         {{#power-select
           options=levelFive
@@ -58,6 +68,7 @@ RLand map page
         }}
           {{level5}}
         {{/power-select}}
+	{{/if}}
         <br>
         {{md-btn-submit text="Submit"}}
       </form>
@@ -66,16 +77,30 @@ RLand map page
       {{#each model.polygons as |polygon|}}
         <div class="row">
           {{#polygon-list item=polygon}}
-            <div>
-              {{#link-to "polygon-info" polygon.id}}More info{{/link-to}}
-              {{md-btn text="Add Task"}}
-            </div>
-          <br>
-            <div>
-              {{#link-to "edit-polygon" polygon.id}}Edit{{/link-to}}
-              {{md-btn action = "deletePolygon" actionArg=polygon text="Delete"}}
-            </div>
-          {{/polygon-list}}
+        <div>
+           {{#link-to "notes" polygon.id}}Your notes{{/link-to}}
+           {{#link-to "harvests" polygon.id}}Your harvests{{/link-to}}
+           {{#link-to "tasks" polygon.id}}Your tasks{{/link-to}}
+           <div>
+                        {{#link-to "polygon-info" polygon.id}}More info{{/link-to}}
+           </div>
+           <div>
+                        {{#link-to "new-task" polygon.id}}Add a Task{{/link-to}}
+           </div>
+           <div>
+              {{#link-to "new-harvest" polygon.id}}Add a Harvest{{/link-to}}
+           </div>
+           <div>
+              {{#link-to "new-note" polygon.id}}Add Note{{/link-to}}
+           </div>
+        </div>
+        <div>
+           <div>
+                  {{#link-to "edit-polygon" polygon.id}}Edit{{/link-to}}
+                          </div>
+           <button {{action "deletePolygon" polygon}}>Delete</button>
+        </div>
+      {{/polygon-list}}
         </div>
       {{/each}}
     </div>

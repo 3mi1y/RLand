@@ -11,6 +11,9 @@ def clear_bucket(bucket):
 db = RiakDb()
 clear_bucket(db.user_bucket)
 clear_bucket(db.poly_bucket)
+clear_bucket(db.task_bucket)
+clear_bucket(db.harvest_bucket)
+clear_bucket(db.note_bucket)
 clear_bucket(db.poly_type_bucket)
 
 ptypes = {"root": {"name": "root", "is_container": False, "harvest": None, "children": []}}

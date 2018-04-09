@@ -14,6 +14,9 @@ class TestDbUsers(unittest.TestCase):
         self.db = RiakDb()
         self.db.create_user(U_EMAIL, U_NAME, U_PASS, U_ADDR)
 
+    def tearDown(self):
+        self.db.delete_user(U_EMAIL)
+
     def test_get_user(self):
         self.assertEqual(self.db.get_user(U_EMAIL)['name'], U_NAME)
 
@@ -35,6 +38,10 @@ class TestDbPolygons(unittest.TestCase):
         p = self.db.create_polygon("Nevada", "Area 51", U_EMAIL, date.today(), None, ['type1', 'typeB'])
         self.poly_id = p['id']
 
+    def tearDown(self):
+        self.db.delete_polygon(self.poly_id)
+        self.db.delete_user(U_EMAIL)
+
     def test_get_own_polygon(self):
         poly = self.db.get_polygon(self.poly_id, U_EMAIL)
         self.assertEqual(poly['name'], "Area 51")
@@ -51,14 +58,15 @@ class TestDbPolygons(unittest.TestCase):
         self.db.delete_polygon(self.poly_id)
         self.assertIsNone(self.db.get_polygon(self.poly_id, U_EMAIL))
 
-    def tearDown(self):
-        self.db.delete_polygon(self.poly_id)
-
 
 class TestDbPolygonTypes(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
         self.db.create_poly_type("Test", False, None, ["child1", "child2"])
+
+    def tearDown(self):
+        self.db.delete_polygon("Test")
+        self.db.delete_user(U_EMAIL)
 
     def test_get_poly_type(self):
         self.assertEqual(self.db.get_poly_type("Test")['children'][0],
@@ -70,29 +78,24 @@ class TestDbPolygonTypes(unittest.TestCase):
         self.db.delete_poly_type("Test")
         self.assertIsNone(self.db.get_poly_type("Test"))
 
-    def tearDown(self):
-        self.db.delete_polygon("Test")
-
 
 class TestDbPolygonTasks(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
-        task = self.db.create_task(1, "water tomatoes", str(date.today()))
+        task = self.db.create_task(1, "water tomatoes", str(date.today()), 1, False, "water the tomatoes")
         self.task_id = task['id']
 
-    def test_get_own_task(self):
-        name = self.db.get_task(1, self.task_id)['name']
-        self.assertEqual(name, "water tomatoes")
+    def tearDown(self):
+        self.db.delete_user(U_EMAIL)
+        self.db.delete_task(self.task_id)
 
-    def test_get_other_task(self):
-        self.assertIsNone(self.db.get_task(2, self.task_id))
+    def test_get_own_task(self):
+        name = self.db.get_task(self.task_id)['name']
+        self.assertEqual(name, "water tomatoes")
 
     def test_delete_task(self):
         self.db.delete_task(self.task_id)
-        self.assertIsNone(self.db.get_task(1, self.task_id))
-
-    def tearDown(self):
-        self.db.delete_task(self.task_id)
+        self.assertIsNone(self.db.get_task(self.task_id))
 
 
 class TestDbPolygonNotes(unittest.TestCase):
@@ -101,19 +104,17 @@ class TestDbPolygonNotes(unittest.TestCase):
         note = self.db.create_note(1, str(date.today()), "NoteTitle", "NoteContent")
         self.note_id = note['id']
 
-    def test_get_own_note(self):
-        title = self.db.get_note(1, self.note_id)['title']
-        self.assertEqual(title, "NoteTitle")
+    def tearDown(self):
+        self.db.delete_note(self.note_id)
+        self.db.delete_user(U_EMAIL)
 
-    def test_get_other_note(self):
-        self.assertIsNone(self.db.get_note(2, self.note_id))
+    def test_get_note(self):
+        title = self.db.get_note(self.note_id)['title']
+        self.assertEqual(title, "NoteTitle")
 
     def test_delete_note(self):
         self.db.delete_note(self.note_id)
-        self.assertIsNone(self.db.get_note(1, self.note_id))
-
-    def tearDown(self):
-        self.db.delete_note(self.note_id)
+        self.assertIsNone(self.db.get_note(self.note_id))
 
 
 class TestDbPolygonHarvest(unittest.TestCase):
@@ -122,16 +123,14 @@ class TestDbPolygonHarvest(unittest.TestCase):
         harvest = self.db.create_harvest(1, str(date.today()), 5, "bushels")
         self.harvest_id = harvest['id']
 
-    def test_get_own_harvest(self):
-        units = self.db.get_harvest(1, self.harvest_id)['units']
-        self.assertEqual(units, "bushels")
+    def tearDown(self):
+        self.db.delete_harvest(self.harvest_id)
+        self.db.delete_user(U_EMAIL)
 
-    def test_get_other_task(self):
-        self.assertIsNone(self.db.get_harvest(2, self.harvest_id))
+    def test_get_own_harvest(self):
+        units = self.db.get_harvest(self.harvest_id)['units']
+        self.assertEqual(units, "bushels")
 
     def test_delete_task(self):
         self.db.delete_harvest(self.harvest_id)
-        self.assertIsNone(self.db.get_harvest(1, self.harvest_id))
-
-    def tearDown(self):
-        self.db.delete_harvest(self.harvest_id)
+        self.assertIsNone(self.db.get_harvest(self.harvest_id))

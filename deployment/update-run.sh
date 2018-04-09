@@ -9,6 +9,8 @@ cd "$rland_dir"
 git pull
 
 cd "$rland_dir"/ember-proj
+npm install
+bower install
 ember build
 
 cd "$rland_dir"/server
