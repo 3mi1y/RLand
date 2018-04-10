@@ -289,7 +289,7 @@ class RiakDb:
             harvest.delete()
             return("Deleted")
 
-    def create_task(self, poly_id, name, date,priority,completed):
+    def create_task(self, poly_id, name, date,priority,completed,description):
         keys = self.task_bucket.get_keys()
         mx = max([int(k) for k in keys] + [0])
         task_id = str(mx+1)
@@ -299,7 +299,8 @@ class RiakDb:
             'name': name,
             'date': date,
             'priority' : priority,
-            'completed' : completed
+            'completed' : completed,
+            'description': description,
         })
         task.store()
         return {
@@ -308,7 +309,8 @@ class RiakDb:
             'name': name,
             'date': date,
             'priority':priority,
-            'completed':completed
+            'completed':completed,
+            'description': description,
         }
 
     def get_task(self, task_id):
@@ -322,7 +324,8 @@ class RiakDb:
             'name': task['name'],
             'date': task['date'],
             'priority':task['priority'],
-            'completed':task['completed']
+            'completed':task['completed'],
+            'description':task['description'],
         }
 
     def get_tasks(self, poly_ids):
@@ -337,7 +340,8 @@ class RiakDb:
                     'name': data['name'],
                     'date': data['date'],
                     'priority':data['priority'],
-                    'completed':data['completed']
+                    'completed':data['completed'],
+                    'description':data['description'],
                 }]
         return tasks
 
@@ -348,6 +352,7 @@ class RiakDb:
             task.data['date'] = updateTask['date']
             task.data['priority'] = updateTask['priority']
             task.data['completed'] = updateTask['completed']
+            task.data['description'] = updateTask['description']
             if task.data['poly_id'] != updateTask['poly_id']:
                 raise Exception("Can't update a aharvest for a different polygon")
             task.store()

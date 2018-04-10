@@ -1,6 +1,8 @@
 import Ember from 'ember';
+import Component from '@ember/component';
+import $ from 'jquery';
 
-export default Ember.Component.extend({
+export default Component.extend({
   maps: Ember.inject.service(),
   classNames: "rland-map",
 
@@ -13,16 +15,23 @@ export default Ember.Component.extend({
   didInsertElement()
   {
     this._super(...arguments);
-    let location = this.get('location');
+    let location = this.get('location').toString().trim();
+    if (!location) {
+      // no location set, so pick a default
+      location = "Montana";
+      // TODO: the location is set to Montana, but the map is zoomed in too far
+    }
     let map = this.get('maps');
     let mapElement = map.getMapElement(location);
     this.$('.map-container').append(mapElement);
 
-    //todo: Modify for our polygon models, as is causes transaction is null error
-    // let polygons = this.get('polygons')();
-    // polygons.then((results) => results.forEach((model) => {
-    //   map.addPolygon(model.get('type'), model.get('shape'), model);
-    // }, this));
+    this.get('maps').on_map_polygons.forEach((polygon) => {
+      polygon.setMap(null);
+    });
+
+    this.get('polygons').forEach((model) => {
+      map.addPolygon(model.get('location'), model);
+    });
   },
 
   polygon_selected(sender/*, key, value, rev*/)
@@ -31,6 +40,7 @@ export default Ember.Component.extend({
     this.send('polygonSelected', selected);
 
     if (selected) {
+      // this.get('maps').showPath();
       $('.poly-list').hide();
       $('.new-poly').show();
     }

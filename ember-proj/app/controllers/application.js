@@ -9,7 +9,7 @@ export default Controller.extend({
         Ember.run(() => this.store.unloadAll())
         Ember.run(() => console.log(this.store.peekAll('polygon').get('length')))
         this.get('authentication').logout()
-        $.get("api/logout").then(() => { console.log("Logged out on the server")})
+        $.get("/api/logout").then(() => { console.log("Logged out on the server")})
         this.transitionToRoute('index')
      }
    }

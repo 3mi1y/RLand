@@ -38,8 +38,19 @@ export default Controller.extend({
         "address-error": false,
       });
       this.get('store').findRecord('user', '@CURRENT_USER', { reload: true }).then(user => {
-        const newAddress = this.get("street") + " " + this.get("city") + ", " + this.get("state") + " " + this.get("zip");
-        user.set("address", newAddress);
+        // TODO: this duplicates register.js
+        const street = this.get("street");
+        const city = this.get("city");
+        const state = this.get("state");
+        const zip = this.get("zip");
+
+        let address = "";
+        if (street) { address += street + " "; }
+        if (city) { address += city; }
+        if (state) { address += ", " + state; }
+        if (zip) { address += " " + zip; }
+
+        user.set("address", address);
         user.save().then(() => {
           this.set("address-success", true);
           return user.reload();
