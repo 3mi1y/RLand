@@ -1,11 +1,39 @@
 .nav-container {
-   background-color: rgba(51, 51, 51, .8);
+   background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+   font-family: Raleway;
 }
 .nav-link {
-   color: rgb(238, 238, 238);
+   color: #333;
    text-decoration: none;
    padding: 30px;
    font-size: 20px;
+   -webkit-animation: fadein 4s; /* Safari, Chrome and Opera > 12.1 */
+       -moz-animation: fadein 4s; /* Firefox < 16 */
+        -ms-animation: fadein 4s; /* Internet Explorer */
+         -o-animation: fadein 4s; /* Opera < 12.1 */
+            animation: fadein 4s;
+}
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 .nav-link:hover {
    text-decoration: none;
@@ -14,5 +42,5 @@
 }
 .nav-link:visited {
   text-decoration: none;
-  color: rgb(238, 238, 238);
+  color: #333;
 }

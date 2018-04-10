@@ -16,6 +16,9 @@
          {{ link-to 'Social' 'social' class="nav-link" }}
          {{ link-to 'Charts' 'charts' class="nav-link" }}
          {{ link-to 'Profile' 'profile' class="nav-link" }}
+      {{else}}
+         {{ link-to 'About' 'about' class="nav-link" }}
+         {{ link-to 'Features' 'about' class="nav-link" }}
       {{/if}}
     </div>
 
@@ -24,7 +27,8 @@
         {{#if authentication.isLoggedIn}}
            <li><a href="#" {{action "logout"}}>Logout</a></li>
         {{else}}
-           <li>{{ link-to 'Sign-in' 'login' class="nav-link" }}</li>
+           <li>{{ link-to 'Sign-up' 'register' class="nav-link" }}</li>
+           <li>{{ link-to 'Login' 'login' class="nav-link" }}</li>
         {{/if}}
       </ul>
     </div>

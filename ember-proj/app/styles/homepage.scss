@@ -1,34 +1,42 @@
 .home-container {
    position: absolute;
-   background-image: url(http://cdn.skim.gs);
    top: 45px;
    left: 0px;
    width: 100%;
+   font-family: Raleway;
 }
 .home-jumbotron {
-   background-image: url(http://cdn.skim.gs/images/oo5rhtgvdvk8yiej0vhz/indoor-vegetable-garden);
-   height: 100vh;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   height: 45vh;
 }
 .header-one-jumbo {
-   font-size: 150px;
-   margin-left: 3%;
+   margin-top: 10vh;
+   font-size: 50px;
    margin-bottom: 0px;
-   color: rgba(230, 136, 34, 1);
+   color: #333;
 }
 .header-two-jumbo {
-   font-size: 50px;
-   margin-left: 10%;
-   color: rgba(236, 240, 241, 1);
-  
+   font-size: 20px;
+   color: #cecece; 
 }
 .info-area {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   height: 45vh;
+   border: 1px solid red;
+}
+.info-card {
+   width: 100%;
+   border: 1px solid red;
    display: flex;
    flex-direction: column;
    align-items: center;
 }
 .header-one-info-area {
    font-size: 30px;
-   border-bottom: 3px solid #cecece;
    color: #e67e22;
    margin-bottom: 30px;
    margin-top: 50px;
@@ -37,4 +45,26 @@
    max-width: 200px;
    margin-top: 30px;
    margin-bottom: 30px;
+}
+.homepage-button-container {
+   width: 40%;
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+}
+.homepage-button {
+   width: 45%;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 3px 0 rgba(0, 0, 0, 0.19);
+   border-radius: 2px;
+   padding: 10px 20px 10px 20px;
+   margin: 20px;
+   color: #333;
+}
+.homepage-button:hover {
+   text-decoration: none;
+   color: black;
 }
