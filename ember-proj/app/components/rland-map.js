@@ -25,11 +25,13 @@ export default Component.extend({
     let mapElement = map.getMapElement(location);
     this.$('.map-container').append(mapElement);
 
-    //todo: Modify for our polygon models, as is causes transaction is null error
-    // let polygons = this.get('polygons')();
-    // polygons.then((results) => results.forEach((model) => {
-    //   map.addPolygon(model.get('type'), model.get('shape'), model);
-    // }, this));
+    this.get('maps').on_map_polygons.forEach((polygon) => {
+      polygon.setMap(null);
+    });
+
+    this.get('polygons').forEach((model) => {
+      map.addPolygon(model.get('location'), model);
+    });
   },
 
   polygon_selected(sender/*, key, value, rev*/)
@@ -38,6 +40,7 @@ export default Component.extend({
     this.send('polygonSelected', selected);
 
     if (selected) {
+      // this.get('maps').showPath();
       $('.poly-list').hide();
       $('.new-poly').show();
     }

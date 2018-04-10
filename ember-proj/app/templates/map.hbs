@@ -1,11 +1,8 @@
 <div class="map-components">
-  {{rland-map location=model.address polygonSelected=(action "polygonSelected")}}
+  {{rland-map location=model.address polygons=model.polygons polygonSelected=(action "polygonSelected")}}
   <div class="polygon-container">
     <div class="new-poly" style="display:none;">
       <form {{action "createPolygon" on="submit"}}>
-        <label>Please enter a location of your polygon</label>
-        <p>{{input value=location type="text"}}</p>
-
         <label>Please enter the name of the polygon</label>
         <p>{{input value=name type="text"}}</p>
 

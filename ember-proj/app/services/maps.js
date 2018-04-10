@@ -90,17 +90,18 @@ export default Service.extend({
 
     });
 
-    var setSelected = (shape) => this.setSelectedShape(shape);
-    var addPolygonListener = (overlay) => this.addPolygonListener(overlay);
+    let setSelected = (shape) => this.setSelectedShape(shape);
+    let addPolygonListener = (overlay) => this.addPolygonListener(overlay);
+    let setPolyModel = (polyObject) => this.setPolyModel(polyObject);
+
     google.maps.event.addListener(this.get('map'), 'click', () => this.clearSelected());
     google.maps.event.addListener(drawing, 'overlaycomplete', function (e) {
       drawing.setDrawingMode(null);
       e.overlay.setEditable(false);
       setSelected(e.overlay);
-
       addPolygonListener(e.overlay);
+      setPolyModel(e);
     });
-
 
     drawing.setMap(this.get('map'));
   },
@@ -108,7 +109,6 @@ export default Service.extend({
   addPolygonListener(overlay)
   {
     var setSelected = (shape) => this.setSelectedShape(shape);
-    var getSelected = () => this.get('selected');
     var clearSelected = () => this.clearSelected();
     google.maps.event.addListener(overlay, 'click', function () {
       setSelected(this);
@@ -118,25 +118,54 @@ export default Service.extend({
       let code = e.which;
       if (code === 46)
       {
-        let selected = getSelected();
-        selected.setMap(null);
-        //selected.model.destroyRecord();
         clearSelected();
       }
     });
   },
 
-  addPolygon(type, shape, model)
+  addPolygon(location, model)
   {
-    let rectangle = new google.maps.Rectangle({
-      map: this.get('map'),
-      bounds: shape,
-      clickable: true,
-    });
-
-    rectangle.set('model', model);
-    this.addPolygonListener(rectangle);
-    this.on_map_polygons.push(rectangle);
+    if(location) {
+      location = JSON.parse(location);
+      let map = this.get('map');
+      let shape = location.shape;
+      let polygon = null;
+      if (shape == google.maps.drawing.OverlayType.CIRCLE) {
+        let center = location.center;
+        let radius = location.radius;
+        polygon = new google.maps.Circle({
+          clickable: true,
+          center: center,
+          radius: radius,
+          map: map
+        });
+      }
+      else if (shape == google.maps.drawing.OverlayType.RECTANGLE) {
+        let neBounds = location.neBounds;
+        let swBounds = location.swBounds;
+        polygon = new google.maps.Rectangle({
+          clickable: true,
+          map: map,
+          bounds: {
+            north: neBounds.lat,
+            south: swBounds.lat,
+            east: neBounds.lng,
+            west: swBounds.lng
+          }
+        });
+      }
+      else {
+        let path = location.path;
+        polygon = new google.maps.Polygon({
+          clickable: true,
+          map: map,
+          path: path
+        });
+      }
+      polygon.set('model', model);
+      this.addPolygonListener(polygon);
+      this.on_map_polygons.push(polygon);
+    }
   },
 
   clearAllPolygons()
@@ -144,6 +173,31 @@ export default Service.extend({
     this.on_map_polygons.forEach((polygon) => polygon.setMap(null));
     this.on_map_polygons = new Array();
     this.clearSelected();
-  }
+  },
 
+  setPolyModel(e)
+  {
+    let polygon = e.overlay;
+    if (e.type == google.maps.drawing.OverlayType.CIRCLE) {
+      polygon.model.set('location', JSON.stringify({
+        shape: e.type,
+        center: polygon.getCenter(),
+        radius: polygon.getRadius()
+      }));
+    }
+    else if (e.type == google.maps.drawing.OverlayType.RECTANGLE) {
+      let bounds = polygon.getBounds();
+      polygon.model.set('location', JSON.stringify({
+        shape: e.type,
+        neBounds: bounds.getNorthEast(),
+        swBounds: bounds.getSouthWest()}));
+    }
+    else {
+      polygon.model.set('location', JSON.stringify({shape: e.type, path: polygon.getPath().getArray()}));
+    }
+  },
+
+  deletePolygon(model) {
+    model.destroyRecord();
+  }
 });
