@@ -1,17 +1,13 @@
 {{outlet}}
-<div class="container">
-  <div class="row">
-    <div class="panel-body">
-      <form id="register" class="form-horizontal" style="display:block;" {{action "register" on="submit"}}>
-        <div class="row">
+<md-content class="md-padding">
+      <form id="register" style="display:block;" {{action "register" on="submit"}}>
+        <div layout layout-sm="column">
           <div id="errors" class="alert alert-warning" style="display:none;"></div>
-          {{md-input value=name label="Your Name" class="col s12"}}
-          {{md-input value=email label="Email" class="col s12" validate=True}}
-          {{md-input value=password type="password" label="Password" class="col s12"}}
-          {{md-input value=address label="Address" class="col s12"}}
+          {{input value=name class="form-input" label="Your Name" }}
+          {{input value=email class="form-input" label="Email" validate=True}}
+          {{input value=password class="form-input" type="password" label="Password"}}
+          {{input value=address class="form-input" label="Address"}}
           {{md-btn-submit text='Create Account' type="submit" action=register}}
         </div>
       </form>
-    </div>
-  </div>
-</div>
+</md-content>

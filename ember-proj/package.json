@@ -43,8 +43,6 @@
     "ember-jquery": "^1.0.5",
     "ember-keyboard": "^3.0.0",
     "ember-load-initializers": "^1.0.0",
-    "ember-material-design-icons-shim": "^0.1.12",
-    "ember-materialize-shim": "^0.2.3",
     "ember-maybe-import-regenerator": "^0.1.6",
     "ember-modal-dialog": "^0.8.8",
     "ember-new-computed": "^1.0.3",
