@@ -17,6 +17,7 @@ class RiakDb:
         self.harvest_bucket = self.client.bucket('harvest')
         self.note_bucket = self.client.bucket('note')
         self.poly_type_bucket = self.client.bucket('polygon_type')
+        self.cached_tree = None
 
     # Create a user with the given email, name, password, and address.
     def create_user(self, email, name, password, address):
@@ -371,6 +372,7 @@ class RiakDb:
             'children': children,
         })
         ptype.store()
+        self.cached_tree = None
         return {'name': name, 'is_container': is_container, 'harvest': harvest, 'children': children}
 
     def get_poly_type(self, name):
@@ -396,13 +398,18 @@ class RiakDb:
             ptype.data['harvest'] = update_ptype['harvest']
             ptype.data['children'] = update_ptype['children']
             ptype.store()
+            self.cached_tree = None
 
     def delete_poly_type(self, name):
         ptype = self.poly_type_bucket.get(name)
         if ptype.data:
             ptype.delete()
+            self.cached_tree = None
 
     def get_poly_type_tree(self):
+        if self.cached_tree:
+            return self.cached_tree
+
         types_list = self.get_poly_types()
         types = dict([(t["name"], t) for t in types_list])
 
@@ -415,4 +422,5 @@ class RiakDb:
                 return None
 
         root = map_fields("root")
-        return root["leaves"]
+        self.cached_tree = root["leaves"]
+        return self.cached_tree
