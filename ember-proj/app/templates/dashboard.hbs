@@ -1,21 +1,27 @@
 {{outlet}}
-{{#each model as |user|}}
-   {{#if user.name }}
-      <h1>Welcome to your dashboard, {{ user.name }}!</h1>
-   {{/if}}
-{{/each}}
-<div>
-   <h2>Quick Links</h2>
-   <div>
-      {{#link-to 'all-tasks'}}Your tasks{{/link-to}}
+<div class="dashboard-container">
+   <div class="dashboard-header">
+      {{#each model as |user|}}
+         {{#if user.name }}
+            <h1>Welcome to your dashboard, {{ user.name }}!</h1>
+         {{/if}}
+      {{/each}}
    </div>
-   <div>
-      {{#link-to 'new-polygon'}}Create a New Polygon{{/link-to}}
-   </div>
-   <div>
-      {{#link-to 'polygon-list'}}Your Polygons{{/link-to}}
-   </div>
-   <div>
-      {{#link-to 'map'}}Map{{/link-to}}
+   <div class="dashboard-body">
+      <div class="dashboard-tasks-container">
+         <h3>Upcoming Tasks</h3>
+      </div>
+      <div class="dashboard-links-container">
+         <h3>Quick Links</h3>
+         <div>
+            {{#link-to 'all-tasks' class="quick-links-button"}}Your Tasks >{{/link-to}}
+         </div>
+         <div>
+            {{#link-to 'polygon-list' class="quick-links-button"}}Your Polygons >{{/link-to}}
+         </div>
+         <div>
+            {{#link-to 'map' class="quick-links-button"}}Map >{{/link-to}}
+         </div>
+      </div>
    </div>
 </div>
