@@ -162,6 +162,8 @@ class RiakDb:
             poly.delete()
             return ("Deleted")
 
+    # Create a note attached the polygon poly_id, with a due
+    # date, title, and content text
     def create_note(self, poly_id, date, title, content):
         keys = self.note_bucket.get_keys()
         mx = max([int(k) for k in keys] + [0])
@@ -182,6 +184,7 @@ class RiakDb:
             "content": content
         }
 
+    # Retrieve a note by its id
     def get_note(self, note_id):
         note = self.note_bucket.get(note_id).data
         if note is None:
@@ -195,6 +198,8 @@ class RiakDb:
             'content': note['content']
         }
 
+    # Retrieve all notes associated with any polygon whose id
+    # is present in the poly_ids array
     def get_notes(self, poly_ids):
         note_ids = self.note_bucket.get_keys()
         notes = []
@@ -210,6 +215,8 @@ class RiakDb:
                 }]
         return notes
 
+    # Update a note's values by its id. All fields must be present
+    # in updateNote
     def update_note(self, updateNote):
         note = self.note_bucket.get(updateNote['id'])
         if note.data:
@@ -220,12 +227,14 @@ class RiakDb:
                 raise Exception("Can't update a note for a different polygon")
             note.store()
 
+    # Delete the note with the given id
     def delete_note(self, note_id):
         note = self.note_bucket.get(note_id)
         if note.data:
             note.delete()
             return("Deleted")
 
+    # Create a harvest on the given polygon with a date, amount, and units
     def create_harvest(self, poly_id, date, amount, units):
         keys = self.harvest_bucket.get_keys()
         mx = max([int(k) for k in keys] + [0])
@@ -246,6 +255,7 @@ class RiakDb:
             'units': units
         }
 
+    # Retrieve the harvest with the given harvest id
     def get_harvest(self, harvest_id):
         harvest = self.harvest_bucket.get(harvest_id).data
         if harvest is None:
@@ -259,6 +269,7 @@ class RiakDb:
             'units': harvest['units']
         }
 
+    # Retrieve all harvests attached to any polygon in poly_ids
     def get_harvests(self, poly_ids):
         harvest_ids = self.harvest_bucket.get_keys()
         harvests = []
@@ -274,6 +285,7 @@ class RiakDb:
                 }]
         return harvests
 
+    # Updates data on a harvest given by its id. All fields must be present on updateHarvest
     def update_harvest(self, updateHarvest):
         harvest = self.harvest_bucket.get(updateHarvest['id'])
         if harvest.data:
@@ -284,12 +296,15 @@ class RiakDb:
                 raise Exception("Can't update a harvest for a different polygon")
             harvest.store()
 
+    # Delete the harvest with the given id
     def delete_harvest(self, harvest_id):
         harvest = self.harvest_bucket.get(harvest_id)
         if harvest.data:
             harvest.delete()
             return("Deleted")
 
+    # Create a task associated with the given polygon, with the specified
+    # name, due date, priority, completion status, and description text.
     def create_task(self, poly_id, name, date,priority,completed,description):
         keys = self.task_bucket.get_keys()
         mx = max([int(k) for k in keys] + [0])
@@ -314,6 +329,7 @@ class RiakDb:
             'description': description,
         }
 
+    # Retrieve the task with the given id
     def get_task(self, task_id):
         task = self.task_bucket.get(task_id).data
         if(task is None):
@@ -329,6 +345,7 @@ class RiakDb:
             'description':task['description'],
         }
 
+    # Retrieve all tasks attached to a polygon in the poly_ids array
     def get_tasks(self, poly_ids):
         task_ids = self.task_bucket.get_keys()
         tasks = []
@@ -346,6 +363,7 @@ class RiakDb:
                 }]
         return tasks
 
+    # Update the task with the given id. All task fields must be provided on updateTask
     def update_task(self, updateTask):
         task = self.task_bucket.get(updateTask['id'])
         if task.data:
@@ -358,12 +376,15 @@ class RiakDb:
                 raise Exception("Can't update a aharvest for a different polygon")
             task.store()
 
+    # Delete the task with the given id
     def delete_task(self, task_id):
         task = self.task_bucket.get(task_id)
         if task.data:
             task.delete()
             return("Deleted")
 
+    # Create a new polygon type with the given name, container status,
+    # list of harvestable items, and child polygon types
     def create_poly_type(self, name, is_container, harvest, children):
         ptype = self.poly_type_bucket.new(name, data={
             'name': name,
@@ -375,6 +396,7 @@ class RiakDb:
         self.cached_tree = None
         return {'name': name, 'is_container': is_container, 'harvest': harvest, 'children': children}
 
+    # Retrieve the polygon type with the given name
     def get_poly_type(self, name):
         ptype = self.poly_type_bucket.get(name).data
         if ptype is None:
@@ -382,6 +404,7 @@ class RiakDb:
         else:
             return {'name': ptype['name'], 'is_container': ptype['is_container'], 'harvest': ptype['harvest'], 'children': ptype['children']}
 
+    # Retrive all available polygon types.
     def get_poly_types(self):
         keys = self.poly_type_bucket.get_keys()
         objs = self.poly_type_bucket.multiget(keys)
@@ -391,6 +414,7 @@ class RiakDb:
             pts += [{'name': ptype['name'], 'is_container': ptype['is_container'], 'harvest': ptype['harvest'], 'children': ptype['children']}]
         return pts
 
+    # Update the polygon type with the given name. All fields must be given on update_ptype
     def update_poly_type(self, update_ptype):
         ptype = self.poly_type_bucket.get(update_ptype['name'])
         if ptype.data:
@@ -400,12 +424,14 @@ class RiakDb:
             ptype.store()
             self.cached_tree = None
 
+    # Delete the polygon with the given name
     def delete_poly_type(self, name):
         ptype = self.poly_type_bucket.get(name)
         if ptype.data:
             ptype.delete()
             self.cached_tree = None
 
+    # Get the polygon type tree in the format used by the dropdowns in the client
     def get_poly_type_tree(self):
         if self.cached_tree:
             return self.cached_tree
@@ -413,6 +439,7 @@ class RiakDb:
         types_list = self.get_poly_types()
         types = dict([(t["name"], t) for t in types_list])
 
+        # Map the fields of the polygon type to the ones used on the client
         def map_fields(ptype_name):
             ptype = types[ptype_name]
             if ptype:
