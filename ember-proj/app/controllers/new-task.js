@@ -11,8 +11,9 @@ export default Controller.extend({
             dueDate: this.get('dueDate'),
             priority: this.get('priority')
          })
-         task.save()
-         this.transitionToRoute('tasks', this.get('model').get('id'))
+         task.save().then(
+            this.transitionToRoute('tasks', this.get('model').get('id'))
+         )
       }
    }
 });

@@ -1,4 +1,3 @@
-RLand map page
 <div class="map-components">
   {{rland-map location=model.address polygonSelected=(action "polygonSelected")}}
   <div class="polygon-container">
@@ -85,11 +84,11 @@ RLand map page
               Info
            {{/link-to}}
            {{#link-to "new-task" polygon.id class="poly-list-link"}}
-              {{fa-icon "plus-circle"}}
+              {{fa-icon "plus"}}
               Task
            {{/link-to}}
            {{#link-to "new-harvest" polygon.id class="poly-list-link"}}
-              {{fa-icon "plus-circle"}}
+              {{fa-icon "plus"}}
               Harvest
            {{/link-to}}
            {{#link-to "edit-polygon" polygon.id class="poly-list-link"}}
