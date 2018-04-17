@@ -7,10 +7,10 @@
         <p>{{input value=name type="text"}}</p>
 
         <label>Select start date (default is today)</label>
-        {{md-input type="date" value=startDate}}
+        {{input type="date" value=startDate}}
 
         <label>Select end date (this is the date you will harvest/move this polygon</label>
-        {{md-input type="date" value=endDate}}
+        {{input type="date" value=endDate}}
 
         <label>Select what this polygon contains:</label>
         {{#power-select
@@ -70,7 +70,7 @@
         {{/power-select}}
 	{{/if}}
         <br>
-        {{md-btn-submit text="Submit"}}
+        <button type="submit">Submit</button>
       </form>
     </div>
     <div class="poly-list">

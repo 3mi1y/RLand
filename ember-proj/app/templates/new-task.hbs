@@ -5,7 +5,7 @@
    <label>Task Name:</label>
    <p>{{input value=name type="text"}}</p>
 
-   <p>{{md-textarea label="Task Description:" value=description}}</p>
+   <p>{{textarea label="Task Description:" value=description}}</p>
    
    <datalist id="tickmarks">
    	<option value="1" label="1" />
@@ -24,7 +24,7 @@
    {{input value=priority type="range" min="1" max="10" list="tickmarks"}}
 
    <label>Select due date (default is today):</label>
-   {{md-input type="date" value=dueDate}}
+   {{input type="date" value=dueDate}}
 
-   {{md-btn-submit text="Submit"}}
+   <button type="submit">Submit</button>
 </form>
