@@ -11,8 +11,16 @@
                   <div class="alert">Invalid username or password</div>
                 {{/if}}
                   <div class="row">
-                    {{input value=email label="email" class="col s12" validate=True}}
-                    {{input value=password type="password" label="Password" class="col s12"}}
+                    <div>
+                       <label>Email</label><br>
+                       {{input value=email class="col s12" validate=True}}
+                    </div>
+               
+                    <div>
+                       <label>Password</label><br>
+                       {{input value=password type="password" label="Password" class="col s12"}}
+                    </div>
+
                     <button type="submit">Log In</button>
                     {{#link-to 'register'}}Sign Up{{/link-to}}
                   </div>
