@@ -1,6 +1,6 @@
 import Controller from '@ember/controller';
 import { inject } from '@ember/service';
-import DS from "ember-data";
+import $ from 'jquery';
 
 export default Controller.extend({
   polyTypeTree: inject(),
@@ -67,7 +67,6 @@ export default Controller.extend({
         let polygon = this.get('selected');
         polygon.set('name', this.get("name"));
         polygon.set('polyType', this.actions.getPolygonType.call(this));
-        polygon.set('location', this.get("location"));
         polygon.set('startDate', this.get("startDate"));
         polygon.set('endDate', this.get("endDate"));
         polygon.save();
@@ -170,13 +169,12 @@ export default Controller.extend({
         polygonTypeArray.push(this.get('selectedOptionThree'));
         polygonTypeArray.push(this.get('selectedOptionFour'));
         polygonTypeArray.push(this.get('selectedOptionFive'));
-        //console.log(polygonTypeArray)
         return polygonTypeArray
       },
 
       deletePolygon(polygon) {
-        this.store.findRecord('polygon', polygon.get('id')).then((post) => {
-          post.destroyRecord();
+        this.get('store').findRecord('polygon', polygon.get('id'), {backgroundReload: false}).then((polygon) => {
+          polygon.destroyRecord();
         })
       }
     }

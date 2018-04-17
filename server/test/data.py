@@ -82,7 +82,7 @@ class TestDbPolygonTypes(unittest.TestCase):
 class TestDbPolygonTasks(unittest.TestCase):
     def setUp(self):
         self.db = RiakDb()
-        task = self.db.create_task(1, "water tomatoes", str(date.today()), 1, False)
+        task = self.db.create_task(1, "water tomatoes", str(date.today()), 1, False, "water the tomatoes")
         self.task_id = task['id']
 
     def tearDown(self):

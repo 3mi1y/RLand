@@ -1,9 +1,8 @@
 <div class="map-components">
-  {{rland-map location=model.address polygonSelected=(action "polygonSelected")}}
+  {{rland-map location=model.address polygons=model.polygons polygonSelected=(action "polygonSelected")}}
   <div class="polygon-container">
     <div class="new-poly" style="display:none;">
       <form {{action "createPolygon" on="submit"}}>
-
         <label>Please enter the name of the polygon</label>
         <p>{{input value=name type="text"}}</p>
 
@@ -13,7 +12,7 @@
         <label>Select end date (this is the date you will harvest/move this polygon</label>
         {{md-input type="date" value=endDate}}
 
-        <label>Polygon Type:</label>
+        <label>Select what this polygon contains:</label>
         {{#power-select
           options=levelOne
           selected=selectedOptionOne
@@ -22,9 +21,9 @@
         }}
           {{level1}}
         {{/power-select}}
-        <br>
 
 	{{#if showLevelTwo}}
+        <br>
         {{#power-select
           options=levelTwo
           selected=selectedOptionTwo
@@ -34,9 +33,9 @@
           {{level2}}
         {{/power-select}}
 	{{/if}}
-        <br>
 
 	{{#if showLevelThree}}
+        <br>
         {{#power-select
           options=levelThree
           selected=selectedOptionThree
@@ -47,8 +46,8 @@
         {{/power-select}}
 	{{/if}}
 
-        <br>
 	{{#if showLevelFour}}
+        <br>
         {{#power-select
           options=levelFour
           selected=selectedOptionFour
@@ -59,8 +58,8 @@
         {{/power-select}}
 	{{/if}}
 
-        <br>
 	{{#if showLevelFive}}
+        <br>
         {{#power-select
           options=levelFive
           selected=selectedOptionFive

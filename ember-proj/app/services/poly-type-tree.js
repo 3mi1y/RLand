@@ -6,9 +6,14 @@ export default Service.extend({
     var promise = this.get('_tree_promise');
     if (!promise) {
       promise = $.get("/api/polygon_type_tree").then(data => {
-        return data.data;
-      }, () => {
-        console.log("Error loading tree");
+        if (data.data) {
+          return data.data;
+        } else {
+          throw new Error("Invalid format for tree data");
+        }
+      }).catch(err => {
+        console.log("Error loading tree", err);
+        this.set('_tree_promise', null);
       });
 
       this.set('_tree_promise', promise);
