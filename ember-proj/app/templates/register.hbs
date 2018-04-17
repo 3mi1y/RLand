@@ -6,16 +6,42 @@
         <div class="row">
           <div id="errors" class="alert alert-warning" style="display:none;"></div>
 
-	  <p>Profile</p>
-          {{input value=name label="Your Name" class="col s12"}}
-          {{input value=email label="Email" class="col s12" validate=True}}
-          {{input value=password type="password" label="Password" class="col s12"}}
+	  <h2>Profile</h2>
+          <div>
+             <label>Your Name</label><br>
+             {{input value=name class="col s12"}}
+          </div>
 
-	  <p>Address</p>
-          {{input value=street label="Street" class="col s12"}}
-          {{input value=city label="City" class="col s12"}}
-          {{input value=state label="State" class="col s12"}}
-          {{input value=zip label="Zipcode" class="col s12"}}
+          <div>
+             <label>Email</label><br>
+             {{input value=email class="col s12" validate=True}}
+          </div>
+
+          <div>
+             <label>Password</label><br>
+             {{input value=password type="password" class="col s12"}}
+          </div>
+
+	  <h2>Address</h2>
+          <div>
+             <label>Street</label><br>
+             {{input value=street class="col s12"}}
+          </div>
+
+          <div>
+             <label>City</label><br>
+             {{input value=city class="col s12"}}
+          </div>
+
+          <div>
+             <label>State</label><br>
+             {{input value=state class="col s12"}}
+          </div>
+
+          <div>
+             <label>Zipcode</label><br>
+             {{input value=zip class="col s12"}}
+          </div>
 
           <button type="submit">Create Account</button>
         </div>
