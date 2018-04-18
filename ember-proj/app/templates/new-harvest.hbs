@@ -3,14 +3,20 @@
    <h1 class="form-page-title">Add a new harvest for polygon: {{ model.name }}</h1>
 
    <form class="form-container" {{action "newHarvest" on="submit"}}>
+
       <div>
-         <label>What are you harvesting?</label>
-         <p>{{input class="input-element" value=units type="text"}}</p>
+         <label>Harvest date:</label>
+	 <p>{{input class="input-element" value=date type="date"}}</p>
       </div>
-      
+
       <div>
          <label>Amount:</label>
          <p>{{input class="input-element" value=amount type="number"}}</p>
+      </div>
+
+      <div>
+         <label>Units: (lbs, number of items, etc)</label>
+         <p>{{input class="input-element" value=units type="text"}}</p>
       </div>
 
       <button class="form-button" type="submit">Submit</button>
