@@ -3,7 +3,6 @@ import Controller from '@ember/controller';
 export default Controller.extend({
    actions: {
       addTask() {
-         console.log(this.get('model').get('id'))
          let task = this.get('store').createRecord('task', {
             name: this.get('name'),
             polyId: this.get('model').get('id'),
@@ -11,8 +10,9 @@ export default Controller.extend({
             dueDate: this.get('dueDate'),
             priority: this.get('priority')
          })
-         task.save()
-         this.transitionToRoute('tasks', this.get('model').get('id'))
+         task.save().then(
+            this.transitionToRoute('polygon-info', this.get('model').get('id'))
+         )
       }
    }
 });

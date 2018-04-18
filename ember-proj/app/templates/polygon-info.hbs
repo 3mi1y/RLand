@@ -64,4 +64,18 @@
        </div>
     {{/if}}
 </div>
+<div class="polyInfoTaskContainer" id="polygonHarvestContainer">
+   <h1>Harvests for this polygon:</h1>
+   {{#if model.harvests}}
+      {{#each model.harvests as |harvest|}}
+         <div class="taskItem">
+            <h2>{{ harvest.units }}</h2>
+            <p>{{ harvest.amount }}</p>
+            {{#link-to "harvest" harvest.id class="btn btn-outline-light"}}More Info{{/link-to}}
+         </div>
+      {{/each}}
+   {{else}}
+      <p>Are you ready to recrod a harvest? Lets go! {{#link-to 'new-harvest' model.polygon.id }}Add a new harvest{{/link-to}}</p>
+   {{/if}}
+</div>
 </div>
