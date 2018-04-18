@@ -1,7 +1,7 @@
 {{outlet}}
 <h1>Polygons in DB</h1>
 <div class="poly-list">
-   {{#each model.polygons as |polygon|}}
+   {{#each model as |polygon|}}
      <div class="row">
        {{#polygon-list item=polygon}}
      <div>
