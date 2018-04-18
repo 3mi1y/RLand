@@ -9,8 +9,9 @@ export default Controller.extend({
                polyId: this.get('model').get('id'),
                content: this.get('notecontent')
             })
-            note.save()
-            this.transitionToRoute('notes', this.get('model').get('id')) 
+            note.save().then(
+               this.transitionToRoute('polygon-info', this.get('model').get('id'))
+            )
          }
    }
 });

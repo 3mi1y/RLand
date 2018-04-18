@@ -29,6 +29,9 @@ Router.map(function() {
   this.route('task-info', { path: '/task-info/:task_id '});
   this.route('about');
   this.route('features');
+  this.route('harvest', { path: '/harvest/:harvest_id' });
+  this.route('confirmation');
+  this.route('note', { path: '/note/:note_id' });
 });
 
 export default Router;

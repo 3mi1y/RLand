@@ -1,6 +1,6 @@
 .polyInfoContainer {
    width: 100%;
-   background-color: rgb(250, 250, 250);
+   background-color: rgb(254, 254, 254);
    position: absolute;
    top: 45px;
    left: 0px;
@@ -10,10 +10,11 @@
    align-items: center;
 }
 .polyInfoHeader {
-   width: 100%;
    display: flex;
-   flex-direction: row;
    justify-content: space-around;
+   width: 100%;
+   font-family: Raleway;
+   padding: 0px 10px 40px 10px;
 }
 .polyInfoLinks {
    width: 45%;
@@ -38,10 +39,7 @@
 }
 .polyInfoTitle {
    width: 100%;
-   margin: 7%;
-   padding-left: 3%;
-   padding-top: 30px;
-   padding-bottom: 40px;
+   padding: 40px 10px 40px 10px;
 }
 .polyInfoTitle h1 {
    padding-bottom: 0px;
@@ -63,7 +61,10 @@
    padding-left: 5%;
    padding-top: 2%;
 }
-
+#polygonHarvestContainer {
+   margin-top: 50px;
+   margin-bottom: 100px;
+}
 
 
 

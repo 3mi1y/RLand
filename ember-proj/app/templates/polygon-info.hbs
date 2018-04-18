@@ -29,9 +29,7 @@
                <div class="noteItem">
                   <div class="noteHeader">
                   <h5><strong>{{ note.title }}</strong></h5>
-                  <button {{action "deleteNote" note}} class="deleteButton">
-                     {{fa-icon "trash" class="trashIcon"}}
-                  </button>
+                  {{#link-to 'note' note.id class="infoButton"}}{{fa-icon "info" class="trashIcon"}}{{/link-to}}
                 </div>
                 <p>{{ note.content }}</p>
               </div>
@@ -63,5 +61,18 @@
           {{#link-to "new-task" model.polygon.id}}Add a Task{{/link-to}}
        </div>
     {{/if}}
+</div>
+<div class="polyInfoTaskContainer" id="polygonHarvestContainer">
+   <h1>Harvests for this polygon:</h1>
+   {{#if model.harvests}}
+      {{#each model.harvests as |harvest|}}
+         <div class="taskItem">
+            <h3>You harvested {{harvest.amount}} {{ harvest.units }}</h3>
+            {{#link-to "harvest" harvest.id class="btn btn-outline-light"}}More Info{{/link-to}}
+         </div>
+      {{/each}}
+   {{else}}
+      <p>Are you ready to recrod a harvest? Lets go! {{#link-to 'new-harvest' model.polygon.id }}Add a new harvest{{/link-to}}</p>
+   {{/if}}
 </div>
 </div>
