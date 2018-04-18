@@ -57,22 +57,32 @@ export default Controller.extend({
         this.set('name', model.get('name'));
         this.set('startDate', model.get('startDate'));
         this.set('endDate', model.get('endDate'));
-	let type = model.get('polyType');
-	if (type[0]) {
-	  this.send('updateLevelTwo', type[0]);
-	}
-	if (type[1]) {
-	  this.send('updateLevelThree', type[1]);
-	}
-	if (type[2]) {
-	  this.send('updateLevelFour', type[2]);
-	}
-	if (type[3]) {
-	  this.send('updateLevelFive', type[3]);
-	}
-	if (type[4]) {
-	  this.send('setLevelFiveSelection', type[4]);
-	}
+        let type = model.get('polyType');
+        if (type[0]) {
+          this.send('updateLevelTwo', type[0]);
+        } else {
+          this.set('selectedOptionOne', '');
+          this.set('selectedOptionTwo', '');
+          this.set('selectedOptionThree', '');
+          this.set('selectedOptionFour', '');
+          this.set('selectedOptionFive', '');
+          this.set('showLevelTwo', false);
+          this.set('showLevelThree', false);
+          this.set('showLevelFour', false);
+          this.set('showLevelFive', false);
+        }
+        if (type[1]) {
+          this.send('updateLevelThree', type[1]);
+        }
+        if (type[2]) {
+          this.send('updateLevelFour', type[2]);
+        }
+        if (type[3]) {
+          this.send('updateLevelFive', type[3]);
+        }
+        if (type[4]) {
+          this.send('setLevelFiveSelection', type[4]);
+        }
         this.set('selected', model);
         $('.poly-list').hide();
         $('.new-poly').show();
@@ -97,14 +107,14 @@ export default Controller.extend({
           this.set('startDate', null);
           this.set('endDate', null);
           this.set('selectedOptionOne', '');
-	  this.set('selectedOptionTwo', '');
-	  this.set('selectedOptionThree', '');
-	  this.set('selectedOptionFour', '');
-	  this.set('selectedOptionFive', '');
+          this.set('selectedOptionTwo', '');
+          this.set('selectedOptionThree', '');
+          this.set('selectedOptionFour', '');
+          this.set('selectedOptionFive', '');
 
           $('.new-poly').hide();
           $('.poly-list').show();
-	});
+        });
       },
 
       updateLevelTwo(selectedOption) {
@@ -117,15 +127,15 @@ export default Controller.extend({
         });
         //console.log(myArr)
         this.set('selectedOptionOne', selectedOption);
-	this.set('selectedOptionTwo', '');
-	this.set('selectedOptionThree', '');
-	this.set('selectedOptionFour', '');
-	this.set('selectedOptionFive', '');
+        this.set('selectedOptionTwo', '');
+        this.set('selectedOptionThree', '');
+        this.set('selectedOptionFour', '');
+        this.set('selectedOptionFive', '');
         this.set('levelTwo', myArr);
-	this.set('showLevelTwo', true);
-	this.set('showLevelThree', false);
-	this.set('showLevelFour', false);
-	this.set('showLevelFive', false);
+        this.set('showLevelTwo', true);
+        this.set('showLevelThree', false);
+        this.set('showLevelFour', false);
+        this.set('showLevelFive', false);
         return myArr
       },
 
