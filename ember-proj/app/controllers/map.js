@@ -14,11 +14,11 @@ export default Controller.extend({
   showLevelThree: false,
   showLevelFour: false,
   showLevelFive: false,
-  selectedOptionOne: 'default',
-  selectedOptionTwo: '(must specify level one)',
-  selectedOptionThree: '(must specify level two)',
-  selectedOptionFour: '(must specify level three)',
-  selectedOptionFive: '(must specify level four)',
+  selectedOptionOne: '',
+  selectedOptionTwo: '',
+  selectedOptionThree: '',
+  selectedOptionFour: '',
+  selectedOptionFive: '',
 
   init() {
     this._super(...arguments);
@@ -33,15 +33,18 @@ export default Controller.extend({
     {
       polygonSelected(polygon)
       {
-        if (!polygon)
+        if (!polygon) {
+	  $('.poly-list').show();
+	  $('.new-poly').hide();
           return;
+	}
 
         let model = polygon.get('model');
         if (!model)
         {
           model = this.get('store').createRecord('polygon', {
             name: '',
-            polytype: '',
+            polyType: [],
             location: '',
             category: '',
             subcategory: '',
@@ -49,10 +52,30 @@ export default Controller.extend({
             startDate: '',
             endDate: '',
           });
-          model.save();
           polygon.set('model', model);
         }
+        this.set('name', model.get('name'));
+        this.set('startDate', model.get('startDate'));
+        this.set('endDate', model.get('endDate'));
+	let type = model.get('polyType');
+	if (type[0]) {
+	  this.send('updateLevelTwo', type[0]);
+	}
+	if (type[1]) {
+	  this.send('updateLevelThree', type[1]);
+	}
+	if (type[2]) {
+	  this.send('updateLevelFour', type[2]);
+	}
+	if (type[3]) {
+	  this.send('updateLevelFive', type[3]);
+	}
+	if (type[4]) {
+	  this.send('setLevelFiveSelection', type[4]);
+	}
         this.set('selected', model);
+        $('.poly-list').hide();
+        $('.new-poly').show();
       },
 
       filterByYear(year)
@@ -69,9 +92,19 @@ export default Controller.extend({
         polygon.set('polyType', this.actions.getPolygonType.call(this));
         polygon.set('startDate', this.get("startDate"));
         polygon.set('endDate', this.get("endDate"));
-        polygon.save();
-        $('.new-poly').hide();
-        $('.poly-list').show();
+        polygon.save().then(() => {
+          this.set('name', '');
+          this.set('startDate', null);
+          this.set('endDate', null);
+          this.set('selectedOptionOne', '');
+	  this.set('selectedOptionTwo', '');
+	  this.set('selectedOptionThree', '');
+	  this.set('selectedOptionFour', '');
+	  this.set('selectedOptionFive', '');
+
+          $('.new-poly').hide();
+          $('.poly-list').show();
+	});
       },
 
       updateLevelTwo(selectedOption) {
