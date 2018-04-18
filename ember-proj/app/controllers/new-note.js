@@ -5,6 +5,7 @@ export default Controller.extend({
       newNote() {
             let note = this.get('store').createRecord('note', {
                title: this.get('title'),
+	       date: this.get('date'),
                polyId: this.get('model').get('id'),
                content: this.get('notecontent')
             })

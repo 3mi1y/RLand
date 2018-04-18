@@ -3,12 +3,17 @@
    <h1 class="form-title">New note for polygon: {{ model.name }}</h1>
    <form class="form-container" {{action "newNote" on="submit"}}>
       <div>
+         <label>Date:</label>
+	 <p>{{input class="input-element" value=date type="date"}}</p>
+      </div>
+
+      <div>
          <label>Title:</label>
          <p>{{input class="input-element" value=title type="text"}}</p>
       </div>
 
       <div>
-         <label>Content:</label>
+         <label>Details:</label>
          <p>{{textarea class="input-element" value=notecontent}}</p>
       </div>
    
