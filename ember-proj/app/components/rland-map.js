@@ -38,16 +38,6 @@ export default Component.extend({
   {
     let selected = sender.get('selected');
     this.send('polygonSelected', selected);
-
-    if (selected) {
-      // this.get('maps').showPath();
-      $('.poly-list').hide();
-      $('.new-poly').show();
-    }
-    else {
-      $('.poly-list').show();
-      $('.new-poly').hide();
-    }
   },
 
   actions: {

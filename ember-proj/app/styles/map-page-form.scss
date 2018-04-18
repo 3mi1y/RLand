@@ -1,0 +1,23 @@
+.map-page-form-container {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+}
+.map-form-container {
+   margin-top: 20px;
+   margin-bottom: 50px;
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: space-between;
+   width: 90%;
+   font-family: Raleway;
+}
+.map-form-label {
+   padding-top: 30px;
+   font-size: 12px;
+}
+.map-power-select {
+   width: 90%;
+}

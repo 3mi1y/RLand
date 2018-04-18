@@ -1,25 +1,46 @@
 {{outlet}}
-<div class="container">
-  <div class="row">
-    <div class="panel-body">
-      <form id="register" class="form-horizontal" style="display:block;" {{action "register" on="submit"}}>
-        <div class="row">
+<div class="form-page-container">
+      <h2 class="form-title">Sign-up</h2>
+      <form id="register" class="form-container" {{action "register" on="submit"}}>
           <div id="errors" class="alert alert-warning" style="display:none;"></div>
 
-	  <p>Profile</p>
-          {{md-input value=name label="Your Name" class="col s12"}}
-          {{md-input value=email label="Email" class="col s12" validate=True}}
-          {{md-input value=password type="password" label="Password" class="col s12"}}
+	  <h3 class="form-title">Profile</h3>
+          <div>
+             <label>Your Name</label><br>
+             {{input value=name class="input-element"}}
+          </div>
 
-	  <p>Address</p>
-          {{md-input value=street label="Street" class="col s12"}}
-          {{md-input value=city label="City" class="col s12"}}
-          {{md-input value=state label="State" class="col s12"}}
-          {{md-input value=zip label="Zipcode" class="col s12"}}
+          <div>
+             <label>Email</label><br>
+             {{input value=email class="input-element" validate=True}}
+          </div>
 
-          {{md-btn-submit text='Create Account' type="submit" action=register}}
-        </div>
+          <div>
+             <label>Password</label><br>
+             {{input value=password type="password" class="input-element"}}
+          </div>
+
+	  <h2 class="form-title">Your Address</h2>
+          <div>
+             <label>Street</label><br>
+             {{input value=street class="input-element"}}
+          </div>
+
+          <div>
+             <label>City</label><br>
+             {{input value=city class="input-element"}}
+          </div>
+
+          <div>
+             <label>State</label><br>
+             {{input value=state class="input-element"}}
+          </div>
+
+          <div>
+             <label>Zipcode</label><br>
+             {{input value=zip class="input-element"}}
+          </div>
+
+          <button class="form-button" type="submit">Create Account</button>
       </form>
-    </div>
-  </div>
 </div>

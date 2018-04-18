@@ -1,7 +1,7 @@
 {{outlet}}
 <div class="dashboard-container">
    <div class="dashboard-header">
-      {{#each model as |user|}}
+      {{#each model.users as |user|}}
          {{#if user.name }}
             <h1>Welcome to your dashboard, {{ user.name }}!</h1>
          {{/if}}
@@ -10,6 +10,14 @@
    <div class="dashboard-body">
       <div class="dashboard-tasks-container">
          <h3>Upcoming Tasks</h3>
+         <div class="dashboard-tasks-list">
+            {{#each model.tasks as |task|}}
+               <div class='taskItem {{tasks task.priority}}'>
+                  <h4>{{ task.name }}</h4>
+                  {{#link-to 'task' task.id class="btn btn-outline-light"}}More Info{{/link-to}}
+               </div>
+             {{/each}}
+          </div>
       </div>
       <div class="dashboard-links-container">
          <h3>Quick Links</h3>

@@ -1,24 +1,29 @@
 {{outlet}}
 <h1>Polygons in DB</h1>
-<div class="col-md-4">
-  {{#each model as |polygon|}}
-    <div class="row">
-      {{#polygon-list item=polygon}}
-        <div>
-           {{#link-to "harvests" polygon.id}}Your harvests{{/link-to}}
-           <div>
-           		{{#link-to "polygon-info" polygon.id}}More info{{/link-to}}
-           </div>
-           <div>
-              {{#link-to "new-harvest" polygon.id}}Add a Harvest{{/link-to}}
-           </div>
-        </div>
-        <div>
-           <button {{action "deletePolygon" polygon}}>Delete</button>
-        </div>
-      {{/polygon-list}}
-    </div>
+<div class="poly-list">
+   {{#each model as |polygon|}}
+     <div class="row">
+       {{#polygon-list item=polygon}}
+     <div>
+        {{#link-to "polygon-info" polygon.id class="poly-list-link"}}
+           Info
+        {{/link-to}}
+        {{#link-to "new-task" polygon.id class="poly-list-link"}}
+           {{fa-icon "plus"}}
+           Task
+        {{/link-to}}
+        {{#link-to "new-harvest" polygon.id class="poly-list-link"}}
+           {{fa-icon "plus"}}
+           Harvest
+        {{/link-to}}
+        {{#link-to "edit-polygon" polygon.id class="poly-list-link"}}
+           Edit
+        {{/link-to}}
+        <button {{action "deletePolygon" polygon}} class="poly-list-delete-icon">{{fa-icon "trash"}}</button>
+     </div>
+   {{/polygon-list}}
+      </div>
   {{/each}}
-</div>
+ </div>
 
 

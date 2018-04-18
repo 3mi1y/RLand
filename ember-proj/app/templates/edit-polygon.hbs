@@ -1,20 +1,25 @@
 {{outlet}}
-<h1>Edit Polygon:</h1>
+<div class="form-page-container">
+   <h1 class="form-title">Edit Polygon:</h1>
 
-<form {{action "submitChangedPolygon" model.id on="submit"}}>
+   <form class="form-container" {{action "submitChangedPolygon" model.id on="submit"}}>
+     
+      <div>
+         <label>Change the name of your polygon:</label>
+         <p>{{input class="input-element" value=name placeholder=model.name type="text"}}</p>
+      </div>
 
-   <label>Please enter a location of your polygon</label>
-   <p>{{input value=location placeholder=model.location type="text"}}</p>
-   
-   <label>Please enter the name of the polygon</label>
-   <p>{{input value=name placeholder=model.name type="text"}}</p>
-   
-   <label>Select a new start date for this polygon:</label>
-   {{md-input type="date" value=model.startDate}}   
-   
-   <label>Select a new end-date for this polygon:</label>
-   {{md-input type="date" value=model.endDate}}
+      <div>
+         <label>Select a new start date for this polygon:</label>
+         <p>{{input class="input-element" type="date" value=model.startDate}}</p>   
+      </div>
+       
+      <div>
+         <label>Select a new end-date for this polygon:</label>
+         <p>{{input class="input-element" type="date" value=model.endDate}}</p>
+      </div>
 
-   <button type="submit">Submit</button>
-</form>
+      <button class="form-button" type="submit">Submit</button>
+   </form>
+</div>
 
