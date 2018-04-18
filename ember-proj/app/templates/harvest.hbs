@@ -1,0 +1,10 @@
+{{outlet}}
+<div class="view-one-container">
+   <div>
+      <h1>Units: {{ model.units }}</h1>
+   </div>
+   <div>
+      <h4>Amount: {{ model.amount }}</h4>
+   </div>
+   <button class="form-button" {{action 'deleteHarvest' model}}>Delete Harvest</button>
+</div>

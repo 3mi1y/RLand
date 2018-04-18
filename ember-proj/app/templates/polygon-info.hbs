@@ -29,9 +29,7 @@
                <div class="noteItem">
                   <div class="noteHeader">
                   <h5><strong>{{ note.title }}</strong></h5>
-                  <button {{action "deleteNote" note}} class="deleteButton">
-                     {{fa-icon "trash" class="trashIcon"}}
-                  </button>
+                  {{#link-to 'note' note.id class="infoButton"}}{{fa-icon "info" class="trashIcon"}}{{/link-to}}
                 </div>
                 <p>{{ note.content }}</p>
               </div>
@@ -69,8 +67,7 @@
    {{#if model.harvests}}
       {{#each model.harvests as |harvest|}}
          <div class="taskItem">
-            <h2>{{ harvest.units }}</h2>
-            <p>{{ harvest.amount }}</p>
+            <h3>You harvested {{harvest.amount}} {{ harvest.units }}</h3>
             {{#link-to "harvest" harvest.id class="btn btn-outline-light"}}More Info{{/link-to}}
          </div>
       {{/each}}

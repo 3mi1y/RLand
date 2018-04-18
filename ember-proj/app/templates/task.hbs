@@ -1,6 +1,19 @@
 {{outlet}}
-<h1>{{ model.name }}</h1>
-<p>{{ model.description }}</p>
-<p>{{ model.dueDate }}</p>
-<p>{{ model.completed }}</p>
-<button {{action 'deleteTask' model}}>Delete</button>
+<div class="view-one-container">
+   <h1>{{ model.name }}</h1>
+   <div class="view-one-description">
+      <div>
+         <label>Description</label>
+         <p>{{ model.description }}</p>
+      </div>
+      <div>
+         <label>Due Date:</label>
+         <p>{{ model.dueDate }}</p>
+      </div>
+      <div>
+         <label>Completed</label>
+         <p>{{ model.completed }}</p>
+      </div>
+   </div>
+   <button class="form-button" {{action 'deleteTask' model}}>Delete</button>
+</div>

@@ -8,8 +8,9 @@ export default Controller.extend({
             polyId: this.get('model').get('id'),
             units: this.get('units')
          })
-         harvest.save()
-         this.transitionToRoute('polygon-info', this.get('model').get('id'))
+         harvest.save().then(
+            this.transitionToRoute('polygon-info', this.get('model').get('id'))
+         )
       }
    }
 });

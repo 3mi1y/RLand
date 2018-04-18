@@ -1,53 +1,74 @@
 {{outlet}}
 
-<div class="container">
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-      <div class="panel">
-        <div class="panel-body">
-	  <div>
-	    Email Address: {{model.id}}<br>
-	    Name: {{model.name}}
-	  </div>
-	  <form {{action "change_password" on="submit"}}>
-            <div class="row" style="border: solid thin; text-align: center; padding: 10px">
-              {{input value=current_pw type="password" label="Enter Current Password" class="col s12" validate=True}}
-              {{input value=new_pw type="password" label="Enter New Password" class="col s12" validate=True}}
-              {{input value=verify_pw type="password" label="Verify New Password" class="col s12" validate=True}}
-              <button type="submit">Change Password</button>
-	      <br>
-	      {{#if password-success}}
-	        Password changed successfully.
-	      {{/if}}
-	      {{#if password-error}}
-	        Error changing password. Make sure your old password is correct.
-	      {{/if}}
-	      {{#if password-mismatch}}
-	        Passwords do not match.
-	      {{/if}}
-            </div>
-	  </form>
-	  <form {{action "update_address" on="submit"}}>
-            <div class="row" style="border: solid thin; text-align: center; padding: 10px">
-              <div class="row">
-                Current Address: {{ model.address }}
-              </div>
-              {{input value=street label="New Street" class="col s12"}}
-              {{input value=city label="New City" class="col s12"}}
-              {{input value=state label="New State" class="col s12"}}
-              {{input value=zip label="New Zipcode" class="col s12"}}
-              <button type="submit">Update Address'</button>
-	      <br>
-	      {{#if address-success }}
-	        Address changed successfully.
-	      {{/if}}
-	      {{#if address-error }}
-	        Error changing address. Please try again.
-	      {{/if}}
-            </div>
-	  </form>
-        </div>
+<div class="form-page-container">
+   <div class="profile-info">
+      <h1>Your Profile Info</h1>
+      <p>Email Address: {{model.id}}</p>
+      <p>Name: {{model.name}}</p>
+   </div>
+   <form class="form-container profile-password-form" {{action "change_password" on="submit"}}>
+      <div>
+         <label>Enter Current Password</label>
+         {{input value=current_pw type="password" class="input-element" validate=True}}
       </div>
-    </div>
-  </div>
+      
+      <div>
+          <label>Enter New Password</label>     
+          {{input value=new_pw type="password" class="input-element" validate=True}}
+      </div>
+
+      <div>
+         <label>Verify New Password</label>
+         {{input value=verify_pw type="password" class="input-element" validate=True}}
+      </div>
+
+      <button class="form-button" type="submit">Change Password</button>
+      <br>
+      {{#if password-success}}
+	 Password changed successfully.
+      {{/if}}
+	      
+      {{#if password-error}}
+         Error changing password. Make sure your old password is correct.
+      {{/if}}
+
+       {{#if password-mismatch}}
+	  Passwords do not match.
+       {{/if}}
+          
+    </form>
+   
+    <form class="form-container profile-address-form" {{action "update_address" on="submit"}}>
+       <h3>Current Address: {{ model.address }}</h3>
+       
+       <div>
+          <label>New Street</label>  
+          {{input value=street class="input-element"}}
+       </div>
+
+       <div>
+          <label>New City</label>
+          {{input value=city class="input-element"}}
+       </div>
+
+       <div>
+          <label>New State</label>
+          {{input value=state class="input-element"}}
+       </div>
+
+       <div>
+          <label>New Zipcode</label>
+          {{input value=zip class="input-element"}}
+       </div>
+
+        <button class="form-button" type="submit">Update Address'</button>
+	<br>
+  
+        {{#if address-success }}
+	    Address changed successfully.
+	{{/if}}
+	{{#if address-error }}
+	    Error changing address. Please try again.
+	{{/if}}
+   </form>
 </div>
