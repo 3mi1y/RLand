@@ -7,10 +7,10 @@
         <p>{{input value=name type="text"}}</p>
 
         <label>Select start date (default is today)</label>
-        {{md-input type="date" value=startDate}}
+        {{input type="date" value=startDate}}
 
         <label>Select end date (this is the date you will harvest/move this polygon</label>
-        {{md-input type="date" value=endDate}}
+        {{input type="date" value=endDate}}
 
         <label>Select what this polygon contains:</label>
         {{#power-select
@@ -70,35 +70,30 @@
         {{/power-select}}
 	{{/if}}
         <br>
-        {{md-btn-submit text="Submit"}}
+        <button type="submit">Submit</button>
       </form>
     </div>
     <div class="poly-list">
+      <h1>Your polygons</h1>
       {{#each model.polygons as |polygon|}}
         <div class="row">
           {{#polygon-list item=polygon}}
         <div>
-           {{#link-to "notes" polygon.id}}Your notes{{/link-to}}
-           {{#link-to "harvests" polygon.id}}Your harvests{{/link-to}}
-           {{#link-to "tasks" polygon.id}}Your tasks{{/link-to}}
-           <div>
-                        {{#link-to "polygon-info" polygon.id}}More info{{/link-to}}
-           </div>
-           <div>
-                        {{#link-to "new-task" polygon.id}}Add a Task{{/link-to}}
-           </div>
-           <div>
-              {{#link-to "new-harvest" polygon.id}}Add a Harvest{{/link-to}}
-           </div>
-           <div>
-              {{#link-to "new-note" polygon.id}}Add Note{{/link-to}}
-           </div>
-        </div>
-        <div>
-           <div>
-                  {{#link-to "edit-polygon" polygon.id}}Edit{{/link-to}}
-                          </div>
-           <button {{action "deletePolygon" polygon}}>Delete</button>
+           {{#link-to "polygon-info" polygon.id class="poly-list-link"}}
+              Info
+           {{/link-to}}
+           {{#link-to "new-task" polygon.id class="poly-list-link"}}
+              {{fa-icon "plus"}}
+              Task
+           {{/link-to}}
+           {{#link-to "new-harvest" polygon.id class="poly-list-link"}}
+              {{fa-icon "plus"}}
+              Harvest
+           {{/link-to}}
+           {{#link-to "edit-polygon" polygon.id class="poly-list-link"}}
+              Edit
+           {{/link-to}}
+           <button {{action "deletePolygon" polygon}} class="poly-list-delete-icon">{{fa-icon "trash"}}</button>
         </div>
       {{/polygon-list}}
         </div>

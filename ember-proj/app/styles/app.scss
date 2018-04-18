@@ -8,8 +8,6 @@ $roboto-font-path: '../assets/';
 
 @import "navbar.scss";
 
-@import "materialize";
-
 @import "ember-bootstrap/bootstrap";
 
 @import 'map.scss';
@@ -20,6 +18,10 @@ $roboto-font-path: '../assets/';
 
 @import 'notes.scss';
 
+@import 'forms.scss';
+
 @import 'polygon-info.scss';
+
+@import 'polygon-list.scss';
 
 @import "ember-power-select";

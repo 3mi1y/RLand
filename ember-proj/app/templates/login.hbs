@@ -1,26 +1,21 @@
 {{outlet}}
-<div class="container">
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-      <div class="panel panel-login">
-        <div class="panel-heading">
-          <div class="row">
-            <div class="panel-body">
-              <form id="login" class="form-horizontal" style="display:block;" {{action "login" on="submit"}}>
-                {{#if loginFailed}}
-                  <div class="alert">Invalid username or password</div>
-                {{/if}}
-                  <div class="row">
-                    {{md-input value=email label="email" class="col s12" validate=True}}
-                    {{md-input value=password type="password" label="Password" class="col s12"}}
-                    {{md-btn-submit text='Log in'}}
-		    {{ md-btn action="register" text="Sign up" }}
-                  </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="form-page-container">
+   <h1 class="form-title">Login</h1>
+   <form id="login" class="form-container" {{action "login" on="submit"}}>
+     {{#if loginFailed}}
+        <div class="alert">Invalid username or password</div>
+     {{/if}}
+     <div>
+        <label>Email</label><br>
+        {{input value=email class="input-element" validate=True}}
+     </div>
+               
+     <div>
+       <label>Password</label><br>
+       {{input value=password type="password" class="input-element"}}
+     </div>
+
+     <button type="submit" class="form-button">Log In</button>
+     {{#link-to 'register'}}Sign Up{{/link-to}}
+  </form>
 </div>

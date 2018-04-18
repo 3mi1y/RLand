@@ -1,11 +1,17 @@
 {{outlet}}
-<h1>New note for polygon: {{ model.name }}</h1>
+<div class="form-page-container">
+   <h1 class="form-title">New note for polygon: {{ model.name }}</h1>
+   <form class="form-container" {{action "newNote" on="submit"}}>
+      <div>
+         <label>Title:</label>
+         <p>{{input class="input-element" value=title type="text"}}</p>
+      </div>
 
-<form {{action "newNote" on="submit"}}>
-   <label>Title:</label>
-   <p>{{input value=title type="text"}}</p>
-
-   <p>{{md-textarea label="Content:" value=notecontent}}</p>
-
-   {{md-btn-submit text="Submit"}}
-</form>
+      <div>
+         <label>Content:</label>
+         <p>{{textarea class="input-element" value=notecontent}}</p>
+      </div>
+   
+      <button type="submit">Submit</button>
+   </form>
+</div>
