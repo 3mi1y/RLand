@@ -8,11 +8,10 @@
       </div>
       <div>
          <label>Due Date:</label>
-         <p>{{ model.dueDate }}</p>
+         <p>{{#if model.dueDate}} {{ model.dueDate }} {{else}} No due date {{/if}}</p>
       </div>
       <div>
-         <label>Completed</label>
-         <p>{{ model.completed }}</p>
+         <label>{{#if model.completed}} Complete {{else}} Not Complete {{/if}}</label>
       </div>
    </div>
    <button class="form-button" {{action 'deleteTask' model}}>Delete</button>
