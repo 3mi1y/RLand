@@ -1,18 +1,18 @@
 {{outlet}}
-<div class="form-page-container">
+<div id="register" class="form-page-container">
       <h2 class="form-title">Sign-up</h2>
-      <form id="register" class="form-container" {{action "register" on="submit"}}>
+      <form class="form-container" {{action "register" on="submit"}}>
           <div id="errors" class="alert alert-warning" style="display:none;"></div>
 
 	  <h3 class="form-title">Profile</h3>
+        <div>
+          <label>Email</label><br>
+          {{input value=email class="input-element" validate=True}}
+        </div>
+
           <div>
              <label>Your Name</label><br>
              {{input value=name class="input-element"}}
-          </div>
-
-          <div>
-             <label>Email</label><br>
-             {{input value=email class="input-element" validate=True}}
           </div>
 
           <div>
@@ -43,4 +43,12 @@
 
           <button class="form-button" type="submit">Create Account</button>
       </form>
+</div>
+
+<div id="confirm" class="text-center" style="display:none">
+  <h2>Thank you for registering with RLand</h2>
+  <h3>Click the button below to login</h3>
+  <br>
+  <br>
+  {{link-to "Sign in" "login" class="form-button"}}
 </div>

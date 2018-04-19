@@ -24,7 +24,8 @@ export default Controller.extend({
       });
       user.save().then(() => {
           this.get('store').unloadAll();
-          this.transitionToRoute('login')
+          $('#register').hide();
+          $('#confirm').show();
         },
         (response) => {
           $('#errors').text(response.errors[0].title);
