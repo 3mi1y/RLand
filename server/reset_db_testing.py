@@ -54,7 +54,10 @@ poly31 = db.create_polygon("{\"shape\":\"polygon\",\"path\":[{\"lat\":46.8641104
 poly32 = db.create_polygon("{\"shape\":\"polygon\",\"path\":[{\"lat\":46.86501845459211,\"lng\":-114.03722536428944},{\"lat\":46.86434908478443,\"lng\":-114.0372897373058},{\"lat\":46.8644719560321,\"lng\":-114.03695982559697},{\"lat\":46.865023956227176,\"lng\":-114.03691422804371}]}", "Cabbage", user3["email"], "2018-04-01", "", ["Plant", "Row Crops", "Vegetable & Fruit Garden", "Cabbage", "Red Cabbage"])
 poly33 = db.create_polygon("{\"shape\":\"polygon\",\"path\":[{\"lat\":46.86425188792662,\"lng\":-114.03769206865803},{\"lat\":46.86501845459211,\"lng\":-114.03764110668675},{\"lat\":46.8650147868351,\"lng\":-114.03735679253117},{\"lat\":46.864314240648085,\"lng\":-114.0374158011295}]}", "Potatoes", user3["email"], "2018-04-01", "", ["Plant", "Row Crops", "Vegetable & Fruit Garden", "Potato", "Russet"])
 poly34 = db.create_polygon("{\"shape\":\"polygon\",\"path\":[{\"lat\":46.86502762398358,\"lng\":-114.03799515827671},{\"lat\":46.86422437935,\"lng\":-114.038046120248},{\"lat\":46.86423171497182,\"lng\":-114.03784495457188},{\"lat\":46.865023956227176,\"lng\":-114.03776448830143}]}", "Eggplant", user3["email"], "2018-04-01", "", ["Plant", "Garden Patch/Area (NOT raised beds)", "Vegetable & Fruit Garden", "Eggplant", "Ichiban"])
+poly35 = db.create_polygon("{\"shape\":\"rectangle\",\"neBounds\":{\"lat\":46.86416923252616,\"lng\":-114.03767150324069},\"swBounds\":{\"lat\":46.86413805609026,\"lng\":-114.03778415601931}}", "Chicken Coop", user3["email"], "2018-04-01", "", ["Animal", "Poultry/Egg layers", "Chickens", "Egg Laying Chicken Hens", "Bantam"])
 task31 = db.create_task(poly33["id"], "Harvest Potatoes", "2018-05-01", None, False, "")
+task32 = db.create_task(poly34["id"], "Harvest Eggplant", "2018-05-01", None, False, "")
+task33 = db.create_task(poly35["id"], "Buy Chicken Feed", "2018-05-01", None, False, "")
 
-user3["polygon_ids"] += map(lambda p: p["id"], [poly31, poly32, poly33, poly34])
+user3["polygon_ids"] += map(lambda p: p["id"], [poly31, poly32, poly33, poly34, poly35])
 db.update_user(user3)
