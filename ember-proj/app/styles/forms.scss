@@ -15,18 +15,20 @@
 .form-container {
    margin-top: 20px;
    margin-bottom: 50px;
-   width: 100%;
    display: flex;
    flex-direction: column;
    align-items: center;
    justify-content: space-between;
-   width: 50%;
+   width: 40%;
+   min-width: 450px;
+}
+.form-container * {
+   width: 100%;
 }
 .input-element {
    font-family: Raleway;
    font-size: 20px;
-   padding: 3%;
-   margin: 1%;
+   padding: 8px;
    width: 100%;
    border: 1px solid #cecece;
    border-radius: 4px;
