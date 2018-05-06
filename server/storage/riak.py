@@ -443,7 +443,8 @@ class RiakDb:
         def map_fields(ptype_name):
             ptype = types[ptype_name]
             if ptype:
-                return { "name": ptype["name"], "leaves": [map_fields(c) for c in ptype["children"]] }
+                children = sorted(ptype["children"])
+                return { "name": ptype["name"], "leaves": [map_fields(c) for c in children] }
             else:
                 print("Warning: polygon type not found:", ptype_name)
                 return None
