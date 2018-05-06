@@ -49,7 +49,7 @@ export default Controller.extend({
             category: '',
             subcategory: '',
             tasks: [],
-            startDate: '',
+            startDate: new Date().toISOString().substring(0, 10),
             endDate: '',
           });
           polygon.set('model', model);
