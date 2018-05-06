@@ -95,11 +95,12 @@ export default Service.extend({
     let setPolyModel = (polyObject) => this.setPolyModel(polyObject);
 
     google.maps.event.addListener(this.get('map'), 'click', () => this.clearSelected());
-    google.maps.event.addListener(drawing, 'overlaycomplete', function (e) {
+    google.maps.event.addListener(drawing, 'overlaycomplete', e => {
       drawing.setDrawingMode(null);
       e.overlay.setEditable(false);
       setSelected(e.overlay);
       addPolygonListener(e.overlay);
+      this.on_map_polygons.push(e.overlay);
       setPolyModel(e);
     });
 
