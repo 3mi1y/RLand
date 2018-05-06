@@ -24,6 +24,7 @@ export default Controller.extend({
         this.get('store').findRecord('user', this.get('email')).then(() => {
           // got user
           this.get('authentication').login();
+          this.set("password", "");
           this.transitionToRoute('map')
         }, (response) => {
           // failed to get user
